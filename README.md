@@ -1,4 +1,11 @@
 # Attendance Management System
+Functional Requirements
+- User Authentication
+- Employee Registration
+- Attendance Recording
+- Attendance Reports
+- Leave Management
+- Admin Dashboard
 
 # Gantt Chart
 https://cebuinstituteoftechnology-my.sharepoint.com/:x:/g/personal/clarencekirk_macapobre_cit_edu/EX0PUaIayKpGj128RzcTkwsBBmu9KCDw7roXzGJaw4Itug?e=vygDPE
