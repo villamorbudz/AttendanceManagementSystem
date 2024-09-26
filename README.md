@@ -1,8 +1,8 @@
 # Attendance Management System
 Members:
-Macapobre, Clarence Kirk H.
-Solasco, Ephraim Jay A.
-Villamor, Giles Anthony II I.
+- Macapobre, Clarence Kirk H.
+- Solasco, Ephraim Jay A.
+- Villamor, Giles Anthony II I.
 
 Functional Requirements
 - User Authentication
