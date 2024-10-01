@@ -12,6 +12,8 @@ Functional Requirements
 - Leave Management
 - Admin Dashboard
 
+https://docs.google.com/document/d/1CV0SnLQ8Mk_a7esE05MgeWcsuibVhiEMZl3C8cEM4TM/edit?usp=sharing
+
 # Gantt Chart
 https://cebuinstituteoftechnology-my.sharepoint.com/:x:/g/personal/clarencekirk_macapobre_cit_edu/EX0PUaIayKpGj128RzcTkwsBBmu9KCDw7roXzGJaw4Itug?e=vygDPE
 
