@@ -1,0 +1,78 @@
+{% load static tailwind_tags %}
+<html>
+    <head>
+        <title>AM System</title>
+        {% tailwind_css %}
+        <style>
+            /* Add keyframes for the gradient animation */
+            @keyframes gradient-animation {
+                0% {
+                    background-color: #EE6C4D;
+                }
+                25% {
+                    background-color: #E0FBFC;
+                }
+                50% {
+                    background-color: #98C1D9;
+                }
+                75% {
+                    background-color: #3D5A80;
+                }
+                100% {
+                    background-color: #EE6C4D;
+                }
+            }
+
+            /* Apply the gradient animation to the hero section */
+            .hero {
+                background: linear-gradient(270deg, #EE6C4D, #E0FBFC, #98C1D9, #3D5A80);
+                background-size: 100% 100%;
+                animation: gradient-animation 15s ease infinite;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <div class="navbar bg-base-100">
+            <div class="flex-1">
+              <a class="text-xl btn btn-ghost">daisyUI</a>
+            </div>
+            <div class="flex-none">
+              <button class="btn btn-square btn-ghost">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="inline-block w-5 h-5 stroke-current">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+
+
+        <div class="min-h-screen hero bg-base-200">
+            <div class="flex-col hero-content lg:flex-row-reverse">
+                <img
+                src="{% static 'images/people.png' %}"
+                alt="People"
+                class="max-w-sm rounded-lg "/>              
+
+                <div>
+                    <!-- Set the text color to black -->
+                    <h1 class="text-5xl font-bold text-black">Attendance Management System</h1>
+                    <p class="py-6 text-black">
+                        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
+                        quasi. In deleniti eaque aut repudiandae et a id nisi.
+                    </p>
+                    <button class="btn btn-primary">Get Started</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
