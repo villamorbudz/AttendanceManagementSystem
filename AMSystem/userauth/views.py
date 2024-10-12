@@ -1,6 +1,8 @@
 from django.shortcuts import render
-from django.contrib.auth.views import LoginView
 
-class CustomLoginView(LoginView):
-  template_name = 'userauth/login.html'
+# Create your views here.
+def index(request):
+  return render(request, 'userauth/index.html')
 
+def login(request):
+  return render(request, 'userauth/login.html')

@@ -1,0 +1,106 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/AMSystemlogoWhite.png' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AM System</title>
+    {% tailwind_css %}
+    <style>
+      .animate-blob {
+        background-image: url("{% static 'images/Noise_Texture.png' %}"); /* Add your noise texture image path here */
+        background-size: cover;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <!-- NavBar -->
+    <nav class="p-4 bg-white shadow-md">
+      <div class="container flex items-center justify-between mx-auto">
+        <a href="#" class="flex items-center">
+          <img src="{% static 'images/AMSystemlogo.png' %}" alt="Logo" class="h-10" />
+          <span class="ml-2 text-xl font-semibold"></span>
+        </a>
+        <button class="btn btn-square btn-ghost">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative flex items-center justify-center min-h-screen overflow-hidden">
+      <!-- Background Animations -->
+      <div class="absolute top-0 z-0 rounded-full bg-primary-50 -left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+      <div class="absolute top-0 z-0 bg-blue-300 rounded-full -right-10 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+      <div class="absolute bg-[#3D5A80] rounded-full -bottom-8 left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000 z-0"></div>
+
+      <!-- New Blobs -->
+      <div class="absolute z-0 bg-[#d4e7ff] rounded-full bottom-10 right-20 w-80 h-80 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-3000"></div>
+
+      <div class="container flex flex-col-reverse items-center px-6 mx-auto lg:flex-row">
+        <img src="{% static 'images/people.png' %}" alt="People" class="z-10 w-full rounded-lg lg:w-1/2" />
+
+        <div class="z-10 text-center lg:text-left lg:ml-10">
+          <h1 class="text-5xl font-bold text-gray-800">Attendance Management <br />System</h1>
+          <p class="mt-4 text-lg text-gray-600">Welcome to the Attendance Management System (AMS).</p>
+          <div class="mt-6">
+            <a href="/login">
+              <button class="btn btn-outline btn-warning btn-wide">Login</button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="p-10 text-gray-800 bg-white">
+      <div class="container grid grid-cols-1 gap-8 mx-auto md:grid-cols-4">
+        <!-- Company Info -->
+        <div class="space-y-4">
+          <svg width="50" height="50" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="fill-current">
+            <path d="M22.672 15.226l-2.432.811.841 2.515c..."></path>
+          </svg>
+          <p class="font-semibold">Attendance Management System</p>
+          <p>Providing reliable tech since 1992</p>
+        </div>
+
+        <!-- Services -->
+        <div>
+          <h6 class="mb-4 font-bold footer-title">Services</h6>
+          <ul class="space-y-2">
+            <li><a href="#" class="link link-hover">Branding</a></li>
+            <li><a href="#" class="link link-hover">Design</a></li>
+            <li><a href="#" class="link link-hover">Marketing</a></li>
+            <li><a href="#" class="link link-hover">Advertisement</a></li>
+          </ul>
+        </div>
+
+        <!-- Company -->
+        <div>
+          <h6 class="mb-4 font-bold footer-title">Company</h6>
+          <ul class="space-y-2">
+            <li><a href="#" class="link link-hover">About us</a></li>
+            <li><a href="#" class="link link-hover">Contact</a></li>
+            <li><a href="#" class="link link-hover">Jobs</a></li>
+            <li><a href="#" class="link link-hover">Press kit</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal -->
+        <div>
+          <h6 class="mb-4 font-bold footer-title">Legal</h6>
+          <ul class="space-y-2">
+            <li><a href="#" class="link link-hover">Terms of use</a></li>
+            <li><a href="#" class="link link-hover">Privacy policy</a></li>
+            <li><a href="#" class="link link-hover">Cookie policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pt-4 mt-10 text-sm text-center text-gray-500 border-t">© 2024 Attendance Management System. All rights reserved.</div>
+    </footer>
+  </body>
+</html>
