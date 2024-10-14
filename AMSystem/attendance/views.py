@@ -4,9 +4,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import date
 from django.contrib.auth.views import LoginView
 
-class CustomLoginView(LoginView):
-    template_name = 'registration/login.html'  # Point to your login template
-    
+
 
 @login_required
 def record_attendance(request):
