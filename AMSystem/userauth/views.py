@@ -4,7 +4,7 @@ from django.shortcuts import render
 def home(request):
     return render(request, 'userauth/index.html')
 
-def login_view(request):
+def login(request):
     return render(request, 'userauth/login.html')
 
 
