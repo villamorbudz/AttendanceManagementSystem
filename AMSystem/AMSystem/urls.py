@@ -23,6 +23,6 @@ urlpatterns = [
     path('', include('attendance.urls')),  # This line should include attendance URLs
     path('', include('dashboard.urls')),
     path('', include('userauth.urls')),
-
+    path('', include('usermgmt.urls')),
     path("__reload__/", include("django_browser_reload.urls")),
 ]

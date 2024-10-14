@@ -1,8 +1,13 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import User
+from .models import Employee
 
-class UserRegistrationForm(UserCreationForm):
+class UserRegistrationForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
-        model = User
-        fields = ('email', 'first_name', 'last_name', 'password1', 'password2')
+        model = Employee
+        fields = ['first_name', 'last_name', 'email', 'birthdate', 'contact_number', 'password']
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        return password

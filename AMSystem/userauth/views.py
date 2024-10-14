@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 # userauth/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
-from usermgmt.models import User
-from usermgmt.views import register  # Import the register view from usermgmt
 from .forms import UserAuthenticationForm
 
 def login_view(request):
@@ -12,24 +9,16 @@ def login_view(request):
         form = UserAuthenticationForm(request.POST)
 
         if form.is_valid():
-            user_id = form.cleaned_data['user_id']
+            employee_id = form.cleaned_data['employee_id']
             password = form.cleaned_data['password']
 
-            # Check if the user exists in usermgmt.User
-            if User.objects.filter(user_id=user_id).exists():
-                user = authenticate(request, username=user_id, password=password)
-                if user is not None:
-                    auth_login(request, user)
-                    messages.success(request, 'Successfully logged in!')
-                    if user.is_superuser:
-                        return redirect('/admin/')  # Redirect to Django admin for superusers
-                    else:
-                        return redirect('employee_dashboard')  # Redirect to employee dashboard for regular users
-                else:
-                    messages.error(request, 'Invalid credentials. Please try again.')
+            # This will use the EmployeeBackend you defined
+            user = authenticate(request, username=employee_id, password=password)
+            if user is not None:
+                auth_login(request, user)
+                return redirect('home')
             else:
-                messages.error(request, 'User does not exist.')
-
+                messages.error(request, 'Invalid employee ID or password.')
     else:
         form = UserAuthenticationForm()
 
@@ -40,20 +29,3 @@ def index(request):
 
 def landing(request):
     return render(request, 'userauth/landingPage.html')
-
-def access_denied(request):
-    return render(request, 'userauth/access_denied.html')
-
-def employee_dashboard(request):
-    return render(request, 'dashboard/employee_dashboard.html')
-=======
-from django.shortcuts import render
-
-# Create your views here.
-def home(request):
-    return render(request, 'userauth/index.html')
-
-def login(request):
-    return render(request, 'userauth/login.html')
-
-

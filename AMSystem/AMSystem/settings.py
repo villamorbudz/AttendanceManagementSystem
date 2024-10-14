@@ -172,23 +172,13 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-<<<<<<< HEAD
 NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
 
-AUTH_USER_MODEL = 'usermgmt.User'
-
-LOGIN_URL = 'login'
-
-# Use database-backed sessions
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-
-# Optionally set the session to expire when the browser is closed
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 3600  # 1 hour for testing; adjust as necessary
 
-# CSRF settings
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
-CSRF_USE_SESSIONS = True
-=======
-NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
->>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
+AUTH_USER_MODEL = 'usermgmt.Employee'
+
+AUTHENTICATION_BACKENDS = [
+    'usermgmt.backends.EmployeeBackend',  # Custom backend for Employee model
+    'django.contrib.auth.backends.ModelBackend',  # Default backend for admin
+]
