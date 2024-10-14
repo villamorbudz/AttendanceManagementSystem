@@ -134,3 +134,12 @@ INTERNAL_IPS = [
 ]
 
 NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+AUTH_USER_MODEL = 'usermgmt.Employee'
+
+AUTHENTICATION_BACKENDS = [
+    'usermgmt.backends.EmployeeBackend',  # Custom backend for Employee model
+    'django.contrib.auth.backends.ModelBackend',  # Default backend for admin
+]

@@ -1,17 +1,14 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
-from usermgmt.models import User
+from usermgmt.models import Employee
 
-def login(request):
-    if request.method == 'POST':
-        form = UserAuthenticationForm(request.POST)
-        if form.is_valid():
-            user_id = form.cleaned_data['user_id']
-            password = form.cleaned_data['password']
-            user = authenticate(request, user_id=user_id, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('home')  # Redirect to a success page
-    else:
-        form = UserAuthenticationForm()
-    return render(request, 'registration/login.html', {'form': form})
+class UserAuthenticationForm(forms.Form):
+    employee_id = forms.CharField(max_length=50)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean_employee_id(self):
+        employee_id = self.cleaned_data.get('employee_id')
+        return employee_id
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        return password
