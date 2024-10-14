@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'attendance',
     'dashboard',
     'userauth',
+    'usermgmt',
     'django_browser_reload',
 ]
 
