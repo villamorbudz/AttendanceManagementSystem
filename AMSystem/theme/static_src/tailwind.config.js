@@ -30,9 +30,7 @@ module.exports = {
          * JS: If you use Tailwind CSS in JavaScript, uncomment the following lines and make sure
          * patterns match your project structure.
          */
-        /* JS 1: Ignore any JavaScript in node_modules folder. */
         // '!../../**/node_modules',
-        /* JS 2: Process all JavaScript files in the project. */
         // '../../**/*.js',
 
         /**
@@ -42,16 +40,48 @@ module.exports = {
         // '../../**/*.py'
     ],
     theme: {
+        extend: {
+            animation: {
+                blob: "blob 7s infinite",
+            },
+            keyframes: {
+                blob: {
+                    "0%": {
+                        transform: "translate(0px, 0px) scale(1)",
+                    },
+                    "33%": {
+                        transform: "translate(30px, -50px) scale(2.2)",
+                    },
+                    "66%": {
+                        transform: "translate(-20px, 20px) scale(0.9)",
+                    },
+                    "100%": {
+                        transform: "translate(0px, 0px) scale(1)",
+                    },
+                },
+            },
+            
+            colors:{
+                primary: {
+                    50: '#EE6C4D',
+                    100: 'orange',
+                }            
+            
+            }
+        },
+    },
+    variants: {
         extend: {},
     },
     plugins: [
         /**
          * '@tailwindcss/forms' is the forms plugin that provides a minimal styling
-         * for forms. If you don't like it or have own styling for forms,
+         * for forms. If you don't like it or have your own styling for forms,
          * comment the line below to disable '@tailwindcss/forms'.
          */
         require('@tailwindcss/forms'),
         require('@tailwindcss/typography'),
         require('@tailwindcss/aspect-ratio'),
+        require('daisyui'),
     ],
-}
+};
