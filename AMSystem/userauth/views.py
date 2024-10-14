@@ -50,9 +50,10 @@ def employee_dashboard(request):
 from django.shortcuts import render
 
 # Create your views here.
-def index(request):
-  return render(request, 'userauth/index.html')
+def home(request):
+    return render(request, 'userauth/index.html')
 
-def login(request):
-  return render(request, 'userauth/login.html')
->>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
+def login_view(request):
+    return render(request, 'userauth/login.html')
+
+

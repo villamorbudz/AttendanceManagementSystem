@@ -1,13 +1,13 @@
 from django import forms
-from .models import User, Department
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .models import User
 
-class UserRegistrationForm(forms.ModelForm):
-    department = forms.ModelChoiceField(
-        queryset=Department.objects.all(),
-        empty_label="Select Department",
-        widget=forms.Select(attrs={'class': 'input input-bordered'}),
-    )
-
+class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['user_id', 'first_name', 'last_name', 'birthdate', 'contact_number', 'email', 'department']
+        fields = ('email', 'first_name', 'last_name', 'password1', 'password2')
+
+class UserAuthenticationForm(AuthenticationForm):
+    class Meta:
+        model = User
+        fields = ('user_id', 'password')

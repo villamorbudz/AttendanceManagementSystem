@@ -57,11 +57,7 @@ INSTALLED_APPS = [
     'attendance',
     'dashboard',
     'userauth',
-    'usermgmt',
     'django_browser_reload',
-=======
-    'userauth',
->>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
 ]
 
 MIDDLEWARE = [
