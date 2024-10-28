@@ -1,9 +1,16 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
 from .models import Employee
 
-# Register your models here.
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ['employee_id', 'first_name', 'last_name', 'email', 'birthdate', 'contact_number']
-    search_fields = ['first_name', 'last_name', 'email']
-    list_filter = ['employee_id', 'first_name', 'last_name', 'birthdate']
+    list_display = ('employee_id', 'first_name', 'last_name', 'email', 'is_staff', 'is_active', 'role')
+    search_fields = ('first_name', 'last_name', 'email')
+
+    def role(self, obj):
+        return 'Admin' if obj.is_superuser else 'Employee'
+    role.short_description = 'Role'
+
+# Register the Group model
+admin.site.unregister(Group)
+admin.site.register(Group)

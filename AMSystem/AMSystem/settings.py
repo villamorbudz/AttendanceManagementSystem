@@ -19,10 +19,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -33,13 +29,6 @@ SECRET_KEY = 'django-insecure-=creds)y8n8cm*s^#94miq+mz!*ico7he37&gb5o0u%pa-53e-
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-<<<<<<< HEAD
-# Application definition
-
-INSTALLED_APPS = [
-    'unfold',
-=======
 
 # Application definition
 
@@ -71,7 +60,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
->>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -174,11 +163,7 @@ INTERNAL_IPS = [
 
 NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 AUTH_USER_MODEL = 'usermgmt.Employee'
 
-AUTHENTICATION_BACKENDS = [
-    'usermgmt.backends.EmployeeBackend',  # Custom backend for Employee model
-    'django.contrib.auth.backends.ModelBackend',  # Default backend for admin
-]

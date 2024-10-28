@@ -1,67 +1,122 @@
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/AMSystemlogoWhite.png' %}" />
+    <title>Registration</title>
+    {% tailwind_css %}
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 20px;
-      }
-      .container {
-        max-width: 400px;
-        margin: auto;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      .alert {
-        padding: 10px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        color: white;
-      }
-      .alert-success {
-        background-color: #4caf50; /* Green */
+      .animate-blob {
+        background-image: url("{% static 'images/Noise_Texture.png' %}");
+        background-size: cover;
       }
     </style>
-    <script>
-      function clearFields() {
-        // Get the form and reset its fields
-        const form = document.getElementById("registration-form");
-        form.reset();
-      }
-
-      function redirectAfterDelay() {
-        setTimeout(function () {
-          clearFields(); // Clear fields before redirecting
-          window.location.href = "{% url 'register' %}"; // Redirect after delay
-        }, 3000); // Delay in milliseconds (3000 ms = 3 seconds)
-      }
-    </script>
   </head>
-  <body>
-    <div class="container">
-      <h2>Register</h2>
-
-      {% if messages %} {% for message in messages %}
-      <div class="alert alert-success">{{ message }}</div>
-      {% endfor %} {% endif %}
-
-      <form id="registration-form" method="post">
-        {% csrf_token %} {{ form.as_p }}
-        <button type="submit">Register</button>
-      </form>
+  <body class="bg-gray-50">
+    <!-- Background Animations -->
+    <div class="fixed inset-0 overflow-hidden">
+      <div class="absolute rounded-full bg-primary-50 -left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+      <div class="absolute bg-blue-300 rounded-full -right-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+      <div class="absolute rounded-full bg-[#3D5A80] -bottom-10 left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+      <div class="absolute z-0 bg-[#d4e7ff] rounded-full bottom-20 right-20 w-80 h-80 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-3000"></div>
     </div>
 
-    {% if messages %}
-    <script>
-      redirectAfterDelay(); // Call the redirect function after messages are displayed
-    </script>
-    {% endif %}
+    <!-- Main Container -->
+    <div class="relative z-10 flex items-center justify-center min-h-screen">
+      <div class="flex-col items-center justify-center hero-content lg:flex-row-reverse">
+        <div class="w-screen max-w-lg bg-white shadow-lg card shrink-0">
+          <form method="POST" action="{% url 'register' %}" class="card-body">
+            {% csrf_token %}
+            <div class="mb-6 text-center lg:text-center mb:mb-0">
+              <h1 class="text-3xl font-bold text-blue-950">REGISTER EMPLOYEE</h1>
+            </div>
+
+            {% if messages %}
+            <div class="mb-4">
+              {% for message in messages %}
+              <div class="p-4 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg" role="alert">{{ message }}</div>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Employee ID -->
+            <div class="form-control">
+              <label class="text-left label">
+                <span class="label-text">Employee ID</span>
+              </label>
+              <input type="text" name="employee_id" placeholder="Enter Employee ID" class="input input-bordered" required />
+              {% if form.employee_id.errors %}
+              <div class="text-red-500 text-sm mt-1">{% for error in form.employee_id.errors %} {{ error }} {% endfor %}</div>
+              {% endif %}
+            </div>
+
+            <!-- First Name and Last Name -->
+            <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div class="form-control">
+                <label class="text-left label">
+                  <span class="label-text">First Name</span>
+                </label>
+                <input type="text" name="first_name" placeholder="Enter First Name" class="input input-bordered" required />
+                {% if form.first_name.errors %}
+                <div class="text-red-500 text-sm mt-1">{% for error in form.first_name.errors %} {{ error }} {% endfor %}</div>
+                {% endif %}
+              </div>
+              <div class="form-control">
+                <label class="text-left label">
+                  <span class="label-text">Last Name</span>
+                </label>
+                <input type="text" name="last_name" placeholder="Enter Last Name" class="input input-bordered" required />
+                {% if form.last_name.errors %}
+                <div class="text-red-500 text-sm mt-1">{% for error in form.last_name.errors %} {{ error }} {% endfor %}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Department and Email -->
+            <div class="form-control">
+              <label class="text-left label">
+                <span class="label-text">Department</span>
+              </label>
+              <input type="text" name="department" placeholder="Enter Department" class="input input-bordered" required />
+            </div>
+            <div class="form-control">
+              <label class="text-left label">
+                <span class="label-text">Email</span>
+              </label>
+              <input type="email" name="email" placeholder="Enter Email" class="input input-bordered" required />
+              {% if form.email.errors %}
+              <div class="text-red-500 text-sm mt-1">{% for error in form.email.errors %} {{ error }} {% endfor %}</div>
+              {% endif %}
+            </div>
+
+            <!-- Birthdate and Contact Number -->
+            <div class="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
+              <div class="form-control">
+                <label class="text-left label">
+                  <span class="label-text">Birthdate</span>
+                </label>
+                <input type="date" name="birthdate" class="input input-bordered" />
+              </div>
+              <div class="form-control">
+                <label class="text-left label">
+                  <span class="label-text">Contact Number</span>
+                </label>
+                <input type="text" name="contact_number" placeholder="Enter Contact Number" class="input input-bordered" />
+                {% if form.contact_number.errors %}
+                <div class="text-red-500 text-sm mt-1">{% for error in form.contact_number.errors %} {{ error }} {% endfor %}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Register Button -->
+            <div class="mt-6 form-control">
+              <button type="submit" class="btn bg-[#3D5A80] text-white hover:border-x-cyan-400 w-full">Register</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
