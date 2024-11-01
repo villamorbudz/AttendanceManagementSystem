@@ -1,84 +1,99 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-
-class EmployeeManager(BaseUserManager):
-    def create_user(self, employee_id, first_name, last_name, department, email, birthdate, contact_number, password=None):
-        if not employee_id:
-            raise ValueError("The employee ID is required.")
-        if not email:
-            raise ValueError("An email address is required.")
-        
-        email = self.normalize_email(email)
-        employee_group, _ = Group.objects.get_or_create(name='Employee')
-        
-        employee = self.model(
-            employee_id=employee_id,
-            first_name=first_name,
-            last_name=last_name,
-            department=department,
-            email=email,
-            birthdate=birthdate,
-            contact_number=contact_number,
-            group=employee_group,
-        )
-        employee.set_password(password or '123456')  # Set default password if none provided
-        employee.save(using=self._db)
-        return employee
-
-    def create_superuser(self, employee_id, first_name, last_name, department, email, birthdate, contact_number, password=None):
-        employee = self.create_user(
-            employee_id=employee_id,
-            first_name=first_name,
-            last_name=last_name,
-            department=department,
-            email=email,
-            birthdate=birthdate,
-            contact_number=contact_number,
-            password=password,
-        )
-        employee.is_staff = True
-        employee.is_superuser = True
-        employee.role = 'admin'  # Set the role to admin
-        
-        employee.save(using=self._db)  # Save before assigning to the group
-        
-        admin_group, _ = Group.objects.get_or_create(name='Administrator')
-        employee.group = admin_group
-        employee.save(using=self._db)  # Save again after group assignment
-
-        return employee
-
-class Employee(AbstractBaseUser, PermissionsMixin):
-    employee_id = models.IntegerField(primary_key=True, unique=True)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    department = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    birthdate = models.DateField(null=True, blank=True)
-    contact_number = models.CharField(max_length=100, unique=True, blank=True, null=True)
-
+class Role(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, unique=True)  # Ensure name is unique
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    role = models.CharField(max_length=10, choices=[('employee', 'Employee'), ('admin', 'Administrator')], default='employee')
-
-    group = models.ForeignKey(
-        Group,
-        related_name="employees",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    objects = EmployeeManager()
-
-    USERNAME_FIELD = 'employee_id'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'department', 'email', 'birthdate']
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} (ID: {self.employee_id})"
+        return self.name
 
-    def has_perm(self, perm, obj=None):
-        return True
+    @classmethod
+    def create_role(cls, name, is_staff=False):
+        # Check for existing role
+        role, created = cls.objects.get_or_create(name=name, defaults={'is_staff': is_staff})
+        if created:
+            print(f"Role '{name}' created.")
+        else:
+            print(f"Role '{name}' already exists.")
+        return role
 
-    def has_module_perms(self, app_label):
-        return True
+
+class Department(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, unique=True)  # Ensure name is unique
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def create_department(cls, name):
+        # Check for existing department
+        department, created = cls.objects.get_or_create(name=name)
+        if created:
+            print(f"Department '{name}' created.")
+        else:
+            print(f"Department '{name}' already exists.")
+        return department
+
+
+class UserManager(BaseUserManager):
+    def create_user(self, user_id, password=None, **extra_fields):
+        """Create and return a 'User' with a user_id and password."""
+        if not user_id:
+            raise ValueError('The User ID must be set')
+        user = self.model(user_id=user_id, **extra_fields)
+        user.set_password(password)
+        # extra_fields.setdefault('role', Role.objects.get(name="Employee"))
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, user_id, password=None, **extra_fields):
+        """Create and return a superuser with a user_id and password."""
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', Role.objects.get(name="Administrator"))
+        extra_fields.setdefault('department', Department.objects.get(name="Dev Team"))
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(user_id, password, **extra_fields)
+
+class User(AbstractUser):
+    username = None
+    id = models.AutoField(primary_key=True)
+    user_id = models.CharField(max_length=50, unique=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    birthdate = models.DateField()
+    contact_number = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(max_length=100, unique=True)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, default = None)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    objects = UserManager()  # Attach the custom user manager
+
+    USERNAME_FIELD = 'user_id'
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'birthdate', 'contact_number', 'email']
+
+    def save(self, *args, **kwargs):
+        # Update `is_staff` based on the assigned role
+        if self.role:
+            self.is_staff = self.role.is_staff
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+class Account(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='account')
+    password = models.CharField(max_length=255)
+    
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"

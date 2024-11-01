@@ -1,16 +1,15 @@
 from django.contrib import admin
-from django.contrib.auth.models import Group
-from .models import Employee
+from .models import User, Role, Department  
 
-@admin.register(Employee)
-class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('employee_id', 'first_name', 'last_name', 'email', 'is_staff', 'is_active', 'role')
-    search_fields = ('first_name', 'last_name', 'email')
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('user_id', 'first_name', 'last_name', 'email', 'department', 'role', 
+                    'contact_number', 'is_staff', 'is_active')
+    search_fields = ('user_id', 'first_name', 'last_name', 'email', 'department__name', 
+                        'role__name', 'is_staff', 'is_active')  # Use double underscores to search related fields
 
-    def role(self, obj):
-        return 'Admin' if obj.is_superuser else 'Employee'
-    role.short_description = 'Role'
+# Register User with the custom UserAdmin
+admin.site.register(User, UserAdmin)
 
-# Register the Group model
-admin.site.unregister(Group)
-admin.site.register(Group)
+# Optionally, if you need to manage Roles and Departments
+admin.site.register(Role)  # Register Role if you want to manage it from admin
+admin.site.register(Department)

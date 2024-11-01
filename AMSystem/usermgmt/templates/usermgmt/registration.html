@@ -41,14 +41,14 @@
             </div>
             {% endif %}
 
-            <!-- Employee ID -->
+            <!-- User ID -->
             <div class="form-control">
               <label class="text-left label">
                 <span class="label-text">Employee ID</span>
               </label>
-              <input type="text" name="employee_id" placeholder="Enter Employee ID" class="input input-bordered" required />
-              {% if form.employee_id.errors %}
-              <div class="text-red-500 text-sm mt-1">{% for error in form.employee_id.errors %} {{ error }} {% endfor %}</div>
+              <input type="text" name="user_id" placeholder="Enter Employee ID" class="input input-bordered" required />
+              {% if form.user_id.errors %}
+              <div class="text-red-500 text-sm mt-1">{% for error in form.user_id.errors %} {{ error }} {% endfor %}</div>
               {% endif %}
             </div>
 
@@ -74,13 +74,23 @@
               </div>
             </div>
 
-            <!-- Department and Email -->
+            <!-- Department Dropdown -->
             <div class="form-control">
               <label class="text-left label">
                 <span class="label-text">Department</span>
               </label>
-              <input type="text" name="department" placeholder="Enter Department" class="input input-bordered" required />
+              <select name="department" class="select select-bordered" required>
+                <option value="" disabled selected>Select Department</option>
+                {% for dept in form.department.field.queryset %}
+                <option value="{{ dept.id }}">{{ dept.name }}</option>
+                {% endfor %}
+              </select>
+              {% if form.department.errors %}
+              <div class="text-red-500 text-sm mt-1">{% for error in form.department.errors %} {{ error }} {% endfor %}</div>
+              {% endif %}
             </div>
+
+            <!-- Email -->
             <div class="form-control">
               <label class="text-left label">
                 <span class="label-text">Email</span>

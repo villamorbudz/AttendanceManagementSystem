@@ -2,6 +2,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
+from usermgmt.models import User
+from usermgmt.views import register
 from .forms import UserAuthenticationForm
 
 def login_view(request):
@@ -9,16 +11,21 @@ def login_view(request):
         form = UserAuthenticationForm(request.POST)
 
         if form.is_valid():
-            employee_id = form.cleaned_data['employee_id']
+            user_id = form.cleaned_data['user_id']
             password = form.cleaned_data['password']
 
-            # This will use the EmployeeBackend you defined
-            user = authenticate(request, username=employee_id, password=password)
-            if user is not None:
-                auth_login(request, user)
-                return redirect('home')
+            # Check if the user exists in usermgmt.User
+            if User.objects.filter(user_id=user_id).exists():
+                user = authenticate(request, username=user_id, password=password)
+                if user is not None:
+                    auth_login(request, user)
+                    messages.success(request, 'Successfully logged in!')
+                    return redirect('home')  # Redirect to landing page on successful login
+                else:
+                    messages.error(request, 'Invalid credentials. Please try again.')
             else:
-                messages.error(request, 'Invalid employee ID or password.')
+                messages.error(request, 'User does not exist.')
+
     else:
         form = UserAuthenticationForm()
 
@@ -29,3 +36,6 @@ def index(request):
 
 def landing(request):
     return render(request, 'userauth/landingPage.html')
+
+def access_denied(request):
+    return render(request, 'userauth/access_denied.html')

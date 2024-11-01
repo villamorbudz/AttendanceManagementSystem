@@ -52,12 +52,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-<<<<<<< HEAD
-    'django.contrib.sessions.middleware.SessionMiddleware',  # Ensure this is before CsrfViewMiddleware
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',  # Ensure this is after SessionMiddleware
-=======
-    'django.contrib.sessions.middleware.SessionMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -66,13 +61,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-<<<<<<< HEAD
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # This is the default
 )
 
-=======
->>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
 ROOT_URLCONF = 'AMSystem.urls'
 
 TEMPLATES = [
@@ -163,7 +155,18 @@ INTERNAL_IPS = [
 
 NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
 
-# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+AUTH_USER_MODEL = 'usermgmt.User'
 
-AUTH_USER_MODEL = 'usermgmt.Employee'
+LOGIN_URL = 'login'
+
+# settings.py
+
+# Use database-backed sessions
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+# Optionally set the session to expire when the browser is closed
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Or set a custom session expiry (in seconds)
+SESSION_COOKIE_AGE = 1  # 1 second for testing; adjust as necessary
 
