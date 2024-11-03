@@ -19,9 +19,13 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+<<<<<<< HEAD
     path('', include('attendance.urls')),  # This line should include attendance URLs
     path('', include('dashboard.urls')),
     path('', include('userauth.urls')),
     path('', include('usermgmt.urls')),
     path("__reload__/", include("django_browser_reload.urls")),
+=======
+    path('', include('userauth.urls')),
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
 ]

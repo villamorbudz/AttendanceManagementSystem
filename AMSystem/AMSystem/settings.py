@@ -9,12 +9,20 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+<<<<<<< HEAD
 import os
+=======
+
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -26,10 +34,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+<<<<<<< HEAD
 # Application definition
 
 INSTALLED_APPS = [
     'unfold',
+=======
+
+# Application definition
+
+INSTALLED_APPS = [
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,33 +53,50 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'tailwind',
     'theme',
+<<<<<<< HEAD
     'attendance',
     'dashboard',
     'userauth',
     'usermgmt',
     'django_browser_reload',
+=======
+    'userauth',
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+<<<<<<< HEAD
     'django.contrib.sessions.middleware.SessionMiddleware',  # Ensure this is before CsrfViewMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',  # Ensure this is after SessionMiddleware
+=======
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+<<<<<<< HEAD
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # This is the default
 )
 
+=======
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
 ROOT_URLCONF = 'AMSystem.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+<<<<<<< HEAD
         'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Ensure this points to your templates directory
+=======
+        'DIRS': [],
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,8 +156,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+<<<<<<< HEAD
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+=======
+
+STATIC_URL = 'static/'
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -138,6 +175,7 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+<<<<<<< HEAD
 NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
 
 AUTH_USER_MODEL = 'usermgmt.User'
@@ -154,3 +192,6 @@ SESSION_COOKIE_AGE = 3600  # 1 hour for testing; adjust as necessary
 # CSRF settings
 CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
 CSRF_USE_SESSIONS = True
+=======
+NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045

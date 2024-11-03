@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # userauth/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
@@ -45,3 +46,13 @@ def access_denied(request):
 
 def employee_dashboard(request):
     return render(request, 'dashboard/employee_dashboard.html')
+=======
+from django.shortcuts import render
+
+# Create your views here.
+def index(request):
+  return render(request, 'userauth/index.html')
+
+def login(request):
+  return render(request, 'userauth/login.html')
+>>>>>>> 43e58055dc4f399f298c567cdd630f3f495d2045
