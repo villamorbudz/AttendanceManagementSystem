@@ -5,10 +5,10 @@ from .forms import UserRegistrationForm
 from .models import Role, Department  
 from django.contrib.auth.decorators import login_required
 
-@login_required  # Ensure the user is logged in
+# @login_required  # Ensure the user is logged in
 def register(request):
-    if not request.user.is_staff and not request.user.is_superuser:
-        return redirect('access_denied')  # Redirect to a custom error page
+#    if not request.user.is_staff and not request.user.is_superuser:
+#        return redirect(request.META.get('HTTP_REFERER', 'home'))
 
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
