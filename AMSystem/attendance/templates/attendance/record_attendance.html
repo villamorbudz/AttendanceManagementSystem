@@ -1,0 +1,100 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Attendance</title>
+    {% tailwind_css %}
+    <style>
+        .animate-blob {
+            background-image: url("{% static 'images/Noise_Texture.png' %}"); /* Add your noise texture image path here */
+            background-size: cover;
+        }
+        .clock {
+            font-size: 4rem; /* Adjust the font size for the clock */
+            font-weight: bold;
+            color: #3D5A80; /* Clock color */
+            margin: 2rem 0; /* Space above and below the clock */
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between; /* Space between buttons */
+            margin-top: 2rem; /* Space above the button container */
+        }
+        .btn-custom {
+            width: 48%; /* Set a width for the buttons */
+            padding: 1rem; /* Add padding for a better look */
+            border-radius: 0.5rem; /* Rounded edges */
+        }
+        .notification {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #4caf50; /* Green background */
+            color: white; /* White text */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            z-index: 1000; /* Make sure it's above everything */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Background Animations -->
+    <div class="fixed inset-0 overflow-hidden">
+        <div class="absolute rounded-full bg-primary-50 -left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div class="absolute bg-blue-300 rounded-full -right-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute rounded-full bg-[#3D5A80] -bottom-10 left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        <div class="absolute z-0 bg-[#d4e7ff] rounded-full bottom-20 right-20 w-80 h-80 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-3000"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen">
+        <div class="clock" id="clock"></div> <!-- Clock element -->
+        <div class="notification" id="notification"></div> <!-- Notification element -->
+        <div class="flex-col items-center justify-center hero-content lg:flex-row-reverse">
+            <div class="w-screen max-w-sm bg-white shadow-lg card shrink-0">
+                <div class="card-body">
+                    <div class="mb-6 text-center lg:text-center lg:mb-0">
+                        <h1 class="text-3xl font-bold text-blue-950">Record Attendance</h1>
+                    </div>
+                    <div class="button-container">
+                        <button type="button" onclick="showNotification('Time-in')" class="btn btn-custom bg-blue-500 text-white hover:bg-blue-600">Time-in</button>
+                        <button type="button" onclick="showNotification('Time-out')" class="btn btn-custom bg-blue-500 text-white hover:bg-blue-600">Time-out</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to update the clock
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Show notification function
+        function showNotification(buttonValue) {
+            const notification = document.getElementById('notification');
+            notification.textContent = `Successfully ${buttonValue}!`; // Set notification text
+            notification.style.display = 'block'; // Show notification
+
+            // Hide the notification after 3 seconds
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Update the clock every second
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call to set the clock immediately
+    </script>
+</body>
+</html>
