@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+# from unfold.admin import ModelAdmin as UnfoldModelAdmin
+
 class Role(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)  # Ensure name is unique

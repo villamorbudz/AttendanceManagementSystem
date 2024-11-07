@@ -19,7 +19,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/dashboard', admin.site.urls, name="admin_dashboard"),
-    path('', include('attendance.urls')), 
+    path('admin_tools_stats/', include('admin_tools_stats.urls')),
+    path('', include('attendance.urls')),
     path('', include('dashboard.urls')),
     path('', include('userauth.urls')),
     path('', include('usermgmt.urls')),

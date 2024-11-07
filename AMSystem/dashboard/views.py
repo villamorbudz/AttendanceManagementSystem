@@ -7,3 +7,6 @@ def admin_dashboard(request):
 
 def employee_dashboard(request):
     return render(request, 'dashboard/employee_dashboard.html')
+
+def employee_profile(request):
+    return render(request, 'dashboard/employee_profile.html')

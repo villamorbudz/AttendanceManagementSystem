@@ -1,15 +1,62 @@
 from django.contrib import admin
-from .models import User, Role, Department  
+from unfold.admin import ModelAdmin as UnfoldModelAdmin
+from .models import Role, Department, User, Account
+from import_export.admin import ImportExportModelAdmin
+from unfold.contrib.import_export.forms import ExportForm, ImportForm, SelectableFieldsExportForm
+from unfold.contrib.filters.admin import ( 
+            RangeDateFilter,
+            # RelatedFieldFilter,
+            # DateFieldFilter,
+            # BooleanFieldFilter,
+        
+        )
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'first_name', 'last_name', 'email', 'department', 'role', 
-                    'contact_number', 'is_staff', 'is_active')
-    search_fields = ('user_id', 'first_name', 'last_name', 'email', 'department__name', 
-                        'role__name', 'is_staff', 'is_active')  # Use double underscores to search related fields
 
-# Register User with the custom UserAdmin
+class RoleAdmin(UnfoldModelAdmin):
+    list_display = ('name', 'is_staff')
+    search_fields = ('name',)
+    list_filter = ('is_staff',)
+
+class DepartmentAdmin(UnfoldModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+# , ImportExportModelAdmin
+class UserAdmin(UnfoldModelAdmin,ImportExportModelAdmin):
+    list_display = ('user_id', 'first_name', 'last_name', 'email', 'role', 'department', 'is_staff', 'is_active')
+    search_fields = ('user_id', 'first_name', 'last_name', 'email')
+    list_filter = ('role', 'department', 'is_staff', 'is_active')
+    fieldsets = (
+        (None, {
+            'fields': ('user_id', 'password')
+        }),
+        ('Personal info', {
+            'fields': ('first_name', 'last_name', 'birthdate', 'contact_number', 'email')
+        }),
+        ('Permissions', {
+            'fields': ('role', 'department', 'is_staff', 'is_active')
+        }),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('user_id', 'password1', 'password2', 'first_name', 'last_name', 'birthdate', 'contact_number', 'email', 'role', 'department', 'is_staff', 'is_active'),
+        }),
+        ('created_at', RangeDateFilter)
+    )
+    ordering = ('user_id',)
+    filter_horizontal = ()
+    import_form_class = ImportForm
+    export_form_class = ExportForm
+    list_filter_submit = True
+
+
+
+class AccountAdmin(UnfoldModelAdmin):
+    list_display = ('user', 'password')
+    search_fields = ('user__first_name', 'user__last_name', 'user__email')
+
+admin.site.register(Role, RoleAdmin)
+admin.site.register(Department, DepartmentAdmin)
 admin.site.register(User, UserAdmin)
-
-# Optionally, if you need to manage Roles and Departments
-admin.site.register(Role)  # Register Role if you want to manage it from admin
-admin.site.register(Department)
+admin.site.register(Account, AccountAdmin)

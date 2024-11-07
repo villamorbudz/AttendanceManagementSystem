@@ -11,10 +11,37 @@
         background-image: url("{% static 'images/Noise_Texture.png' %}");
         background-size: cover;
       }
+
+      /* Dark theme styles */
+      .dark {
+        background-color: #1a202c;
+        color: #cbd5e0;
+      }
+
+      .dark .bg-white {
+        background-color: #2d3748;
+      }
+
+      .dark .shadow-md {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      /* Hide the checkbox */
+      #theme-toggle {
+        display: none;
+      }
     </style>
   </head>
 
-  <body class="bg-gray-50">
+  <body id="theme" class="bg-gray-50">
+    <!-- Theme Toggle -->
+    <div class="absolute top-4 right-4">
+      <label class="switch">
+        <input type="checkbox" id="theme-toggle" />
+        <span class="slider round"></span>
+      </label>
+    </div>
+
     <!-- Background Animations -->
     <div class="fixed inset-0 overflow-hidden">
       <div class="absolute rounded-full bg-primary-50 -left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
@@ -63,5 +90,25 @@
         </div>
       </div>
     </div>
+    <script>
+      const themeToggle = document.getElementById("theme-toggle");
+      const body = document.getElementById("theme");
+
+      // Check the stored theme on page load
+      if (localStorage.getItem("theme") === "dark") {
+        body.classList.add("dark");
+        themeToggle.checked = true; // Set the checkbox checked if dark theme is stored
+      }
+
+      // Toggle theme on checkbox change
+      themeToggle.addEventListener("change", () => {
+        body.classList.toggle("dark");
+        if (body.classList.contains("dark")) {
+          localStorage.setItem("theme", "dark");
+        } else {
+          localStorage.removeItem("theme");
+        }
+      });
+    </script>
   </body>
 </html>

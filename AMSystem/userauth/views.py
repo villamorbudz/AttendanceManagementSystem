@@ -1,5 +1,6 @@
 # userauth/views.py
 from django.shortcuts import render, redirect
+<<<<<<< HEAD
 from django.urls import reverse
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
@@ -16,10 +17,29 @@ def login_view(request):
             password = form.cleaned_data['password']
             
             # Check if the user exists in the User model
+=======
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib import messages
+from usermgmt.models import User
+from usermgmt.views import register  # Import the register view from usermgmt
+from .forms import UserAuthenticationForm
+
+
+def login_view(request):
+    if request.method == 'POST':
+        form = UserAuthenticationForm(request.POST)
+
+        if form.is_valid():
+            user_id = form.cleaned_data['user_id']
+            password = form.cleaned_data['password']
+
+            # Check if the user exists in usermgmt.User
+>>>>>>> origin/eadashboard
             if User.objects.filter(user_id=user_id).exists():
                 user = authenticate(request, username=user_id, password=password)
                 if user is not None:
                     auth_login(request, user)
+<<<<<<< HEAD
 
                     # Store user ID, first name, and last name in the session
                     request.session['user_id'] = user.user_id
@@ -30,6 +50,13 @@ def login_view(request):
                         return redirect(request.GET.get('next', 'admin_redirect'))
                     else:
                         return redirect(request.GET.get('next', 'employee_dashboard')) 
+=======
+                    messages.success(request, 'Successfully logged in!')
+                    if user.is_superuser:
+                        return redirect('/admin/')  # Redirect to Django admin for superusers
+                    else:
+                        return redirect('employee_dashboard')  # Redirect to employee dashboard for regular users
+>>>>>>> origin/eadashboard
                 else:
                     messages.error(request, 'Invalid credentials. Please try again.')
             else:
@@ -38,6 +65,7 @@ def login_view(request):
     else:
         form = UserAuthenticationForm()
 
+<<<<<<< HEAD
     clear_messages_view(request)
 
     return render(request, 'userauth/login.html', {'form': form})
@@ -55,3 +83,18 @@ def redirect_to_admin_dashboard(request):
 def clear_messages_view(request):
     storage = messages.get_messages(request)
     storage.used = True
+=======
+    return render(request, 'userauth/login.html', {'form': form})
+
+def index(request):
+    return render(request, 'userauth/index.html')
+
+def landing(request):
+    return render(request, 'userauth/landingPage.html')
+
+def access_denied(request):
+    return render(request, 'userauth/access_denied.html')
+
+def employee_dashboard(request):
+    return render(request, 'dashboard/employee_dashboard.html')
+>>>>>>> origin/eadashboard
