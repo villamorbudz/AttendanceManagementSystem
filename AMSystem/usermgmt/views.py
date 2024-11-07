@@ -5,11 +5,11 @@ from .forms import UserRegistrationForm
 from .models import Role, Department  
 from django.contrib.auth.decorators import login_required
 
-# @login_required  # Ensure the user is logged in
+@login_required
 def register(request):
-#    if not request.user.is_staff and not request.user.is_superuser:
-#        return redirect(request.META.get('HTTP_REFERER', 'home'))
-
+    if request.user.role == 'Employee':
+        return redirect('employee_dashboard')
+    
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         
@@ -29,7 +29,6 @@ def register(request):
             messages.success(request, f'Registration successful for {user.first_name} {user.last_name}! '
                                         f'User ID is: {user.user_id}. '
                                         'Ensure the employee password is changed after the first login.')
-            return redirect('success_page')  # Replace with your success URL
     else:
         form = UserRegistrationForm()
 

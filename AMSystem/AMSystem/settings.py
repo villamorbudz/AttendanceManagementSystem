@@ -174,4 +174,4 @@ LOGIN_URL = 'login'
 # ===================
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 1  # Set a custom session expiry (in seconds) for testing
+# SESSION_COOKIE_AGE = 1  # Set a custom session expiry (in seconds) for testing
