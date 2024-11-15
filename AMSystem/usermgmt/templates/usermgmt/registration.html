@@ -9,11 +9,6 @@
     {% tailwind_css %}
     <style>
       .animate-blob {
-<<<<<<< HEAD
-        background-image: url("{% static 'images/Noise_Texture.png' %}");
-        background-size: cover;
-      }
-=======
             background-image: url("{% static 'images/Noise_Texture.png' %}");
             background-size: cover;
         }
@@ -37,7 +32,6 @@
             display: none;
         }
     </style>
->>>>>>> origin/eadashboard
     </style>
   </head>
   <body class="bg-gray-50">
@@ -74,11 +68,7 @@
               </label>
               <input type="text" name="user_id" placeholder="Enter Employee ID" class="input input-bordered" required />
               {% if form.user_id.errors %}
-<<<<<<< HEAD
-              <div class="text-red-500 text-sm mt-1">{% for error in form.user_id.errors %} {{ error }} {% endfor %}</div>
-=======
               <div class="mt-1 text-sm text-red-500">{% for error in form.user_id.errors %} {{ error }} {% endfor %}</div>
->>>>>>> origin/eadashboard
               {% endif %}
             </div>
 
@@ -90,11 +80,7 @@
                 </label>
                 <input type="text" name="first_name" placeholder="Enter First Name" class="input input-bordered" required />
                 {% if form.first_name.errors %}
-<<<<<<< HEAD
-                <div class="text-red-500 text-sm mt-1">{% for error in form.first_name.errors %} {{ error }} {% endfor %}</div>
-=======
                 <div class="mt-1 text-sm text-red-500">{% for error in form.first_name.errors %} {{ error }} {% endfor %}</div>
->>>>>>> origin/eadashboard
                 {% endif %}
               </div>
               <div class="form-control">
@@ -103,11 +89,7 @@
                 </label>
                 <input type="text" name="last_name" placeholder="Enter Last Name" class="input input-bordered" required />
                 {% if form.last_name.errors %}
-<<<<<<< HEAD
-                <div class="text-red-500 text-sm mt-1">{% for error in form.last_name.errors %} {{ error }} {% endfor %}</div>
-=======
                 <div class="mt-1 text-sm text-red-500">{% for error in form.last_name.errors %} {{ error }} {% endfor %}</div>
->>>>>>> origin/eadashboard
                 {% endif %}
               </div>
             </div>
@@ -124,11 +106,7 @@
                 {% endfor %}
               </select>
               {% if form.department.errors %}
-<<<<<<< HEAD
-              <div class="text-red-500 text-sm mt-1">{% for error in form.department.errors %} {{ error }} {% endfor %}</div>
-=======
               <div class="mt-1 text-sm text-red-500">{% for error in form.department.errors %} {{ error }} {% endfor %}</div>
->>>>>>> origin/eadashboard
               {% endif %}
             </div>
 
@@ -139,11 +117,7 @@
               </label>
               <input type="email" name="email" placeholder="Enter Email" class="input input-bordered" required />
               {% if form.email.errors %}
-<<<<<<< HEAD
-              <div class="text-red-500 text-sm mt-1">{% for error in form.email.errors %} {{ error }} {% endfor %}</div>
-=======
               <div class="mt-1 text-sm text-red-500">{% for error in form.email.errors %} {{ error }} {% endfor %}</div>
->>>>>>> origin/eadashboard
               {% endif %}
             </div>
 
@@ -161,11 +135,7 @@
                 </label>
                 <input type="text" name="contact_number" placeholder="Enter Contact Number" class="input input-bordered" />
                 {% if form.contact_number.errors %}
-<<<<<<< HEAD
-                <div class="text-red-500 text-sm mt-1">{% for error in form.contact_number.errors %} {{ error }} {% endfor %}</div>
-=======
                 <div class="mt-1 text-sm text-red-500">{% for error in form.contact_number.errors %} {{ error }} {% endfor %}</div>
->>>>>>> origin/eadashboard
                 {% endif %}
               </div>
             </div>
@@ -178,8 +148,6 @@
         </div>
       </div>
     </div>
-<<<<<<< HEAD
-=======
     <script>
       const themeToggle = document.getElementById('theme-toggle');
       const body = document.getElementById('theme');
@@ -200,6 +168,5 @@
           }
       });
     </script>
->>>>>>> origin/eadashboard
   </body>
 </html>

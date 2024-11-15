@@ -1,14 +1,14 @@
 # userauth/views.py
 from django.shortcuts import render, redirect
-<<<<<<< HEAD
 from django.urls import reverse
-from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from usermgmt.models import User
 from .forms import UserAuthenticationForm
+from django.contrib.auth import get_user_model
 
 def login_view(request):
-    logout(request) # to optimize
+    if request.user.is_authenticated:
+        logout(request)
 
     if request.method == 'POST':
         form = UserAuthenticationForm(request.POST)
@@ -16,57 +16,14 @@ def login_view(request):
             user_id = form.cleaned_data['user_id']
             password = form.cleaned_data['password']
             
-            # Check if the user exists in the User model
-=======
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib import messages
-from usermgmt.models import User
-from usermgmt.views import register  # Import the register view from usermgmt
-from .forms import UserAuthenticationForm
-
-
-def login_view(request):
-    if request.method == 'POST':
-        form = UserAuthenticationForm(request.POST)
-
-        if form.is_valid():
-            user_id = form.cleaned_data['user_id']
-            password = form.cleaned_data['password']
-
-            # Check if the user exists in usermgmt.User
->>>>>>> origin/eadashboard
-            if User.objects.filter(user_id=user_id).exists():
-                user = authenticate(request, username=user_id, password=password)
-                if user is not None:
-                    auth_login(request, user)
-<<<<<<< HEAD
-
-                    # Store user ID, first name, and last name in the session
-                    request.session['user_id'] = user.user_id
-                    request.session['first_name'] = user.first_name
-                    request.session['last_name'] = user.last_name
-                    
-                    if(user.role.name == "Administrator"):
-                        return redirect(request.GET.get('next', 'admin_redirect'))
-                    else:
-                        return redirect(request.GET.get('next', 'employee_dashboard')) 
-=======
-                    messages.success(request, 'Successfully logged in!')
-                    if user.is_superuser:
-                        return redirect('/admin/')  # Redirect to Django admin for superusers
-                    else:
-                        return redirect('employee_dashboard')  # Redirect to employee dashboard for regular users
->>>>>>> origin/eadashboard
-                else:
-                    messages.error(request, 'Invalid credentials. Please try again.')
+            user = authenticate(request, user_id=user_id, password=password)
+            if user:
+                login(request, user)
+                return redirect_to_dashboard(request)
             else:
-                messages.error(request, 'User does not exist.')
-
+                messages.error(request, 'Invalid credentials. Please try again.')
     else:
         form = UserAuthenticationForm()
-
-<<<<<<< HEAD
-    clear_messages_view(request)
 
     return render(request, 'userauth/login.html', {'form': form})
 
@@ -75,26 +32,26 @@ def landing(request):
 
 def index(request):
     return render(request, 'userauth/index.html')
-
-def redirect_to_admin_dashboard(request):
-    admin_url = reverse('admin:index')
-    return redirect(admin_url)
 
 def clear_messages_view(request):
     storage = messages.get_messages(request)
     storage.used = True
-=======
-    return render(request, 'userauth/login.html', {'form': form})
 
-def index(request):
-    return render(request, 'userauth/index.html')
+def redirect_to_dashboard(request):
+    if request.user.is_authenticated:
+        department = request.user.department
+        role = department.role.first()
 
-def landing(request):
-    return render(request, 'userauth/landingPage.html')
+        if role:
+            role_name = role.name
 
-def access_denied(request):
-    return render(request, 'userauth/access_denied.html')
-
-def employee_dashboard(request):
-    return render(request, 'dashboard/employee_dashboard.html')
->>>>>>> origin/eadashboard
+            if role_name == 'Employee':
+                return redirect('employee_dashboard')
+            elif role_name == 'Administrator':
+                return redirect('home')
+            elif role_name == 'System Administrator':
+                return redirect('../admin/dashboard')
+        else:
+            return redirect('login')
+    else:
+        return redirect('login')

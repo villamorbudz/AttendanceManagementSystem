@@ -6,73 +6,73 @@ from django.contrib.auth.hashers import make_password
 def create_default_roles(apps, schema_editor):
     Role = apps.get_model('usermgmt', 'Role')
 
-    # Create default roles
-    admin_role, created = Role.objects.get_or_create(name="Administrator", defaults={'is_staff': True})
-    if created:
-        print("Created admin role")
-    else:
-        print("Admin role already exists")
-
-    employee_role, created = Role.objects.get_or_create(name="Employee", defaults={'is_staff': False})
-    if created:
-        print("Created employee role")
-    else:
-        print("Employee role already exists")
+    Role.objects.get_or_create(
+        name="System Administrator", 
+        defaults={'is_staff': True, 'is_superuser': True}
+    )
+    Role.objects.get_or_create(
+        name="Administrator", 
+        defaults={'is_staff': True, 'is_superuser': False}
+    )
+    Role.objects.get_or_create(
+        name="Employee", 
+        defaults={'is_staff': False, 'is_superuser': False}
+    )
 
 def create_default_departments(apps, schema_editor):
     Department = apps.get_model('usermgmt', 'Department')
+    Role = apps.get_model('usermgmt', 'Role')
 
-    # List of default departments to create
-    default_departments = ["Dev Team", "N/A"]
+    system_admin_role = Role.objects.get(name="System Administrator")
+    admin_role = Role.objects.get(name="Administrator")
+    employee_role = Role.objects.get(name="Employee")
 
-    for dept_name in default_departments:
-        department, created = Department.objects.get_or_create(name=dept_name)
-        if created:
-            print(f"Created default department: {dept_name}")
-        else:
-            print(f"Default department '{dept_name}' already exists.")
+    default_dept, _ = Department.objects.get_or_create(name="System Administration")
+    human_resources, _ = Department.objects.get_or_create(name="Human Resources")
+    na_dept, _ = Department.objects.get_or_create(name="N/A")
 
+    default_dept.role.set([system_admin_role])
+    human_resources.role.set([admin_role])
+    na_dept.role.set([employee_role])
 
 def create_default_user(apps, schema_editor):
     User = apps.get_model('usermgmt', 'User')
     Department = apps.get_model('usermgmt', 'Department')
-    Role = apps.get_model('usermgmt', 'Role')
 
-    # Get the created department and roles
-    department = Department.objects.first()
-    admin_role = Role.objects.filter(name="Administrator").first()
+    department = Department.objects.filter(name="System Administration").first()
 
-    # Create a default user with is_staff based on the role
-    user, created = User.objects.get_or_create(
-        user_id="0",
-        defaults={
-            'first_name': "Admin",
-            'last_name': "User",
-            'email': "admin@example.com",
-            'birthdate': "2000-01-01",
-            'contact_number': "00000000000",
-            'department': department,
-            'role': admin_role,  # Assign the Administrator role
-            'is_active': True
-        }
-    )
+    if department:
+        user, created = User.objects.get_or_create(
+            user_id="0",
+            defaults={
+                'first_name': "Admin",
+                'last_name': "User",
+                'email': "admin@ams.com",
+                'birthdate': "2000-01-01",
+                'contact_number': "00000000000",
+                'department': department,
+                'is_active': True,
+                'is_staff': True,
+                'is_superuser': True,
+                'password': make_password("admin")
+            }
+        )
 
-    user.set_password("admin")
-    user.save()
-    
-    if created:
-        print("Created default user: Admin User")
-    else:
-        print("Default user already exists")
+        if not created:
+            user.is_staff = True    
+            user.password = make_password("admin")
+            user.save()
+            print("Updated password for default Admin User")
+        else:
+            print("Created default Admin User")
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('usermgmt', '0001_initial'),  # Adjust this to match your initial migration
+        ('usermgmt', '0001_initial'),
     ]
 
     operations = [
         migrations.RunPython(create_default_roles),
         migrations.RunPython(create_default_departments),
-        # migrations.RunPython(create_default_user),  # Uncomment when ready to create the default user
+        migrations.RunPython(create_default_user),
     ]

@@ -56,10 +56,10 @@ INSTALLED_APPS = [
 # MIDDLEWARE
 # ===================
 MIDDLEWARE = [
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -119,10 +119,10 @@ DATABASES = {
 # ===================
 
 AUTH_USER_MODEL = 'usermgmt.User'
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',  # This is the default
-)
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -184,12 +184,11 @@ LOGIN_URL = 'login'
 # ===================
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-# SESSION_COOKIE_AGE = 1  # Set a custom session expiry (in seconds) for testing
-SESSION_COOKIE_AGE = 1  # Set a custom session expiry (in seconds) for testing
+# SESSION_COOKIE_AGE = 120  
 
 # CSRF settings
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
-CSRF_USE_SESSIONS = True
+# CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+# CSRF_USE_SESSIONS = True
 
 
 # ===================

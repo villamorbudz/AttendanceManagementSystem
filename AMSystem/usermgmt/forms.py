@@ -4,7 +4,7 @@ from .models import User, Department
 class UserRegistrationForm(forms.ModelForm):
     department = forms.ModelChoiceField(
         queryset=Department.objects.all(),
-        empty_label="Select Department",
+        empty_label = "Select Department",
         widget=forms.Select(attrs={'class': 'input input-bordered'}),
     )
 

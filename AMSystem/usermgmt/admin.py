@@ -1,6 +1,6 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin as UnfoldModelAdmin
-from .models import Role, Department, User, Account
+from .models import Role, Department, User
 from import_export.admin import ImportExportModelAdmin
 from unfold.contrib.import_export.forms import ExportForm, ImportForm, SelectableFieldsExportForm
 from unfold.contrib.filters.admin import ( 
@@ -11,20 +11,19 @@ from unfold.contrib.filters.admin import (
         
         )
 
-
 class RoleAdmin(UnfoldModelAdmin):
-    list_display = ('name', 'is_staff')
+    list_display = ('name', 'is_staff', 'is_superuser')
     search_fields = ('name',)
-    list_filter = ('is_staff',)
+    list_filter = ('is_staff', 'is_superuser') 
 
 class DepartmentAdmin(UnfoldModelAdmin):
     list_display = ('name',)
     search_fields = ('name',)
 # , ImportExportModelAdmin
 class UserAdmin(UnfoldModelAdmin,ImportExportModelAdmin):
-    list_display = ('user_id', 'first_name', 'last_name', 'email', 'role', 'department', 'is_staff', 'is_active')
+    list_display = ('user_id', 'first_name', 'last_name', 'email', 'department', 'is_staff', 'is_active')
     search_fields = ('user_id', 'first_name', 'last_name', 'email')
-    list_filter = ('role', 'department', 'is_staff', 'is_active')
+    list_filter = ('department', 'is_staff', 'is_active')
     fieldsets = (
         (None, {
             'fields': ('user_id', 'password')
@@ -33,7 +32,7 @@ class UserAdmin(UnfoldModelAdmin,ImportExportModelAdmin):
             'fields': ('first_name', 'last_name', 'birthdate', 'contact_number', 'email')
         }),
         ('Permissions', {
-            'fields': ('role', 'department', 'is_staff', 'is_active')
+            'fields': ('department', 'is_staff', 'is_active')
         }),
     )
 
@@ -59,4 +58,3 @@ class AccountAdmin(UnfoldModelAdmin):
 admin.site.register(Role, RoleAdmin)
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(User, UserAdmin)
-admin.site.register(Account, AccountAdmin)
