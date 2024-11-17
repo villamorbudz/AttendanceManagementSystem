@@ -30,11 +30,11 @@
  <!-- Navbar -->
  <div class="navbar bg-gray-50 dark:bg-gray-800">
     <div class="flex-none">
-        <button id="drawer-toggle" class="btn btn-square btn-ghost">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
+        <button id="drawer-toggle" class="btn btn-square btn-ghost bg-[#ee6c4d]">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5" stroke="white">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          </button>
     </div>
 
     <div class="flex-1">
@@ -75,10 +75,10 @@
         </div>
         <ul class="mt-4">
             <li>
-                <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Dashboard</a>
+                <a href="{% url 'employee_dashboard' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Dashboard</a>
             </li>
             <li>
-                <a href="{% url 'emp_profile' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Profile</a>
+                <a href="{% url 'employee_profile' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Profile</a>
             </li>
             <li>
                 <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Settings</a>
@@ -91,6 +91,7 @@
 </div>
 
 
+
 <!-- Overlay -->
 <div id="overlay" class="fixed inset-0 hidden bg-black opacity-50"></div>
 
@@ -99,6 +100,9 @@
     <h2 class="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">Data Analytics</h2>
     <div class="grid grid-cols-3 gap-4">
         <!-- Attendance Analytics -->
+
+        
+         <!-- Attendance Analytics -->
         <div class="p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Attendance</h3>
             <div class="flex items-center justify-center">
@@ -118,7 +122,7 @@
 
         <!-- Balance Money Analytics -->
         <div class="p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
-            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Balance Money</h3>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Salary Money</h3>
             <div class="flex items-center justify-center">
                 <div class="text-yellow-500 radial-progress" style="--value: 80; --size: 10rem; --thickness: 6px;">80%</div>
             </div>

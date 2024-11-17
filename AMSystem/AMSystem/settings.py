@@ -62,6 +62,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    # Add other trusted origins if necessary
+]
+CSRF_COOKIE_SECURE = False
+
+
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # This is the default
 )
@@ -271,3 +280,10 @@ UNFOLD = {
     },
    
 }
+
+
+#Ensure you have the MEDIA_URL and MEDIA_ROOT settings to handle uploaded images:
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
