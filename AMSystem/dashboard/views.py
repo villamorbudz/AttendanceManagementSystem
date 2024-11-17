@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Profile
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 # from django.shortcuts import render, redirect
 # from django.contrib.auth import logout
 # from django.shortcuts import redirect
@@ -19,6 +20,13 @@ from django.contrib.auth.models import User
 #     return render(request, 'dashboard/admin_dashboard.html')
 
 # Other views
+def submit_leave_request(request):
+    if request.method == "POST":
+        # Process leave request logic
+        return HttpResponse("Leave request submitted successfully!")
+    return HttpResponse("Invalid request method.")
+
+
 def admin_dashboard(request):
     return render(request, 'dashboard/admin_dashboard.html')
 
@@ -27,6 +35,9 @@ def admin_employee_status(request):
 
 def employee_dashboard(request):
     return render(request, 'dashboard/employee_dashboard.html')
+
+def employee_Leave_Request_dashboard(request):
+    return render(request, 'dashboard/employee_Leave_Request_dashboard.html')
 
 @login_required
 def employee_profile(request):

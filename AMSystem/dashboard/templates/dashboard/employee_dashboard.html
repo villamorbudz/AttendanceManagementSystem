@@ -30,11 +30,11 @@
  <!-- Navbar -->
  <div class="navbar bg-gray-50 dark:bg-gray-800">
     <div class="flex-none">
-        <button id="drawer-toggle" class="btn btn-square btn-ghost bg-[#ee6c4d]">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5" stroke="white">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-          </button>
+        <button id="drawer-toggle" class="btn btn-square btn-ghost">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+        </button>
     </div>
 
     <div class="flex-1">
@@ -78,7 +78,7 @@
                 <a href="{% url 'employee_dashboard' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Dashboard</a>
             </li>
             <li>
-                <a href="{% url 'employee_profile' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Profile</a>
+                <a href="{% url 'employee_dashboard:employee_profile' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Profile</a>
             </li>
             <li>
                 <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Settings</a>
@@ -100,9 +100,6 @@
     <h2 class="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">Data Analytics</h2>
     <div class="grid grid-cols-3 gap-4">
         <!-- Attendance Analytics -->
-
-        
-         <!-- Attendance Analytics -->
         <div class="p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Attendance</h3>
             <div class="flex items-center justify-center">
@@ -129,7 +126,19 @@
             <p class="text-center text-gray-600 dark:text-gray-400">Out of $1000 total balance</p>
         </div>
     </div>
+
+    <!-- Leave Request Section -->
+<div class="container mx-auto mt-10">
+    <h2 class="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">Leave Management</h2>
+    <div class="flex justify-center">
+        <!-- Leave Request Button -->
+        <a href="{% url 'employee_dashboard:employee_Leave_Request_dashboard' %}" 
+           class="px-6 py-3 text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
+            Request Leave
+        </a>
+    </div>
 </div>
+
 
 <script>
     // Drawer toggle functionality
