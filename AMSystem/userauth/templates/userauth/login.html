@@ -7,7 +7,6 @@
     <title>AMSystem Login</title>
     {% tailwind_css %}
     <style>
-<<<<<<< HEAD
       .animate-blob {
         background-image: url("{% static 'images/Noise_Texture.png' %}");
         background-size: cover;
@@ -31,7 +30,6 @@
       #theme-toggle {
         display: none;
       }
-=======
         .animate-blob {
             background-image: url("{% static 'images/Noise_Texture.png' %}");
             background-size: cover;
@@ -40,7 +38,6 @@
         .dark .bg-white { background-color: #2d3748; }
         .dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
         #theme-toggle { display: none; }
->>>>>>> eadashboard
     </style>
 </head>
 
@@ -68,7 +65,7 @@
         <!-- Form Container -->
         <div class="w-[450px] h-[477px] bg-[#f9f9f9] rounded-[47px] shadow-lg flex items-center dark:bg-gray-700 ml-20"> 
                 <div class="w-[400.32px] h-[550px] bg-[#f9f9f9] rounded-[47px] shadow flex justify-center items-center dark:bg-gray-800">
-                <form class="card-body" method="POST" action="{% url 'login' %}">
+                <form class="card-body" method="POST" action="{% url 'userauth:login' %}">
                     {% csrf_token %}
                     <div class="mb-6 text-center lg:text-center lg:mb-0">
                         <h1 class="text-3xl font-bold text-gray-800 mb-14 dark:text-white">LOGIN</h1>
@@ -122,7 +119,6 @@
 
 
     <script>
-<<<<<<< HEAD
       const themeToggle = document.getElementById("theme-toggle");
       const body = document.getElementById("theme");
 
@@ -130,15 +126,6 @@
       if (localStorage.getItem("theme") === "dark") {
         body.classList.add("dark");
         themeToggle.checked = true; // Set the checkbox checked if dark theme is stored
-=======
-      const themeToggle = document.getElementById('theme-toggle');
-      const body = document.getElementById('theme');
-
-      // Check the stored theme on page load
-      if (localStorage.getItem('theme') === 'dark') {
-          body.classList.add('dark');
-          themeToggle.checked = true;
->>>>>>> eadashboard
       }
 
       // Toggle theme on checkbox change
@@ -170,9 +157,5 @@
           }
       }
     </script>
-<<<<<<< HEAD
   </body>
-=======
-</body>
->>>>>>> eadashboard
 </html>

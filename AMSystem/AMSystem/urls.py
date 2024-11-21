@@ -19,28 +19,33 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from dashboard import views as dashboard_views
 from dashboard.views import admin_dashboard
 from dashboard import views
 
 urlpatterns = [
-<<<<<<< HEAD
-    path('admin/dashboard', admin.site.urls, name="admin_dashboard"),
-    path('admin_tools_stats/', include('admin_tools_stats.urls')),
-    path('', include('attendance.urls')),
-    path('', include('dashboard.urls')),
-    path('', include('userauth.urls')),
-    path('', include('usermgmt.urls')),
-=======
+    # path('admin/dashboard', admin.site.urls, name="admin_dashboard"),
+    # # path('admin_tools_stats/', include('admin_tools_stats.urls')),
+    # path('', include('attendance.urls')),
+    # path('', include('dashboard.urls')),
+    # path('', include('userauth.urls')),
+    # path('', include('usermgmt.urls')),
+    # path('admin/', admin.site.urls),  # Django admin
+    # # path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    # path('admin_dashboard/', include('dashboard.admin_urls')),  # Admin-specific URLs
+    # # path('admin_tools_stats/', include('admin_tools_stats.urls')),
+    # path('', include('attendance.urls')),  # Main attendance URLs
+    # path('', include('dashboard.urls')),    # Dashboard URLs
+    # path('', include('userauth.urls')),     # Authentication URLs
+    # path('', include('usermgmt.urls')),     # User management URLs
+    # path("__reload__/", include("django_browser_reload.urls")),
+    path('', include('userauth.urls', namespace='userauth')),  # Root URL and userauth URLs with namespace
     path('admin/', admin.site.urls),  # Django admin
-    # path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
-    path('admin_dashboard/', include('dashboard.admin_urls')),  # Admin-specific URLs
-    path('admin_tools_stats/', include('admin_tools_stats.urls')),
-    path('', include('attendance.urls')),  # Main attendance URLs
-    path('', include('dashboard.urls')),    # Dashboard URLs
-    path('', include('userauth.urls')),     # Authentication URLs
-    path('', include('usermgmt.urls')),     # User management URLs
->>>>>>> eadashboard
-    path("__reload__/", include("django_browser_reload.urls")),
+    path('admin_dashboard/', include('dashboard.admin_urls', namespace='admin_dashboard')),  # Admin-specific URLs
+    path('dashboard/', include('dashboard.urls', namespace='employee_dashboard')),  # Dashboard URLs
+    path('attendance/', include('attendance.urls')),  # Main attendance URLs
+    path('usermgmt/', include('usermgmt.urls')),  # User management URLs
+    path("__reload__/", include("django_browser_reload.urls")),  # Browser reload URLs
 ]
 
 if settings.DEBUG:

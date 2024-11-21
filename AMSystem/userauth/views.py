@@ -56,7 +56,6 @@ def landing(request):
 def index(request):
     return render(request, 'userauth/index.html')
 
-<<<<<<< HEAD
 def clear_messages_view(request):
     storage = messages.get_messages(request)
     storage.used = True
@@ -79,7 +78,4 @@ def redirect_to_dashboard(request):
             return redirect('login')
     else:
         return redirect('login')
-=======
-def employee_dashboard(request):
-    return render(request, 'dashboard/employee_dashboard.html')
->>>>>>> eadashboard
+    

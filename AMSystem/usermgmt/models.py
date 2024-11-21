@@ -12,26 +12,17 @@ class Role(models.Model):
         return f"{self.id} - {self.name}"
 
     @classmethod
-<<<<<<< HEAD
     def create_role(cls, name, is_staff=False, is_superuser=False):
         role, created = cls.objects.get_or_create(
             name=name,
             defaults={'is_staff': is_staff, 'is_superuser': is_superuser}
         )
-=======
-    def create_role(cls, name, is_staff=False):
-        role, created = cls.objects.get_or_create(name=name, defaults={'is_staff': is_staff})
->>>>>>> eadashboard
         if created:
             print(f"Role '{name}' created.")
         else:
             print(f"Role '{name}' already exists.")
         return role
 
-<<<<<<< HEAD
-=======
-# Department Model
->>>>>>> eadashboard
 class Department(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
@@ -42,21 +33,13 @@ class Department(models.Model):
 
     @classmethod
     def create_department(cls, name):
-<<<<<<< HEAD
         department, created = cls.objects.get_or_create(name=name, role=Role.objects.get_or_create(name="Employee"))
-=======
-        department, created = cls.objects.get_or_create(name=name)
->>>>>>> eadashboard
         if created:
             print(f"Department '{name}' created.")
         else:
             print(f"Department '{name}' already exists.")
         return department
 
-<<<<<<< HEAD
-=======
-# Custom User Manager
->>>>>>> eadashboard
 class UserManager(BaseUserManager):
     def create_user(self, user_id, password=None, **extra_fields):
         if not user_id:
@@ -86,11 +69,7 @@ class UserManager(BaseUserManager):
 
 # Custom User Model
 class User(AbstractUser):
-<<<<<<< HEAD
     username = None  # Remove username field
-=======
-    username = None  # Remove default username field
->>>>>>> eadashboard
     id = models.AutoField(primary_key=True)
     user_id = models.CharField(max_length=50, unique=True)  # Custom user ID
     first_name = models.CharField(max_length=255)
@@ -98,14 +77,8 @@ class User(AbstractUser):
     birthdate = models.DateField()
     contact_number = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
-<<<<<<< HEAD
     department = models.ForeignKey(Department, on_delete=models.CASCADE, default=None)
     is_anonymous = False
-=======
-    role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, default=None)
-    is_staff = models.BooleanField(default=False)
->>>>>>> eadashboard
     is_active = models.BooleanField(default=True)
     
     # Profile image field
@@ -116,25 +89,5 @@ class User(AbstractUser):
     USERNAME_FIELD = 'user_id'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'birthdate', 'contact_number', 'email']
 
-<<<<<<< HEAD
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-=======
-    def save(self, *args, **kwargs):
-        if self.role:
-            self.is_staff = self.role.is_staff  # Set is_staff based on role
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-
-# Account Model (optional, depending on your requirements)
-class Account(models.Model):
-    id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='account')
-    password = models.CharField(max_length=255)  # You might want to hash the password or store it securely
-
-    def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}"
-
->>>>>>> eadashboard

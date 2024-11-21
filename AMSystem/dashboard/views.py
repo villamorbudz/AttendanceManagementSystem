@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # dashboard/views.py
 
 from django.shortcuts import render
@@ -11,7 +10,6 @@ def employee_dashboard(request):
 
 def employee_profile(request):
     return render(request, 'dashboard/employee_profile.html')
-=======
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -136,4 +134,10 @@ def admin_employee_status(request):
 def admin_leave_management(request):
     # Add your logic here
     return render(request, 'admin_leave_management.html')
->>>>>>> eadashboard
+
+# dashboard/views.py
+# dashboard/views.py
+from django.shortcuts import render
+
+def home(request):
+    return render(request, 'userauth/landingPage.html')

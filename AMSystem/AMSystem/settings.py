@@ -66,21 +66,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-<<<<<<< HEAD
-=======
-CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:8000',
-    'http://localhost:8000',
-    # Add other trusted origins if necessary
-]
-CSRF_COOKIE_SECURE = False
-
-
-
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',  # This is the default
-)
->>>>>>> eadashboard
 
 # ===================
 # URL CONFIGURATION
@@ -192,16 +177,6 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-<<<<<<< HEAD
-=======
-NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
-
-AUTH_USER_MODEL = 'usermgmt.User'
-# AUTH_USER_MODEL = 'usermgmt.CustomUser'
-
-
-
->>>>>>> eadashboard
 LOGIN_URL = 'login'
 
 
@@ -331,4 +306,4 @@ UNFOLD = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
