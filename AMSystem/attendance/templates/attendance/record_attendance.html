@@ -1,100 +1,299 @@
 {% load static tailwind_tags %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Record Attendance</title>
-    {% tailwind_css %}
-    <style>
-        .animate-blob {
-            background-image: url("{% static 'images/Noise_Texture.png' %}"); /* Add your noise texture image path here */
-            background-size: cover;
-        }
-        .clock {
-            font-size: 4rem; /* Adjust the font size for the clock */
-            font-weight: bold;
-            color: #3D5A80; /* Clock color */
-            margin: 2rem 0; /* Space above and below the clock */
-        }
-        .button-container {
-            display: flex;
-            justify-content: space-between; /* Space between buttons */
-            margin-top: 2rem; /* Space above the button container */
-        }
-        .btn-custom {
-            width: 48%; /* Set a width for the buttons */
-            padding: 1rem; /* Add padding for a better look */
-            border-radius: 0.5rem; /* Rounded edges */
-        }
-        .notification {
-            display: none; /* Initially hidden */
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #4caf50; /* Green background */
-            color: white; /* White text */
-            padding: 1rem;
-            border-radius: 0.5rem;
-            z-index: 1000; /* Make sure it's above everything */
-        }
-    </style>
-</head>
+<html>
+    <head>
+        <title>Attendance Recording</title>
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/AMSystemlogoWhite.png' %}">
+        {% tailwind_css %}
+        <script>
+            function toggleTheme() {
+              const body = document.body;
+              const toggle = document.getElementById('themeToggle');
+              if (toggle.checked) {
+                body.classList.add('dark');
+              } else {
+                body.classList.remove('dark');
+              }
+            }
+          
+            // Optional: Persist the theme
+            document.addEventListener('DOMContentLoaded', () => {
+              const theme = localStorage.getItem('theme');
+              const body = document.body;
+              const toggle = document.getElementById('themeToggle');
+          
+              if (theme === 'dark') {
+                body.classList.add('dark');
+                toggle.checked = true;
+              }
+          
+              toggle.addEventListener('change', () => {
+                const isDarkMode = toggle.checked;
+                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+              });
+            });
+          </script>
+          
+          <style>
+            body {
+              transition: background-color 0.3s ease, color 0.3s ease;
+            }
+          
+            body.dark {
+              background-color: #1a202c;
+              color: #ffffff;
+            }
+          
+            body.light {
+              background-color: #ffffff;
+              color: #1a202c;
+            }
+          </style>
+    </head>
+    <body class="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+        <!-- Background Animations -->
+        <div class="fixed inset-0 overflow-hidden">
+            <div class="absolute rounded-full bg-primary-50 -left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+            <div class="absolute bg-blue-300 rounded-full -right-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+            <div class="absolute rounded-full bg-[#3D5A80] -bottom-10 left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+            <div class="absolute z-0 bg-[#d4e7ff] rounded-full bottom-20 right-20 w-80 h-80 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-3000"></div>
+        </div> 
 
-<body class="bg-gray-50">
-    <!-- Background Animations -->
-    <div class="fixed inset-0 overflow-hidden">
-        <div class="absolute rounded-full bg-primary-50 -left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div class="absolute bg-blue-300 rounded-full -right-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div class="absolute rounded-full bg-[#3D5A80] -bottom-10 left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-        <div class="absolute z-0 bg-[#d4e7ff] rounded-full bottom-20 right-20 w-80 h-80 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-3000"></div>
-    </div>
+        <!-- Main Container -->
+        <div class="relative z-10 flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0 md:space-x-1 ">
+            <!-- Left Form (Employee Information) -->
+            <div class="w-[494.32px] h-[731px] bg-[#f9f9f9] rounded-[47px] shadow flex flex-col items-center dark:bg-gray-800">
+                <div class="w-full h-full max-w-md p-6 ">
+                    <!-- Title -->
+                    <h1 class="text-4xl font-bold text-center text-gray-800 mb-14 dark:text-white">Attendance</h1>
+                    <div class="flex justify-center mb-6 ">
+                        <img src="{% static 'images/AMSystemlogo-dark.png' %}" alt="Logo" class="w-[214.52px] h-[130px] dark:hidden">
+                        <img src="{% static 'images/AMSystemlogo-light.png' %}" alt="Logo" class="hidden w-[214.52px] h-[130px] dark:block">
+                    </div>
 
-    <!-- Main Container -->
-    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen">
-        <div class="clock" id="clock"></div> <!-- Clock element -->
-        <div class="notification" id="notification"></div> <!-- Notification element -->
-        <div class="flex-col items-center justify-center hero-content lg:flex-row-reverse">
-            <div class="w-screen max-w-sm bg-white shadow-lg card shrink-0">
-                <div class="card-body">
-                    <div class="mb-6 text-center lg:text-center lg:mb-0">
-                        <h1 class="text-3xl font-bold text-blue-950">Record Attendance</h1>
+                    <!-- Employee Information Form -->
+                    <form method="post" class="space-y-4 ">
+                        {% csrf_token %}
+                        <!-- Text -->
+                        <p class="text-center text-gray-700 textarea-md dark:text-gray-300">Please enter your Employee ID and Password to record your attendance.</p>
+                        <!-- Employee ID -->
+                        <div>
+                            <label for="employee-id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Employee ID:</label>
+                            <input type="text" id="employee-id" name="employee_id" class="w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm input input-bordered input-info max-w-xsblock focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white" required>
+                        </div>
+
+                        <!-- Password -->
+                        <div>
+                            <label for="employee-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password:</label>
+                            <input type="password" id="employee-name" name="employee_name" class="w-full p-2 mt-1 border border-gray-300 rounded-md shadow-sm input input-bordered input-info max-w-xsblock focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white" required>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Form (Real-time Clock and Toggle Button) -->
+            <div class="w-[700px] h-[577px] bg-[#f9f9f9] rounded-r-[47px] px-6 py-8 flex flex-col items-center dark:bg-gray-800">
+                                     <!-- Theme Toggle Button -->
+                                     <label class="swap swap-rotate">
+                                        <!-- Toggle input -->
+                                        <input type="checkbox" id="themeToggle" class="hidden" onchange="toggleTheme()">
+                                    
+                                        <!-- Sun Icon -->
+                                        <svg
+                                          class="w-10 h-10 fill-current swap-off"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          viewBox="0 0 24 24">
+                                          <path
+                                            d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
+                                        </svg>
+                                    
+                                        <!-- Moon Icon -->
+                                        <svg
+                                          class="w-10 h-10 fill-current swap-on"
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          viewBox="0 0 24 24">
+                                          <path
+                                            d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
+                                        </svg>
+                                      </label>
+                <div class="flex items-center justify-center w-full h-screen max-w-md">
+                    <!-- Real-time Date and Time Display -->
+                    <div class="flex flex-col items-center mb-20">
+                        <!-- Date -->
+                        <div class="mb-20 text-center">
+                            <span class="text-3xl font-bold text-gray-800 dark:text-white" id="date"></span>
+                        </div>
+                        <!-- Clock Display -->
+                        <div class="flex flex-col items-center mb-10 space-y-8">
+                            <div class="flex items-center space-x-8">
+                                <!-- Hours -->
+                                <div class="flex flex-col items-center p-4 text-[#3D5A80] transition-transform transform rounded-lg shadow-lg hover:scale-105">
+                                    <span class="text-6xl font-extrabold text-[#EE6C4D]" id="hours"></span>
+                                    <span class="text-sm">Hours</span>
+                                </div>
+
+                                <!-- Minutes -->
+                                <div class="flex flex-col items-center p-4 text-[#3D5A80] transition-transform transform rounded-lg shadow-lg hover:scale-105">
+                                    <span class="text-6xl font-extrabold text-[#EE6C4D]" id="minutes"></span>
+                                    <span class="text-sm">Minutes</span>
+                                </div>
+
+                                <!-- Seconds -->
+                                <div class="flex flex-col items-center p-4 text-[#3D5A80] transition-transform transform rounded-lg shadow-lg hover:scale-105">
+                                    <span class="text-6xl font-extrabold text-[#3D5A80]" id="seconds"></span>
+                                    <span class="text-sm">Seconds</span>
+                                </div>
+
+                                <!-- AM/PM -->
+                                <div class="flex flex-col items-center p-4 text-[#3D5A80] transition-transform transform rounded-lg shadow-lg hover:scale-105">
+                                    <span class="text-4xl font-extrabold text-[#3D5A80]" id="ampm"></span>
+                                    <span class="text-sm">AM/PM</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Toggle Button -->
+                        <div class="flex justify-center mb-6">
+                            <button type="button" id="toggleButton" class="px-6 py-3 w-40 text-white bg-[#3D5A80] rounded-md hover:bg-[#EE6C4D]" onclick="toggleTimeButton()">
+                                Time-in
+                            </button>
+                        </div>
+
+                        <!-- Image (Optional) -->
+                        <div class="absolute bottom-4 -right-40">
+                            <img class="w-96" src="{% static 'images/people.png' %}" alt="People Image" />
+                        </div>
                     </div>
-                    <div class="button-container">
-                        <button type="button" onclick="showNotification('Time-in')" class="btn btn-custom bg-blue-500 text-white hover:bg-blue-600">Time-in</button>
-                        <button type="button" onclick="showNotification('Time-out')" class="btn btn-custom bg-blue-500 text-white hover:bg-blue-600">Time-out</button>
-                    </div>
+
+                    <!-- Modals for Time-in and Time-out -->
+                    <!-- Time-in Modal -->
+                    <dialog id="timein_modal" class="modal">
+                        <div class="w-[748px] h-[457px] relative">
+                            <!-- Background Panel -->
+                            <div class="w-[748px] h-[406.13px] left-0 top-[50.87px] absolute bg-[#e0fbfc] rounded-[10px]"></div>
+
+                            <!-- Content Area -->
+                            <div class="w-[596.54px] h-[365.97px] left-[1px] top-[90.84px] absolute flex-col justify-start items-start inline-flex">
+                                <div class="w-[354.68px] h-[217.59px] bg-[#e0fbfc] rounded-[10px]"></div>
+                            </div>
+
+                            <!-- Decorative Circle with Profile Image -->
+                            <div class="w-[125.17px] h-[125.17px] left-[326px] top-0 absolute bg-[#ee6c4d] rounded-full border-2 border-[#3d5a80] flex items-center justify-center">
+                                <img class="w-[87px] h-[87px] rounded-full" src="{% static 'images/profile1.png' %}" alt="Profile Image" />
+                            </div>
+
+                            <!-- Sub-circle -->
+                            <div class="w-[106.84px] h-[106.84px] left-[334.90px] top-[8.90px] absolute"></div>
+
+                            <!-- Success Message -->
+                            <div class="w-[499px] h-[77px] left-[140px] top-[360px] absolute text-center text-[#0d2739] text-4xl font-black font-['Inter']">
+                                Successfully Time-In!
+                            </div>
+
+                            <!-- User Information -->
+                            <div class="w-[510px] h-[286px] left-[54px] top-[74px] absolute text-[#0d2739] text-4xl font-normal font-['Inter']">
+                                <br/><br/><br/>
+                                ID: 12345<br/>
+                                Name: John Doe<br/>
+                                Department: HR
+                            </div>
+                        </div>
+                    </dialog>
+
+                    <script>
+                        function showTimeInModal() {
+                            const timeinModal = document.getElementById('timein_modal');
+                            timeinModal.showModal(); // Show the modal
+                            setTimeout(() => {
+                                timeinModal.close(); // Automatically close the modal after 3 seconds
+                            }, 3000);
+                        }
+                    </script>
+
+                    <!-- Time-out Modal -->
+                    <dialog id="timeout_modal" class="modal">
+                        <div class="w-[748px] h-[457px] relative">
+                            <!-- Background Panel -->
+                            <div class="w-[748px] h-[406.13px] left-0 top-[50.87px] absolute bg-[#e0fbfc] rounded-[10px]"></div>
+
+                            <!-- Content Area -->
+                            <div class="w-[596.54px] h-[365.97px] left-[1px] top-[90.84px] absolute flex-col justify-start items-start inline-flex">
+                                <div class="w-[354.68px] h-[217.59px] bg-[#e0fbfc] rounded-[10px]"></div>
+                            </div>
+
+                            <!-- Decorative Circle with Profile Image -->
+                            <div class="w-[125.17px] h-[125.17px] left-[326px] top-0 absolute bg-[#ee6c4d] rounded-full border-2 border-[#3d5a80] flex items-center justify-center">
+                                <img class="w-[87px] h-[87px] rounded-full" src="{% static 'images/profile1.png' %}" alt="Profile Image" />
+                            </div>
+
+                            <!-- Sub-circle -->
+                            <div class="w-[106.84px] h-[106.84px] left-[334.90px] top-[8.90px] absolute"></div>
+
+                            <!-- Success Message -->
+                            <div class="w-[499px] h-[77px] left-[140px] top-[360px] absolute text-center text-[#0d2739] text-4xl font-black font-['Inter']">
+                                Successfully Time-Out!
+                            </div>
+
+                            <!-- User Information -->
+                            <div class="w-[510px] h-[286px] left-[54px] top-[74px] absolute text-[#0d2739] text-4xl font-normal font-['Inter']">
+                                <br/><br/><br/>
+                                ID: 12345<br/>
+                                Name: John Doe<br/>
+                                Department: HR
+                            </div>
+                        </div>
+                    </dialog>
+
+                    <script>
+                        function showTimeOutModal() {
+                            const timeoutModal = document.getElementById('timeout_modal');
+                            timeoutModal.showModal(); // Show the modal
+                            setTimeout(() => {
+                                timeoutModal.close(); // Automatically close the modal after 3 seconds
+                            }, 3000);
+                        }
+                    </script>
+
+                    <script>
+                        let isTimeIn = true;
+
+                        function updateTime() {
+                            const now = new Date();
+                            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                            const date = now.toLocaleDateString('en-US', options);
+
+                            let hours = now.getHours();
+                            let ampm = hours >= 12 ? 'PM' : 'AM';
+                            hours = hours % 12;
+                            hours = hours ? hours : 12;
+
+                            document.getElementById('date').textContent = date;
+                            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+                            document.getElementById('minutes').textContent = String(now.getMinutes()).padStart(2, '0');
+                            document.getElementById('seconds').textContent = String(now.getSeconds()).padStart(2, '0');
+                            document.getElementById('ampm').textContent = ampm;
+                        }
+                        setInterval(updateTime, 1000);
+                        updateTime();
+
+                        function toggleTimeButton() {
+                            const button = document.getElementById('toggleButton');
+                            if (isTimeIn) {
+                                showTimeInModal(); // Show the Time-in modal
+                                button.textContent = 'Time-out';
+                                button.classList.replace('bg-green-500', 'bg-red-500');
+                                button.classList.replace('hover:bg-green-600', 'hover:bg-red-600');
+                                isTimeIn = false;
+                            } else {
+                                showTimeOutModal(); // Show the Time-out modal
+                                button.textContent = 'Time-in';
+                                button.classList.replace('bg-red-500', 'bg-green-500');
+                                button.classList.replace('hover:bg-red-600', 'hover:bg-green-600');
+                                isTimeIn = true;
+                            }
+                        }
+                    </script>
                 </div>
             </div>
         </div>
-    </div>
-
-    <script>
-        // Function to update the clock
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
-        }
-
-        // Show notification function
-        function showNotification(buttonValue) {
-            const notification = document.getElementById('notification');
-            notification.textContent = `Successfully ${buttonValue}!`; // Set notification text
-            notification.style.display = 'block'; // Show notification
-
-            // Hide the notification after 3 seconds
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
-        }
-
-        // Update the clock every second
-        setInterval(updateClock, 1000);
-        updateClock(); // Initial call to set the clock immediately
-    </script>
-</body>
+    </body>
 </html>

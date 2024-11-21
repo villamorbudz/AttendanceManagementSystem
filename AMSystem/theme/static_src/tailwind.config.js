@@ -52,7 +52,8 @@ module.exports = {
   plugins: [
     require("@tailwindcss/forms"), // Forms plugin
     require("@tailwindcss/typography"), // Typography plugin
-    require("@tailwindcss/aspect-ratio"), // Aspect ratio plugin
+    require("@tailwindcss/aspect-ratio"),
+    // require('@tailwindcss/container-queries'), // Aspect ratio plugin
     require("daisyui"), // DaisyUI plugin
   ],
   daisyui: {

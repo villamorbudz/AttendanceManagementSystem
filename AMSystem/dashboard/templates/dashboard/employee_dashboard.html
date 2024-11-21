@@ -78,6 +78,7 @@
           <img src="{% static 'images/AMSystemlogo-light.png' %}" alt="Logo" class="hidden h-10 dark:block" />
         </div>
         <ul class="mt-4">
+<<<<<<< HEAD
           <li>
             <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Dashboard</a>
           </li>
@@ -90,6 +91,20 @@
           <li>
             <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Logout</a>
           </li>
+=======
+            <li>
+                <a href="{% url 'employee_dashboard' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600"><img src="{% static 'images/chart-pie.png' %}" alt="icon" class="inline-block w-6 h-6 ml-2" /> Dashboard</a>
+            </li>
+            <li>
+                <a href="{% url 'employee_dashboard:employee_profile' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Profile</a>
+            </li>
+            <li>
+                <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Settings</a>
+            </li>
+            <li>
+                <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Logout</a>
+            </li>
+>>>>>>> eadashboard
         </ul>
       </div>
     </div>
@@ -97,6 +112,7 @@
     <!-- Overlay -->
     <div id="overlay" class="fixed inset-0 hidden bg-black opacity-50"></div>
 
+<<<<<<< HEAD
     <!-- Analytics Section -->
     <div class="container mx-auto mt-10">
       <h2 class="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">Data Analytics</h2>
@@ -108,18 +124,54 @@
             <div class="text-blue-500 radial-progress" style="--value: 70; --size: 10rem; --thickness: 6px">70%</div>
           </div>
           <p class="text-center text-gray-600 dark:text-gray-400">Out of 100 total days</p>
+=======
+
+<!-- Overlay -->
+<div id="overlay" class="fixed inset-0 hidden bg-black opacity-50"></div>
+
+
+<!-- Analytics Section -->
+<div class="container mx-auto mt-10 ">
+    <div class="text-3xl font-extrabold bg-clip-border hover:bg-clip-padding">
+    <h2 class="mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#EE6C4D] from-10% to-[#E0FBFC] to-90%">DASHBOARD <img src="{% static 'images/chart-pie.png' %}" alt="icon" class="inline-block w-6 h-6 ml-2" /></h2>
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+        
+        <!-- Attendance Analytics -->
+         <div class="p-4 bg-white rounded-[25px] shadow-lg dark:bg-gray-800 box-decoration-slice bg-gradient-to-r from-[#E0FBFC] to-[#EE6C4D]">
+        <div class="p-4 px-2 text-white bg-white rounded-[15px]  shadow-lg dark:bg-gray-800 ">
+            <h3 class="text-2xl font-extrabold text-[#3d5a80] dark:text-gray-200">Attendance</h3>
+            <div class="flex items-center justify-center">
+                <div class="text-blue-500 radial-progress " style="--value: 70; --size: 10rem; --thickness: 6px;">70%</div>
+            </div>
+            <p class="text-center text-gray-600 dark:text-gray-400">Out of 100 total days</p>
+>>>>>>> eadashboard
         </div>
+    </div>
 
         <!-- Leave Analytics -->
+<<<<<<< HEAD
         <div class="p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
           <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Leave</h3>
           <div class="flex items-center justify-center">
             <div class="text-green-500 radial-progress" style="--value: 50; --size: 10rem; --thickness: 6px">50%</div>
           </div>
           <p class="text-center text-gray-600 dark:text-gray-400">Out of 20 total leave days</p>
+=======
+        <div class="p-4 bg-white rounded-[25px] shadow-lg dark:bg-gray-800 box-decoration-slice bg-gradient-to-r from-[#E0FBFC] to-[#EE6C4D]">
+            <div class="p-4 px-2 text-white bg-white rounded-[15px]  shadow-lg dark:bg-gray-800 ">
+                <h3 class="text-2xl font-extrabold text-[#3d5a80] dark:text-gray-200">Leave</h3>
+                <div class="flex items-center justify-center">
+                    <div class="text-blue-500 radial-progress " style="--value: 70; --size: 10rem; --thickness: 6px;">70%</div>
+                </div>
+                <p class="text-center text-gray-600 dark:text-gray-400">Out of 100 total days</p>
+            </div>
+>>>>>>> eadashboard
         </div>
+    
 
         <!-- Balance Money Analytics -->
+<<<<<<< HEAD
         <div class="p-4 bg-white rounded-lg shadow-lg dark:bg-gray-800">
           <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Balance Money</h3>
           <div class="flex items-center justify-center">
@@ -128,8 +180,32 @@
           <p class="text-center text-gray-600 dark:text-gray-400">Out of $1000 total balance</p>
         </div>
       </div>
+=======
+        <div class="p-4 bg-white rounded-[25px] shadow-lg dark:bg-gray-800 box-decoration-slice bg-gradient-to-r from-[#E0FBFC] to-[#EE6C4D]">
+            <div class="p-4 px-2 text-white bg-white rounded-[15px]  shadow-lg dark:bg-gray-800 ">
+                <h3 class="text-2xl font-extrabold text-[#3d5a80] dark:text-gray-200">Balance</h3>
+                <div class="flex items-center justify-center">
+                    <div class="text-blue-500 radial-progress " style="--value: 70; --size: 10rem; --thickness: 6px;">70%</div>
+                </div>
+                <p class="text-center text-gray-600 dark:text-gray-400">Out of 100 total days</p>
+            </div>
+        </div>
+
+    <!-- Leave Request Section -->
+<div class="container mx-auto mt-10">
+    <div class="text-3xl font-extrabold bg-clip-border hover:bg-clip-padding">
+    <h2 class="mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#EE6C4D] from-10% to-[#E0FBFC] to-90%">Leave Management</h2>
+    </div>
+    <div class="flex justify-center">
+        <!-- Leave Request Button -->
+        <a href="{% url 'employee_dashboard:employee_leave_request_dashboard' %}" 
+           class="px-6 py-3 text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
+            Request Leave
+        </a>
+>>>>>>> eadashboard
     </div>
 
+<<<<<<< HEAD
     <script>
       // Drawer toggle functionality
       document.getElementById("drawer-toggle").addEventListener("click", function () {
@@ -148,4 +224,94 @@
       });
     </script>
   </body>
+=======
+<!-- Leave Status Section (Moved from Leave Request Page) -->
+<div class="container mx-auto mt-10">
+<div class="p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Leave Status</h3>
+    <table class="w-full border-collapse table-auto">
+        <thead>
+            <tr class="bg-gray-200 dark:bg-gray-700">
+                <th class="px-4 py-2 text-left">Start Date</th>
+                <th class="px-4 py-2 text-left">End Date</th>
+                <th class="px-4 py-2 text-left">Reason</th>
+                <th class="px-4 py-2 text-left">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leave_requests %}
+            <tr class="border-t dark:border-gray-700">
+                <td class="px-4 py-2 text-gray-800 dark:text-gray-300">{{ leave.start_date }}</td>
+                <td class="px-4 py-2 text-gray-800 dark:text-gray-300">{{ leave.end_date }}</td>
+                <td class="px-4 py-2 text-gray-800 dark:text-gray-300">{{ leave.reason }}</td>
+                <td class="px-4 py-2 text-gray-800 dark:text-gray-300">{{ leave.status }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="px-4 py-2 text-center text-gray-600 dark:text-gray-400">No leave requests found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+    </div>
+<!-- Modal for messages -->
+{% if messages %}
+<dialog id="message_modal" class="modal" open>
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">Notification</h3>
+    <div class="py-4">
+      {% for message in messages %}
+      <div class="alert {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    <div class="modal-action">
+      <button class="btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</dialog>
+{% endif %}
+</div>
+</div>
+</div>
+
+
+<script>
+    // Drawer toggle functionality
+    document.getElementById('drawer-toggle').addEventListener('click', function() {
+        const drawer = document.getElementById('drawer');
+        const overlay = document.getElementById('overlay');
+        drawer.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+    });
+
+    // Overlay click to close the drawer
+    document.getElementById('overlay').addEventListener('click', function() {
+        const drawer = document.getElementById('drawer');
+        const overlay = document.getElementById('overlay');
+        drawer.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+    });
+    // Close the modal after 3 seconds
+    document.addEventListener("DOMContentLoaded", function() {
+          const messageModal = document.getElementById("message_modal");
+
+          if (messageModal) {
+              setTimeout(() => {
+                  messageModal.close();
+              }, 3000);
+          }
+      });
+
+      // Close modal on button click
+      function closeModal() {
+          const messageModal = document.getElementById("message_modal");
+          if (messageModal) {
+              messageModal.close();
+          }
+      }
+</script>
+</body>
+>>>>>>> eadashboard
 </html>

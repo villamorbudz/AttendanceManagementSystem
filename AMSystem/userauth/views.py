@@ -6,6 +6,29 @@ from django.contrib import messages
 from .forms import UserAuthenticationForm
 from django.contrib.auth import get_user_model
 
+
+# def login_view(request):
+#     if request.method == 'POST':
+#         form = UserAuthenticationForm(request.POST)
+#         if form.is_valid():
+#             user_id = form.cleaned_data['user_id']
+#             password = form.cleaned_data['password']
+#             user = authenticate(request, username=user_id, password=password)
+#             if user is not None:
+#                 auth_login(request, user)
+#                 messages.success(request, 'Successfully logged in!')
+#                 if user.is_superuser:
+#                     return redirect('admin_dashboard')  # Ensure this is correct
+#                 else:
+#                     return redirect('employee_dashboard')  # For non-admin users
+#             else:
+#                 messages.error(request, 'Invalid credentials. Please try again.')
+#     else:
+#         form = UserAuthenticationForm()
+    
+#     return render(request, 'userauth/login.html', {'form': form})
+
+
 def login_view(request):
     if request.user.is_authenticated:
         logout(request)
@@ -33,6 +56,7 @@ def landing(request):
 def index(request):
     return render(request, 'userauth/index.html')
 
+<<<<<<< HEAD
 def clear_messages_view(request):
     storage = messages.get_messages(request)
     storage.used = True
@@ -55,3 +79,7 @@ def redirect_to_dashboard(request):
             return redirect('login')
     else:
         return redirect('login')
+=======
+def employee_dashboard(request):
+    return render(request, 'dashboard/employee_dashboard.html')
+>>>>>>> eadashboard
