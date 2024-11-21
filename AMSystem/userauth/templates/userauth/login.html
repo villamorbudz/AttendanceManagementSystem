@@ -1,0 +1,138 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AMSystem Login</title>
+    {% tailwind_css %}
+    <style>
+        .animate-blob {
+            background-image: url("{% static 'images/Noise_Texture.png' %}");
+            background-size: cover;
+        }
+        .dark { background-color: #1a202c; color: #cbd5e0; }
+        .dark .bg-white { background-color: #2d3748; }
+        .dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        #theme-toggle { display: none; }
+    </style>
+</head>
+
+<body id="theme" class="bg-gray-50">
+    <!-- Theme Toggle -->
+    <div class="absolute top-4 right-4">
+      <label class="switch">
+        <input type="checkbox" id="theme-toggle">
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <!-- Background Animations -->
+    <div class="fixed inset-0 overflow-hidden">
+        <div class="absolute rounded-full bg-primary-50 -left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div class="absolute bg-blue-300 rounded-full -right-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute rounded-full bg-[#3D5A80] -bottom-10 left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        <div class="absolute z-0 bg-[#d4e7ff] rounded-full bottom-20 right-20 w-80 h-80 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-3000"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 flex items-center justify-center min-h-screen">
+        <div class="flex items-center space-x-0.5">
+            
+        <!-- Form Container -->
+        <div class="w-[450px] h-[477px] bg-[#f9f9f9] rounded-[47px] shadow-lg flex items-center dark:bg-gray-700 ml-20"> 
+                <div class="w-[400.32px] h-[550px] bg-[#f9f9f9] rounded-[47px] shadow flex justify-center items-center dark:bg-gray-800">
+                <form class="card-body" method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="mb-6 text-center lg:text-center lg:mb-0">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-14 dark:text-white">LOGIN</h1>
+                    </div>
+                    <div class="form-control ">
+                        <label class="w-full max-w-xs text-left label">
+                            <span class="label-text">Employee ID</span>
+                        </label>
+                        <input type="text" name="user_id" placeholder="Enter Employee ID" class="input input-bordered" required aria-required="true" />
+                    </div>
+                    <div class="form-control">
+                        <label class="text-left label">
+                            <span class="label-text">Password</span>
+                        </label>
+                        <input type="password" name="password" placeholder="Enter password" class="input input-bordered" required aria-required="true" />
+                        <label class="label">
+                            <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
+                        </label>
+                    </div>
+
+                    <!-- Modal for messages -->
+                    {% if messages %}
+                    <dialog id="message_modal" class="modal" open>
+                      <div class="modal-box">
+                        <h3 class="text-lg font-bold">Notification</h3>
+                        <div class="py-4">
+                          {% for message in messages %}
+                          <div class="alert {{ message.tags }}">{{ message }}</div>
+                          {% endfor %}
+                        </div>
+                        <div class="modal-action">
+                          <button class="btn" onclick="closeModal()">Close</button>
+                        </div>
+                      </div>
+                    </dialog>
+                    {% endif %}
+
+                    <div class="mt-6 form-control">
+                        <button type="submit" class="btn bg-[#3D5A80] text-white hover:border-x-cyan-400">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<!-- Image Container -->
+<div class="w-[600px] h-[377px] flex items-center justify-center -ml-0.5">
+    <!-- Adjusted position with 'ml-6' -->
+    <img src="{% static 'images/people.png' %}" alt="Login Illustration" class="w-[200%] h-auto rounded-lg " />
+</div>
+
+
+    <script>
+      const themeToggle = document.getElementById('theme-toggle');
+      const body = document.getElementById('theme');
+
+      // Check the stored theme on page load
+      if (localStorage.getItem('theme') === 'dark') {
+          body.classList.add('dark');
+          themeToggle.checked = true;
+      }
+
+      // Toggle theme on checkbox change
+      themeToggle.addEventListener('change', () => {
+          body.classList.toggle('dark');
+          if (body.classList.contains('dark')) {
+              localStorage.setItem('theme', 'dark');
+          } else {
+              localStorage.removeItem('theme');
+          }
+      });
+
+      // Close the modal after 3 seconds
+      document.addEventListener("DOMContentLoaded", function() {
+          const messageModal = document.getElementById("message_modal");
+
+          if (messageModal) {
+              setTimeout(() => {
+                  messageModal.close();
+              }, 3000);
+          }
+      });
+
+      // Close modal on button click
+      function closeModal() {
+          const messageModal = document.getElementById("message_modal");
+          if (messageModal) {
+              messageModal.close();
+          }
+      }
+    </script>
+</body>
+</html>
