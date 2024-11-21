@@ -159,6 +159,9 @@ INTERNAL_IPS = [
 NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
 
 AUTH_USER_MODEL = 'usermgmt.User'
+# AUTH_USER_MODEL = 'usermgmt.CustomUser'
+
+
 
 LOGIN_URL = 'login'
 

@@ -95,6 +95,7 @@
 <!-- Overlay -->
 <div id="overlay" class="fixed inset-0 hidden bg-black opacity-50"></div>
 
+
 <!-- Analytics Section -->
 <div class="container mx-auto mt-10">
     <h2 class="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">Data Analytics</h2>
@@ -132,11 +133,40 @@
     <h2 class="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">Leave Management</h2>
     <div class="flex justify-center">
         <!-- Leave Request Button -->
-        <a href="{% url 'employee_dashboard:employee_Leave_Request_dashboard' %}" 
+        <a href="{% url 'employee_dashboard:employee_leave_request_dashboard' %}" 
            class="px-6 py-3 text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
             Request Leave
         </a>
     </div>
+</div>
+
+<!-- Leave Status Section (Moved from Leave Request Page) -->
+<div class="p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
+    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Leave Status</h3>
+    <table class="w-full border-collapse table-auto">
+        <thead>
+            <tr class="bg-gray-200 dark:bg-gray-700">
+                <th class="px-4 py-2 text-left">Start Date</th>
+                <th class="px-4 py-2 text-left">End Date</th>
+                <th class="px-4 py-2 text-left">Reason</th>
+                <th class="px-4 py-2 text-left">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leave_requests %}
+            <tr class="border-t dark:border-gray-700">
+                <td class="px-4 py-2 text-gray-800 dark:text-gray-300">{{ leave.start_date }}</td>
+                <td class="px-4 py-2 text-gray-800 dark:text-gray-300">{{ leave.end_date }}</td>
+                <td class="px-4 py-2 text-gray-800 dark:text-gray-300">{{ leave.reason }}</td>
+                <td class="px-4 py-2 text-gray-800 dark:text-gray-300">{{ leave.status }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="px-4 py-2 text-center text-gray-600 dark:text-gray-400">No leave requests found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 
