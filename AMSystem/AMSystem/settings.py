@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'userauth',
     'usermgmt',
     'django_browser_reload',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

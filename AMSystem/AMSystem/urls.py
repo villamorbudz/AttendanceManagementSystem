@@ -19,9 +19,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from dashboard.views import admin_dashboard
+from dashboard import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),  # Django admin
+    # path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin_dashboard/', include('dashboard.admin_urls')),  # Admin-specific URLs
     path('admin_tools_stats/', include('admin_tools_stats.urls')),
     path('', include('attendance.urls')),  # Main attendance URLs
     path('', include('dashboard.urls')),    # Dashboard URLs

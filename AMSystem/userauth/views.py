@@ -7,6 +7,29 @@ from usermgmt.views import register  # Import the register view from usermgmt
 from .forms import UserAuthenticationForm
 
 
+
+# def login_view(request):
+#     if request.method == 'POST':
+#         form = UserAuthenticationForm(request.POST)
+#         if form.is_valid():
+#             user_id = form.cleaned_data['user_id']
+#             password = form.cleaned_data['password']
+#             user = authenticate(request, username=user_id, password=password)
+#             if user is not None:
+#                 auth_login(request, user)
+#                 messages.success(request, 'Successfully logged in!')
+#                 if user.is_superuser:
+#                     return redirect('admin_dashboard')  # Ensure this is correct
+#                 else:
+#                     return redirect('employee_dashboard')  # For non-admin users
+#             else:
+#                 messages.error(request, 'Invalid credentials. Please try again.')
+#     else:
+#         form = UserAuthenticationForm()
+    
+#     return render(request, 'userauth/login.html', {'form': form})
+
+
 def login_view(request):
     if request.method == 'POST':
         form = UserAuthenticationForm(request.POST)

@@ -5,10 +5,10 @@ from . import views
 app_name = 'employee_dashboard'
 
 urlpatterns = [
-    # Admin Dashboard URLs
-    path('admin/admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
-    path('admin/employee/status/', views.admin_employee_status, name='admin_employee_status'),
-    path('admin/leave/management/', views.admin_leave_management, name='admin_leave_management'),
+    # # Admin Dashboard URLs
+    # path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    # path('admin/employee/status/', views.admin_employee_status, name='admin_employee_status'),
+    # path('admin/leave/management/', views.admin_leave_management, name='admin_leave_management'),
     
     # Employee Dashboard URLs
     path('employee/dashboard/', views.employee_dashboard, name='employee_dashboard'),
