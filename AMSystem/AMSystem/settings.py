@@ -49,7 +49,11 @@ INSTALLED_APPS = [
     'userauth',
     'usermgmt',
     'django_browser_reload',
+<<<<<<< HEAD
     'django_extensions',
+=======
+    'django_apscheduler',
+>>>>>>> temp-recovery
 ]
 
 
@@ -145,7 +149,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # INTERNATIONALIZATION
 # ===================
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Singapore'
 USE_I18N = True
 USE_TZ = True
 
