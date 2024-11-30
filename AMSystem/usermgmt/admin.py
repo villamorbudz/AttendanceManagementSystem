@@ -49,12 +49,6 @@ class UserAdmin(UnfoldModelAdmin,ImportExportModelAdmin):
     export_form_class = ExportForm
     list_filter_submit = True
 
-
-
-class AccountAdmin(UnfoldModelAdmin):
-    list_display = ('user', 'password')
-    search_fields = ('user__first_name', 'user__last_name', 'user__email')
-
 admin.site.register(Role, RoleAdmin)
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(User, UserAdmin)
