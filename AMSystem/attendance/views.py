@@ -55,7 +55,7 @@ def record_attendance(request):
         if action == 'time_in':
             # Check if current time is within allowed time range
             if current_time_obj < earliest_time:
-                return JsonResponse({'response': f'Cannot time in before {earliest_time.strftime("%I:%M %p")}'}, status = 401)
+                return JsonResponse({'response': f'Unable to time in: Cannot time in before {earliest_time.strftime("%I:%M %p")}'}, status = 401)
             elif current_time_obj > WORK_END:
                 return JsonResponse({'response': f'Unable to time in: Beyond work hours'}, status = 401)
             

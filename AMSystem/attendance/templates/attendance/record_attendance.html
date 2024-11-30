@@ -255,7 +255,8 @@
                     responseMessageElement.style.left = '50%';
                     responseMessageElement.style.transform = 'translateX(-50%)';
                     responseMessageElement.innerHTML = data.response;
-                    throw new Error(data.response);
+                    showResultModal();
+                    return; // Exit the function instead of throwing an error
                 }
 
                 // Update UI based on the response
