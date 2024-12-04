@@ -58,12 +58,7 @@
         </label>
         <div class="avatar online">
             <div class="flex items-center justify-center w-10 h-10 bg-gray-800 rounded-full text-neutral-content">
-                <!-- Display the user's profile image if available or use the user's first letter -->
-                {% if profile_image_url %}
-                    <img src="{{ profile_image_url }}" alt="Profile Image" class="object-cover w-10 h-10 rounded-full">
-                {% else %}
-                    <span class="text-xl">{{ user.first_name|default:"U" }}</span>  <!-- Fallback to initial -->
-                {% endif %}
+                <span class="text-xl">{{ user.first_name|default:"U"|first }}</span>
             </div>
         </div>
     </div>
@@ -101,16 +96,20 @@
 <div class="container max-w-lg p-6 mx-auto mt-10 bg-white rounded-lg shadow-md dark:bg-gray-800">
     <h2 class="mb-6 text-2xl font-bold text-center text-gray-800 dark:text-gray-200">Profile</h2>
     
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST">
         {% csrf_token %}
         
         <div class="mb-4">
-            <label for="profile_image" class="block text-gray-700 dark:text-gray-200">Profile Image</label>
-            <input type="file" name="profile_image" id="profile-pic" accept="image/*" class="block w-full mt-2 text-sm text-gray-700 dark:text-gray-200">
+            <label for="profile_image_url" class="block text-gray-700 dark:text-gray-200">Profile Image URL</label>
+            <input type="url" name="profile_image_url" id="profile_image_url" placeholder="https://example.com/image.jpg" 
+                   class="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600"
+                   value="{{ profile.profile_image }}">
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Enter the URL of your profile image</p>
         </div>
 
         <div class="mb-6 text-center">
-            <img id="profile-pic-preview" src="{% if profile_image_url %}{{ profile_image_url }}{% else %}{{ STATIC_URL }}images/default_profile_image.jpg{% endif %}" alt="Profile Picture" class="object-cover w-32 h-32 mx-auto rounded-full">
+            <img id="profile-pic-preview" src="{% if profile.profile_image %}{{ profile.profile_image }}{% else %}{{ STATIC_URL }}images/default_profile_image.jpg{% endif %}" 
+                 alt="Profile Picture" class="object-cover w-32 h-32 mx-auto rounded-full">
         </div>
 
         <button type="submit" class="w-full py-2 mt-4 text-white bg-blue-500 rounded-lg hover:bg-blue-600">Update Profile</button>
@@ -132,6 +131,17 @@
         const overlay = document.getElementById('overlay');
         drawer.classList.add('-translate-x-full');
         overlay.classList.add('hidden');
+    });
+
+    // Preview image when URL is entered
+    document.getElementById('profile_image_url').addEventListener('input', function() {
+        const previewImg = document.getElementById('profile-pic-preview');
+        const url = this.value;
+        if (url) {
+            previewImg.src = url;
+        } else {
+            previewImg.src = '{{ STATIC_URL }}images/default_profile_image.jpg';
+        }
     });
 </script>
 

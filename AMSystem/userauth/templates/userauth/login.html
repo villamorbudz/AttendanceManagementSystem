@@ -65,7 +65,7 @@
         <!-- Form Container -->
         <div class="w-[450px] h-[477px] bg-[#f9f9f9] rounded-[47px] shadow-lg flex items-center dark:bg-gray-700 ml-20"> 
                 <div class="w-[400.32px] h-[550px] bg-[#f9f9f9] rounded-[47px] shadow flex justify-center items-center dark:bg-gray-800">
-                <form class="card-body" method="POST" action="{% url 'userauth:login' %}">
+                <form class="card-body" method="POST" action="{% url 'userauth:login' %}?next={{ request.GET.next }}">
                     {% csrf_token %}
                     <div class="mb-6 text-center lg:text-center lg:mb-0">
                         <h1 class="text-3xl font-bold text-gray-800 mb-14 dark:text-white">LOGIN</h1>

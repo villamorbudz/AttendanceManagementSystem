@@ -48,12 +48,9 @@ INSTALLED_APPS = [
     'dashboard',
     'userauth',
     'usermgmt',
+    'leave',
     'django_browser_reload',
-<<<<<<< HEAD
-    'django_extensions',
-=======
     'django_apscheduler',
->>>>>>> temp-recovery
 ]
 
 
@@ -157,8 +154,14 @@ USE_TZ = True
 # ===================
 # STATIC FILES
 # ===================
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 
 # ===================
@@ -181,7 +184,8 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-LOGIN_URL = 'login'
+LOGIN_URL = 'userauth:login'
+LOGOUT_REDIRECT_URL = 'userauth:login'
 
 
 # ===================
@@ -232,7 +236,7 @@ UNFOLD = {
     "SHOW_VIEW_ON_SITE": True, # show/hide "View on site" button, default: True
 
     # "THEME": "dark", # Force theme: "dark" or "light". Will disable theme switcher
-    
+
 
     "COLORS": {
         "font": {
@@ -304,10 +308,3 @@ UNFOLD = {
         ],
     },
 }
-
-
-#Ensure you have the MEDIA_URL and MEDIA_ROOT settings to handle uploaded images:
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

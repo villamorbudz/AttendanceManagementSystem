@@ -19,9 +19,12 @@ class RoleAdmin(UnfoldModelAdmin):
     list_filter = ('is_staff', 'is_superuser') 
 
 class DepartmentAdmin(UnfoldModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'get_roles')
     search_fields = ('name',)
-# , ImportExportModelAdmin
+
+    def get_roles(self, obj):
+        return ", ".join([role.name for role in obj.role.all()])
+    get_roles.short_description = 'Roles'
 class UserAdmin(UnfoldModelAdmin,ImportExportModelAdmin):
     list_display = ('user_id', 'first_name', 'last_name', 'email', 'department', 'is_staff', 'is_active')
     search_fields = ('user_id', 'first_name', 'last_name', 'email')

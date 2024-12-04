@@ -81,9 +81,6 @@ class User(AbstractUser):
     is_anonymous = False
     is_active = models.BooleanField(default=True)
     
-    # Profile image field
-    profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
-
     objects = UserManager()
 
     USERNAME_FIELD = 'user_id'

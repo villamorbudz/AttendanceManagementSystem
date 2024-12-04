@@ -1,0 +1,207 @@
+{% load static tailwind_tags %}
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/AMSystemlogoWhite.png' %}">
+    <title>Manager Dashboard</title>
+    {% tailwind_css %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize theme based on user preference
+        const userPref = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        if (userPref === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+
+        // Toggle dark/light mode
+        function toggleTheme() {
+            const htmlElement = document.documentElement;
+            if (htmlElement.classList.contains('dark')) {
+                console.log("Switching to light mode");
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                console.log("Switching to dark mode");
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900">
+    <!-- Navbar -->
+    <div class="navbar bg-gray-50 dark:bg-gray-800">
+        <div class="flex-1">
+            <button id="drawer-toggle" class="btn btn-square btn-ghost lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <img src="{% static 'images/AMSystemlogoWhite.png' %}" alt="Logo" class="w-10 h-10">
+            <a class="ml-2 text-xl normal-case btn btn-ghost">Manager Dashboard</a>
+        </div>
+        <div class="flex-none">
+            <button onclick="toggleTheme()" class="btn btn-square btn-ghost">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                </svg>
+            </button>
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+                    <div class="w-10 rounded-full">
+                        <img src="{% static 'images/avatar.png' %}" alt="avatar"/>
+                    </div>
+                </label>
+                <ul tabindex="0" class="p-2 mt-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+                    <li><a>Profile</a></li>
+                    <li><a>Settings</a></li>
+                    <li><a href="{% url 'userauth:login' %}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex">
+        <!-- Sidebar/Drawer -->
+        <div id="drawer" class="fixed inset-y-0 left-0 z-50 hidden w-64 h-full transition-transform -translate-x-full bg-gray-50 lg:translate-x-0 dark:bg-gray-800 lg:static lg:block">
+            <div class="p-4">
+                <h2 class="mb-4 text-xl font-semibold text-gray-800 dark:text-white">Menu</h2>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="{% url 'dashboard:manager_dashboard' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">
+                            <img src="{% static 'images/chart-pie.png' %}" alt="icon" class="inline-block w-6 h-6 ml-2" /> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Employee Management</a>
+                    </li>
+                    <li>
+                        <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Leave Management</a>
+                    </li>
+                    <li>
+                        <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Attendance Records</a>
+                    </li>
+                    <li>
+                        <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Reports</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Overlay for mobile drawer -->
+        <div id="overlay" class="fixed inset-0 z-40 hidden bg-black opacity-50 lg:hidden"></div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 p-4">
+            <h1 class="mb-4 text-2xl font-bold text-gray-800 dark:text-white">Dashboard Overview</h1>
+            
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 gap-4 p-4 mt-4 bg-gray-100 rounded-lg shadow dark:bg-gray-800 md:grid-cols-3">
+                <!-- Active Employees Stat -->
+                <div class="p-6 bg-white rounded-lg shadow stat dark:bg-gray-700">
+                    <div class="flex items-center justify-between stat-figure text-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-8 h-8 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div class="stat-title">Active Employees</div>
+                    </div>
+                    <div class="stat-value">89</div>
+                    <div class="stat-desc">21% more than last month</div>
+                </div>
+
+                <!-- Leave Requests Stat -->
+                <div class="p-6 bg-white rounded-lg shadow stat dark:bg-gray-700">
+                    <div class="flex items-center justify-between stat-figure text-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-8 h-8 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                        </svg>
+                        <div class="stat-title">Pending Leave Requests</div>
+                    </div>
+                    <div class="stat-value">7</div>
+                    <div class="stat-desc">Requires attention</div>
+                </div>
+
+                <!-- Attendance Rate Stat -->
+                <div class="p-6 bg-white rounded-lg shadow stat dark:bg-gray-700">
+                    <div class="flex items-center justify-between stat-figure text-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-8 h-8 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                        <div class="stat-title">Attendance Rate</div>
+                    </div>
+                    <div class="stat-value">98.2%</div>
+                    <div class="stat-desc">↗︎ 2% more than last week</div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 gap-4 mt-8 md:grid-cols-2">
+                <!-- Attendance Trend Chart -->
+                <div class="p-6 bg-white rounded-lg shadow dark:bg-gray-700">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Monthly Attendance Trend</h3>
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+
+                <!-- Leave Distribution Chart -->
+                <div class="p-6 bg-white rounded-lg shadow dark:bg-gray-700">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white">Leave Distribution</h3>
+                    <canvas id="leaveChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Drawer toggle functionality
+        document.getElementById('drawer-toggle').addEventListener('click', function() {
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('overlay');
+            
+            drawer.classList.toggle('hidden');
+            drawer.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        });
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('overlay');
+            
+            drawer.classList.add('hidden');
+            drawer.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        });
+
+        // Sample chart data
+        const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+        new Chart(attendanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Attendance Rate',
+                    data: [95, 93, 97, 94, 96, 98],
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            }
+        });
+
+        const leaveCtx = document.getElementById('leaveChart').getContext('2d');
+        new Chart(leaveCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Annual', 'Sick', 'Emergency', 'Other'],
+                datasets: [{
+                    data: [30, 20, 15, 35],
+                    backgroundColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)'
+                    ]
+                }]
+            }
+        });
+    </script>
+</body>
+</html>

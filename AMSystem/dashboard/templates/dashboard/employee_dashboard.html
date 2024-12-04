@@ -79,10 +79,10 @@
         </div>
         <ul class="mt-4">
             <li>
-                <a href="{% url 'employee_dashboard' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600"><img src="{% static 'images/chart-pie.png' %}" alt="icon" class="inline-block w-6 h-6 ml-2" /> Dashboard</a>
+                <a href="{% url 'dashboard:employee_dashboard' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600"><img src="{% static 'images/chart-pie.png' %}" alt="icon" class="inline-block w-6 h-6 ml-2" /> Dashboard</a>
             </li>
             <li>
-                <a href="{% url 'employee_dashboard:employee_profile' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Profile</a>
+                {% comment %} <a href="{% url 'employee_dashboard:employee_profile' %}" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Profile</a> {% endcomment %}
             </li>
             <li>
                 <a href="#" class="block py-2 transition duration-200 hover:bg-gray-200 dark:hover:bg-gray-600">Settings</a>
@@ -150,10 +150,10 @@
     </div>
     <div class="flex justify-center">
         <!-- Leave Request Button -->
-        <a href="{% url 'employee_dashboard:employee_leave_request_dashboard' %}" 
+        {% comment %} <a href="{% url 'employee_dashboard:employee_leave_request_dashboard' %}" 
            class="px-6 py-3 text-white bg-blue-500 rounded-lg shadow-md hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
             Request Leave
-        </a>
+        </a> {% endcomment %}
     </div>
 
 <!-- Leave Status Section (Moved from Leave Request Page) -->
