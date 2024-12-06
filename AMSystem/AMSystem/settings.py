@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'attendance',
     'dashboard',
     'userauth',
-    'usermgmt',
+    'management',
     'leave',
     'django_browser_reload',
     'django_apscheduler',
@@ -120,7 +120,7 @@ DATABASES = {
 # AUTHENTICATION
 # ===================
 
-AUTH_USER_MODEL = 'usermgmt.User'
+AUTH_USER_MODEL = 'management.User'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -282,7 +282,7 @@ UNFOLD = {
                         "title": _("Departments"),
                         "icon": "Groups",  # Supported icon set: https://fonts.google.com/icons
                         # "user": lambda request: static("images/adduser.png"),
-                        "link": reverse_lazy("admin:usermgmt_department_changelist"),
+                        "link": reverse_lazy("admin:management_department_changelist"),
                         "badge": "Add Groups",
                         "permission": lambda request: request.user.is_superuser,
                     },
@@ -290,7 +290,7 @@ UNFOLD = {
                         "title": _("Roles"),
                         "icon": "Group",  # Supported icon set: https://fonts.google.com/icons
                         # "user": lambda request: static("images/adduser.png"),
-                        "link": reverse_lazy("admin:usermgmt_role_changelist"),
+                        "link": reverse_lazy("admin:management_role_changelist"),
                         "badge": "Add Role",
                         "permission": lambda request: request.user.is_superuser,
                     },
@@ -298,7 +298,7 @@ UNFOLD = {
                         "title": _("Users"),
                         "icon": "Person",  # Supported icon set: https://fonts.google.com/icons
                         # "user": lambda request: static("images/adduser.png"),
-                        "link": reverse_lazy("admin:usermgmt_user_changelist"),
+                        "link": reverse_lazy("admin:management_user_changelist"),
                         "badge": "Add Users",
                         "permission": lambda request: request.user.is_superuser,
                     },

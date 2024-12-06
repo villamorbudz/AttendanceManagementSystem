@@ -22,13 +22,13 @@ from django.conf.urls.static import static
 from dashboard import views as dashboard_views
 from dashboard.views import manager_dashboard
 from dashboard import views
-from usermgmt.views import register
+from management.views import register
 
 urlpatterns = [
     path('', include('userauth.urls')),
     path('', include('dashboard.urls')),
-    path('', include('usermgmt.urls')),
     path('', include('leave.urls')),
+    path('management/', include('management.urls')),
     path('admin/', admin.site.urls),
     path('attendance/', include('attendance.urls')),
     path("__reload__/", include("django_browser_reload.urls")),

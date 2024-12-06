@@ -3,6 +3,7 @@ from django.contrib import messages
 from .forms import UserRegistrationForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from userauth.views import redirect_to_dashboard
+from django.contrib.auth.hashers import make_password
 
 @login_required
 def register(request):
@@ -18,7 +19,7 @@ def register(request):
         if form.is_valid():
             user = form.save(commit=False)
             default_password = '123456'  # To implement default password format: lastnameAMS123456
-            user.set_password(make_password(default_password))
+            user.set_password(default_password)
             user.save()
 
             messages.success(request, f'Registration successful for {user.first_name} {user.last_name}! '
@@ -27,7 +28,7 @@ def register(request):
     else:
         form = UserRegistrationForm()
 
-    return render(request, 'usermgmt/registration.html', {'form': form})
+    return render(request, 'management/registration.html', {'form': form})
 
 def success_page(request):
-    return render(request, 'usermgmt/success.html')
+    return render(request, 'management/success.html')

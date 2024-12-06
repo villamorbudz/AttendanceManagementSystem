@@ -50,9 +50,9 @@ def redirect_to_dashboard(request):
 
             if role_name == 'Employee':
                 return redirect('dashboard:employee_dashboard')
-            elif role_name == 'Administrator':
+            elif role_name == 'Manager':
                 return redirect('dashboard:manager_dashboard')
-            elif role_name == 'System Administrator':
+            elif role_name == 'Administrator':
                 return redirect('admin:index')
         else:
             return redirect('login')
