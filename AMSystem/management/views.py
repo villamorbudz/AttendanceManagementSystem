@@ -255,7 +255,7 @@ def register(request):
             user.set_password(form.cleaned_data['password'])
             user.save()
             messages.success(request, 'User registered successfully')
-            return redirect('management:success')
+            
         else:
             messages.error(request, 'Registration unsuccessful. Please correct the errors below.')
     else:
@@ -330,33 +330,100 @@ def bulk_register(request):
                 return redirect('management:bulk_register')
 
             decoded_file = csv_file.read().decode('utf-8')
-            csv_data = csv.DictReader(io.StringIO(decoded_file))
+            csv_data = list(csv.DictReader(io.StringIO(decoded_file)))
             
-            with transaction.atomic():
-                for row in csv_data:
+            # Temporary storage for validation
+            users_to_create = []
+            validation_errors = []
+            
+            # First pass: Validate all rows and prepare user data
+            for index, row in enumerate(csv_data, 1):
+                try:
+                    # Validate required fields
+                    required_fields = ['user_id', 'first_name', 'last_name', 'department', 'birthdate']
+                    missing_fields = [field for field in required_fields if not row.get(field)]
+                    if missing_fields:
+                        validation_errors.append(f"Row {index}: Missing required fields: {', '.join(missing_fields)}")
+                        continue
+                    
+                    # Validate department exists
                     try:
                         department = Department.objects.get(name=row['department'])
-                        user = get_user_model().objects.create(
-                            user_id=row['user_id'],
-                            first_name=row['first_name'],
-                            last_name=row['last_name'],
-                            email=row['email'],
-                            contact_number=row.get('contact_number', ''),
-                            birthdate=datetime.strptime(row['birthdate'], '%Y-%m-%d').date(),
-                            department=department
-                        )
-                        user.set_password(row.get('password', '123456'))  # Default password if not provided
-                        user.save()
-                    except Exception as e:
-                        messages.error(request, f'Error processing row for user {row.get("user_id", "unknown")}: {str(e)}')
-                        return redirect('management:bulk_register')
+                    except Department.DoesNotExist:
+                        validation_errors.append(f"Row {index}: Department '{row['department']}' does not exist")
+                        continue
+                    
+                    # Generate base email from first_name and last_name
+                    base_name = f"{row['first_name'].lower()}{row['last_name'].lower()}"
+                    # Remove any spaces or special characters
+                    base_name = ''.join(c for c in base_name if c.isalnum())
+                    
+                    # Store validated user data
+                    users_to_create.append({
+                        'user_id': row['user_id'],
+                        'first_name': row['first_name'],
+                        'last_name': row['last_name'],
+                        'email_base': base_name,
+                        'contact_number': row.get('contact_number', ''),
+                        'birthdate': datetime.strptime(row['birthdate'], '%Y-%m-%d').date(),
+                        'department': department,
+                        'password': row.get('password', '123456')
+                    })
+                    
+                except Exception as e:
+                    validation_errors.append(f"Row {index}: {str(e)}")
+            
+            # If there are validation errors, show them all at once
+            if validation_errors:
+                for error in validation_errors:
+                    messages.error(request, error)
+                return redirect('management:bulk_register')
+            
+            # Second pass: Create users with unique emails
+            with transaction.atomic():
+                for user_data in users_to_create:
+                    # Generate unique email
+                    email = generate_unique_email(user_data['email_base'])
+                    
+                    # Create user
+                    user = get_user_model().objects.create(
+                        user_id=user_data['user_id'],
+                        first_name=user_data['first_name'],
+                        last_name=user_data['last_name'],
+                        email=email,
+                        contact_number=user_data['contact_number'],
+                        birthdate=user_data['birthdate'],
+                        department=user_data['department']
+                    )
+                    user.set_password(user_data['password'])
+                    user.save()
                 
             messages.success(request, 'Users registered successfully')
-            return redirect('management:success')
+            
         except Exception as e:
             messages.error(request, str(e))
             return redirect('management:bulk_register')
     return render(request, 'management/bulk_registration.html')
+
+def generate_unique_email(base_name, domain="ams.com"):
+    """
+    Generate a unique email address by appending a number if necessary.
+    Args:
+        base_name: The base name for the email (e.g., 'johndoe')
+        domain: The email domain (default: 'ams.com')
+    Returns:
+        A unique email address
+    """
+    User = get_user_model()
+    email = f"{base_name}@{domain}"
+    counter = 1
+    temp_email = email
+    
+    while User.objects.filter(email=temp_email).exists():
+        temp_email = f"{base_name}{counter}@{domain}"
+        counter += 1
+    
+    return temp_email
 
 @login_required
 def bulk_attendance(request):
@@ -377,25 +444,32 @@ def bulk_attendance(request):
             with transaction.atomic():
                 for row in csv_data:
                     try:
-                        user = get_user_model().objects.get(user_id=row['user_id'])
+                        # Get the existing user
+                        try:
+                            user = get_user_model().objects.get(user_id=row['user_id'])
+                        except get_user_model().DoesNotExist:
+                            raise ValueError(f"User with ID {row['user_id']} does not exist")
+                        
                         date = datetime.strptime(row['date'], '%Y-%m-%d').date()
-                        time_in = datetime.strptime(row['time_in'], '%H:%M').time() if row['time_in'] else None
-                        time_out = datetime.strptime(row['time_out'], '%H:%M').time() if row['time_out'] else None
+                        time_in = datetime.strptime(row['time_in'], '%H:%M:%S').time() if row['time_in'] and row['time_in'] != '0:00:00' else None
+                        time_out = datetime.strptime(row['time_out'], '%H:%M:%S').time() if row['time_out'] and row['time_out'] != '0:00:00' else None
                         
                         attendance, created = Attendance.objects.update_or_create(
                             user=user,
                             date=date,
                             defaults={
                                 'time_in': time_in,
-                                'time_out': time_out
+                                'time_out': time_out,
+                                'status': row['status'],
+                                'remarks': row.get('remarks', '')
                             }
                         )
-                    except (get_user_model().DoesNotExist, ValueError, KeyError) as e:
+                    except (ValueError, KeyError) as e:
                         messages.error(request, f'Error processing row for user {row.get("user_id", "unknown")}: {str(e)}')
                         return redirect('management:bulk_attendance')
                 
             messages.success(request, 'Attendance records uploaded successfully')
-            return redirect('management:success')
+            return redirect('management:bulk_attendance')
         except Exception as e:
             messages.error(request, str(e))
             return redirect('management:bulk_attendance')
@@ -438,7 +512,6 @@ def bulk_leave_requests(request):
                         return redirect('management:bulk_leave_requests')
                 
             messages.success(request, 'Leave requests created successfully')
-            return redirect('management:success')
         except Exception as e:
             messages.error(request, str(e))
             return redirect('management:bulk_leave_requests')

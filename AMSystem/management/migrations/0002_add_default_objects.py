@@ -56,7 +56,7 @@ def create_default_objects(apps, schema_editor):
             last_name='Admin',
             birthdate=datetime.strptime('2000-01-01', '%Y-%m-%d').date(),
             contact_number='0',
-            email='AMS-0000',
+            email='admin@ams.com',
             is_staff=True,
             is_superuser=True,
             department=development_team,
