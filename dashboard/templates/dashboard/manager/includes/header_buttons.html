@@ -1,0 +1,130 @@
+{% load static %}
+
+<div class="flex items-center space-x-4">
+    <!-- Theme Toggle -->
+    <button id="themeToggle" class="relative p-2 text-gray-700 dark:text-gray-200 hover:bg-coral hover:text-white dark:hover:bg-coral dark:hover:text-white rounded-lg transition-all duration-200">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path class="sun-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            <path class="hidden moon-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        </svg>
+    </button>
+
+    <!-- Notifications -->
+    <div class="relative">
+        <button id="notificationsDropdownButton" class="relative p-2 text-gray-700 dark:text-gray-200 hover:bg-coral hover:text-white dark:hover:bg-coral dark:hover:text-white rounded-lg transition-all duration-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span class="inline-flex absolute top-0 right-0 justify-center items-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-500 rounded-full transform translate-x-1/2 -translate-y-1/2">5</span>
+        </button>
+        <!-- Notifications Dropdown -->
+        <div id="notificationsDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <div class="p-4">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Notifications</h3>
+                <div class="space-y-4">
+                    <!-- Notification items -->
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">
+                        <p class="text-sm text-gray-700 dark:text-gray-200">New leave request from John Doe</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">1 hour ago</p>
+                    </a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">
+                        <p class="text-sm text-gray-700 dark:text-gray-200">Employee attendance report ready</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">3 hours ago</p>
+                    </a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">
+                        <p class="text-sm text-gray-700 dark:text-gray-200">System maintenance scheduled</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">1 day ago</p>
+                    </a>
+                </div>
+                <a href="#" class="block py-2 text-sm text-center text-blue-600 border-t hover:text-blue-800">View all notifications</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Dropdown -->
+    <div class="relative">
+        <button id="profileDropdownButton" class="flex items-center p-2 text-gray-700 dark:text-gray-200 hover:bg-coral hover:text-white dark:hover:bg-coral dark:hover:text-white rounded-lg transition-all duration-200">
+            <img src="{% static 'images/default-avatar.png' %}" alt="Profile" class="w-8 h-8 rounded-full">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ request.user.get_full_name }}</span>
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+        </button>
+        <!-- Profile Dropdown Menu -->
+        <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <a href="{% url 'dashboard:manager_profile' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-coral hover:text-white dark:hover:bg-coral dark:hover:text-white rounded-lg transition-all duration-200">
+                <div class="flex items-center">
+                    <svg class="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    My Profile
+                </div>
+            </a>
+            <div class="border-t border-gray-100"></div>
+            <form method="post" action="{% url 'dashboard:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="block px-4 py-2 w-full text-sm text-left text-red-600 hover:bg-gray-100">
+                    <div class="flex items-center">
+                        <svg class="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Logout
+                    </div>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+
+    // Check for saved theme preference or default to light
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+        document.querySelector('.moon-icon').classList.remove('hidden');
+        document.querySelector('.sun-icon').classList.add('hidden');
+    }
+
+    themeToggle.addEventListener('click', function() {
+        if (html.classList.contains('dark')) {
+            html.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+            document.querySelector('.moon-icon').classList.add('hidden');
+            document.querySelector('.sun-icon').classList.remove('hidden');
+        } else {
+            html.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            document.querySelector('.moon-icon').classList.remove('hidden');
+            document.querySelector('.sun-icon').classList.add('hidden');
+        }
+    });
+
+    // Notifications Dropdown
+    const notificationButton = document.getElementById('notificationsDropdownButton');
+    const notificationDropdown = document.getElementById('notificationsDropdown');
+
+    notificationButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        notificationDropdown.classList.toggle('hidden');
+        profileDropdown.classList.add('hidden');
+    });
+
+    // Profile Dropdown
+    const profileButton = document.getElementById('profileDropdownButton');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    profileButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('hidden');
+        notificationDropdown.classList.add('hidden');
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function() {
+        notificationDropdown.classList.add('hidden');
+        profileDropdown.classList.add('hidden');
+    });
+</script>

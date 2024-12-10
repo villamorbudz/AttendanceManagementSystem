@@ -1,0 +1,156 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Employee Dashboard{% endblock %}
+
+{% block content %}
+<div class="flex h-screen bg-gray-100">
+    {% include 'dashboard/employee/includes/sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="overflow-y-auto flex-1">
+        <!-- Header -->
+        <div class="bg-white shadow-sm">
+            <div class="flex justify-between items-center px-6 py-3">
+                <h1 class="text-2xl font-semibold">Dashboard</h1>
+                <div class="flex items-center">
+                    {% include 'dashboard/employee/includes/header_buttons.html' %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="p-6">
+            <!-- Time Tracking Section
+            <div class="mb-6 bg-white rounded-lg shadow">
+                <div class="p-6">
+                    <h2 class="mb-4 text-lg font-semibold">Time Tracking</h2>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-600">Current Time</p>
+                            <p class="text-2xl font-bold" id="current-time">--:--:--</p>
+                        </div>
+                        <div class="space-x-4">
+                            <button id="timeInBtn" class="px-6 py-2 text-white bg-green-500 rounded-md hover:bg-green-600">
+                                Time In
+                            </button>
+                            <button id="timeOutBtn" class="px-6 py-2 text-white bg-red-500 rounded-md hover:bg-red-600">
+                                Time Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3">
+                <!-- Attendance Rate -->
+                <div class="p-6 bg-white rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 text-blue-500 bg-blue-100 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h2 class="text-gray-600">Attendance Rate</h2>
+                            <p class="text-2xl font-semibold">{{ attendance_rate }}%</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leave Balance -->
+                <div class="p-6 bg-white rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 text-green-500 bg-green-100 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h2 class="text-gray-600">Leave Balance</h2>
+                            <p class="text-2xl font-semibold">{{ leave_balance }} days</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Requests -->
+                <div class="p-6 bg-white rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 text-yellow-500 bg-yellow-100 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h2 class="text-gray-600">Pending Requests</h2>
+                            <p class="text-2xl font-semibold">{{ pending_requests }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b">
+                    <h3 class="text-lg font-semibold">Recent Activity</h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        {% for activity in recent_activities %}
+                        <div class="flex justify-between items-center py-3 border-b last:border-0">
+                            <div class="flex items-center">
+                                <div class="mr-4">
+                                    <span class="px-2 py-1 text-xs rounded-full 
+                                        {% if activity.type == 'attendance' %}bg-blue-100 text-blue-800
+                                        {% elif activity.type == 'leave' %}bg-purple-100 text-purple-800
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {{ activity.type|title }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <p class="font-medium">{{ activity.description }}</p>
+                                    <p class="text-sm text-gray-500">{{ activity.timestamp }}</p>
+                                </div>
+                            </div>
+                            <div class="text-sm">
+                                <span class="px-2 py-1 rounded-full 
+                                    {% if activity.status == 'approved' %}bg-green-100 text-green-800
+                                    {% elif activity.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                    {% elif activity.status == 'rejected' %}bg-red-100 text-red-800
+                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {{ activity.status|title }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Update current time
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('current-time').textContent = now.toLocaleTimeString();
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Time In/Out functionality
+    document.getElementById('timeInBtn').addEventListener('click', function() {
+        // Add your time in logic here
+        alert('Time in recorded');
+    });
+
+    document.getElementById('timeOutBtn').addEventListener('click', function() {
+        // Add your time out logic here
+        alert('Time out recorded');
+    });
+</script>
+{% endblock %}

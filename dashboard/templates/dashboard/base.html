@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AMS System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'coral': '#EE6C4D',      // Icon color
+                        'navy': '#293241',       // Text color
+                        'blue': '#3D5A80',       // Chart color 1
+                        'lightblue': '#98C1D9',  // Chart color 3
+                        'ice': '#E0FBFC',        // Chart color 4
+                        
+                        // Theme colors
+                        primary: '#EE6C4D',
+                        secondary: '#3D5A80',
+                        text: '#293241',
+                        background: '#FFFFFF',
+                        
+                        // Dark theme colors
+                        'dark-primary': '#EE6C4D',
+                        'dark-secondary': '#3D5A80',
+                        'dark-text': '#E0FBFC',
+                        'dark-background': '#293241'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Light mode styles */
+        :root {
+            --background: theme('colors.black');
+            --text: theme('colors.white');
+        }
+
+        /* Dark mode styles */
+        .dark {
+            --background: theme('colors.black');
+            --text: theme('colors.white');
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+        }
+
+        /* Hover styles */
+        .hover\:bg-gray-100:hover {
+            background-color: rgba(243, 244, 246, 0.2);
+        }
+
+        .dark .dark\:hover\:bg-blue:hover {
+            background-color: rgba(61, 90, 128, 0.3);
+        }
+
+        /* Custom icon colors */
+        .icon-coral {
+            color: #EE6C4D;
+        }
+
+        .dark .dark\:icon-coral {
+            color: #EE6C4D;
+        }
+
+        /* Custom text colors */
+        .text-navy {
+            color: #293241;
+        }
+
+        .hover\:text-white:hover {
+            color: #FFFFFF;
+        }
+
+        .dark .dark\:hover\:text-white:hover {
+            color: #FFFFFF;
+        }
+
+        /* Chart colors */
+        .chart-color-1 { color: #3D5A80; }
+        .chart-color-2 { color: #EE6C4D; }
+        .chart-color-3 { color: #98C1D9; }
+        .chart-color-4 { color: #E0FBFC; }
+    </style>
+    {% block extra_css %}{% endblock %}
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="font-sans antialiased transition-colors duration-200 text-gray-800 dark:text-gray-100">
+    {% block content %}{% endblock %}
+    
+    <script>
+        // Theme handling will be managed by the header buttons
+        if (localStorage.getItem('theme') === 'dark' || 
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
