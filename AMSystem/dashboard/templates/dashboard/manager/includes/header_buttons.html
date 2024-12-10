@@ -2,16 +2,16 @@
 
 <div class="flex items-center space-x-6">
     <!-- Theme Toggle with animation -->
-    <button data-theme-toggle id="themeToggle" class="relative p-2 text-gray-700 rounded-lg transition-all duration-300 dark:text-gray-200 group hover:scale-110">
+    <button data-theme-toggle class="relative p-2 text-gray-700 rounded-lg transition-all duration-300 dark:text-gray-200 group hover:scale-110">
         <div class="absolute inset-0 rounded-lg opacity-0 transition-opacity duration-300 bg-coral group-hover:opacity-20"></div>
         <svg class="w-6 h-6 transition-transform duration-300 transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path class="sun-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            <path class="moon-icon hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            <path class="hidden moon-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
         </svg>
     </button>
 
-    <!-- Notifications with badge and animation -->
-    <div class="relative">
+    <!-- Notifications Dropdown -->
+    <div class="relative group">
         <button id="notificationsDropdownButton" class="relative p-2 text-gray-700 rounded-lg transition-all duration-300 dark:text-gray-200 hover:scale-110">
             <div class="absolute inset-0 rounded-lg opacity-0 transition-opacity duration-300 bg-coral group-hover:opacity-20"></div>
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,30 +19,26 @@
             </svg>
             <span class="absolute -top-1 -right-1 px-2 py-1 text-xs font-bold text-white rounded-full transition-transform duration-300 transform bg-coral group-hover:scale-110">5</span>
         </button>
-        <!-- Notifications Dropdown -->
-        <div id="notificationsDropdown" class="hidden absolute right-0 mt-3 w-80 bg-white rounded-lg shadow-lg transition-all duration-300 transform origin-top dark:bg-gray-800">
+        <!-- Notifications Dropdown Menu -->
+        <div id="notificationsDropdown" class="hidden absolute right-0 mt-3 w-80 bg-white rounded-lg shadow-lg transition-all duration-300 transform origin-top dark:bg-gray-600">
             <div class="p-4">
                 <h3 class="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-100">Notifications</h3>
                 <div class="space-y-4">
                     <div class="p-3 rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <p class="text-sm text-gray-700 dark:text-gray-200">New leave request from John Doe</p>
-                        <p class="mt-1 text-xs text-coral">1 hour ago</p>
+                        <p class="text-sm text-gray-700 dark:text-gray-200">New leave request pending approval</p>
+                        <p class="mt-1 text-xs text-coral">30 minutes ago</p>
                     </div>
                     <div class="p-3 rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <p class="text-sm text-gray-700 dark:text-gray-200">Employee attendance report ready</p>
-                        <p class="mt-1 text-xs text-coral">3 hours ago</p>
-                    </div>
-                    <div class="p-3 rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <p class="text-sm text-gray-700 dark:text-gray-200">System maintenance scheduled</p>
-                        <p class="mt-1 text-xs text-coral">1 day ago</p>
+                        <p class="text-sm text-gray-700 dark:text-gray-200">Monthly attendance report ready</p>
+                        <p class="mt-1 text-xs text-coral">2 hours ago</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Profile Dropdown with animations -->
-    <div class="relative">
+    <!-- Profile Dropdown -->
+    <div class="relative group">
         <button id="profileDropdownButton" class="flex items-center p-2 space-x-3 text-gray-700 rounded-lg transition-all duration-300 dark:text-gray-200 hover:scale-105">
             <div class="relative">
                 <img src="{% static 'images/default-avatar.png' %}" alt="Profile" class="w-8 h-8 rounded-full border-2 border-transparent transition-all duration-300 group-hover:border-coral">
@@ -54,7 +50,7 @@
             </svg>
         </button>
         <!-- Profile Dropdown Menu -->
-        <div id="profileDropdown" class="hidden absolute right-0 mt-3 w-48 bg-white rounded-lg shadow-lg transition-all duration-300 transform origin-top dark:bg-gray-800">
+        <div id="profileDropdown" class="hidden absolute right-0 mt-3 w-48 bg-white rounded-lg shadow-lg transition-all duration-300 transform origin-top dark:bg-gray-600">
             <div class="p-2 space-y-1">
                 <a href="{% url 'dashboard:manager_profile' %}" class="flex items-center px-4 py-2 text-sm text-gray-700 rounded-lg transition-all duration-200 dark:text-gray-200 hover:bg-coral hover:text-white group">
                     <svg class="mr-3 w-5 h-5 text-gray-400 transition-colors duration-200 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,11 +58,19 @@
                     </svg>
                     Profile
                 </a>
-                <a href="{% url 'dashboard:logout' %}" class="flex items-center px-4 py-2 text-sm text-gray-700 rounded-lg transition-all duration-200 dark:text-gray-200 hover:bg-coral hover:text-white group">
+                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 rounded-lg transition-all duration-200 dark:text-gray-200 hover:bg-coral hover:text-white group">
                     <svg class="mr-3 w-5 h-5 text-gray-400 transition-colors duration-200 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Settings
+                </a>
+                <hr class="my-1 border-gray-200 dark:border-gray-700">
+                <a href="{% url 'userauth:login' %}"" class="flex items-center px-4 py-2 text-sm text-red-600 rounded-lg transition-all duration-200 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 group">
+                    <svg class="mr-3 w-5 h-5 text-red-500 transition-colors duration-200 group-hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                     </svg>
-                    Sign out
+                    Logout
                 </a>
             </div>
         </div>
@@ -74,69 +78,38 @@
 </div>
 
 <script>
-// Theme Toggle
-const themeToggleButton = document.getElementById('themeToggle');
-const sunIcon = document.querySelector('.sun-icon');
-const moonIcon = document.querySelector('.moon-icon');
-
-// Check initial theme
-if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark');
-    sunIcon.classList.add('hidden');
-    moonIcon.classList.remove('hidden');
-} else {
-    document.documentElement.classList.remove('dark');
-    moonIcon.classList.add('hidden');
-    sunIcon.classList.remove('hidden');
-}
-
-themeToggleButton.addEventListener('click', function() {
-    document.documentElement.classList.toggle('dark');
-    sunIcon.classList.toggle('hidden');
-    moonIcon.classList.toggle('hidden');
-    
-    if (document.documentElement.classList.contains('dark')) {
-        localStorage.setItem('theme', 'dark');
-    } else {
-        localStorage.setItem('theme', 'light');
+    // Dropdown functionality
+    function toggleDropdown(dropdown) {
+        dropdown.classList.toggle('hidden');
+        if (!dropdown.classList.contains('hidden')) {
+            dropdown.classList.add('fade-in');
+        }
     }
-});
 
-// Dropdowns
-const notificationsButton = document.getElementById('notificationsDropdownButton');
-const notificationsDropdown = document.getElementById('notificationsDropdown');
-const profileButton = document.getElementById('profileDropdownButton');
-const profileDropdown = document.getElementById('profileDropdown');
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        const notificationsDropdown = document.getElementById('notificationsDropdown');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const notificationsButton = document.getElementById('notificationsDropdownButton');
+        const profileButton = document.getElementById('profileDropdownButton');
 
-let activeDropdown = null;
+        if (!notificationsButton.contains(event.target) && !notificationsDropdown.contains(event.target)) {
+            notificationsDropdown.classList.add('hidden');
+        }
 
-function toggleDropdown(dropdown) {
-    if (activeDropdown && activeDropdown !== dropdown) {
-        activeDropdown.classList.add('hidden');
-    }
-    dropdown.classList.toggle('hidden');
-    activeDropdown = dropdown.classList.contains('hidden') ? null : dropdown;
-}
+        if (!profileButton.contains(event.target) && !profileDropdown.contains(event.target)) {
+            profileDropdown.classList.add('hidden');
+        }
+    });
 
-notificationsButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleDropdown(notificationsDropdown);
-});
+    // Add click event listeners
+    document.getElementById('notificationsDropdownButton').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown(document.getElementById('notificationsDropdown'));
+    });
 
-profileButton.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleDropdown(profileDropdown);
-});
-
-// Close dropdowns when clicking outside
-document.addEventListener('click', () => {
-    if (activeDropdown) {
-        activeDropdown.classList.add('hidden');
-        activeDropdown = null;
-    }
-});
-
-// Prevent dropdown close when clicking inside
-notificationsDropdown.addEventListener('click', (e) => e.stopPropagation());
-profileDropdown.addEventListener('click', (e) => e.stopPropagation());
+    document.getElementById('profileDropdownButton').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleDropdown(document.getElementById('profileDropdown'));
+    });
 </script>

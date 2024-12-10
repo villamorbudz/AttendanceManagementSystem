@@ -4,79 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}AMS System{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'coral': '#EE6C4D',
-                        'coral-dark': '#D85C3D',
-                        'navy': '#293241',
-                        'blue': '#3D5A80',
-                        'lightblue': '#98C1D9',
-                        'ice': '#E0FBFC',
-                    }
-                }
-            }
-        }
-    </script>
+    <title>{% block title %}{% endblock %}</title>
+    {% load static tailwind_tags %}
+    {% tailwind_css %}
+    <link href="{% static 'styles.css' %}" rel="stylesheet">
     <style>
-        /* Light mode styles */
-        :root {
-            --background: theme('colors.black');
-            --text: theme('colors.white');
+        .table-row:hover {
+            background-color: rgb(243 244 246);
         }
-
-        /* Dark mode styles */
-        .dark {
-            --background: theme('colors.black');
-            --text: theme('colors.white');
+        .dark .table-row:hover {
+            background-color: rgb(31 41 55);
         }
-
-        body {
-            background-color: var(--background);
-            color: var(--text);
-        }
-
-        /* Hover styles */
-        .hover\:bg-gray-100:hover {
-            background-color: rgba(243, 244, 246, 0.2);
-        }
-
-        .dark .dark\:hover\:bg-blue:hover {
-            background-color: rgba(61, 90, 128, 0.3);
-        }
-
-        /* Custom icon colors */
-        .icon-coral {
-            color: #EE6C4D;
-        }
-
-        .dark .dark\:icon-coral {
-            color: #EE6C4D;
-        }
-
-        /* Custom text colors */
-        .text-navy {
-            color: #293241;
-        }
-
-        .hover\:text-white:hover {
-            color: #FFFFFF;
-        }
-
-        .dark .dark\:hover\:text-white:hover {
-            color: #FFFFFF;
-        }
-
-        /* Chart colors */
-        .chart-color-1 { color: #3D5A80; }
-        .chart-color-2 { color: #EE6C4D; }
-        .chart-color-3 { color: #98C1D9; }
-        .chart-color-4 { color: #E0FBFC; }
     </style>
     {% block extra_css %}{% endblock %}
     {% block extra_head %}{% endblock %}
@@ -115,6 +53,8 @@
         })
     </script>
 
+    <!-- Scripts -->
+    <script src="{% static 'js/theme.js' %}"></script>
     {% block extra_js %}{% endblock %}
     {% block extra_scripts %}{% endblock %}
 </body>

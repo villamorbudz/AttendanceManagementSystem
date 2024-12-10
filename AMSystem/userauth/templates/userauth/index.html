@@ -36,8 +36,8 @@
 
   <body class="bg-gray-50" id="theme">
     <!-- NavBar -->
-    <nav class="p-4 transition bg-white shadow-md dark:bg-gray-800">
-      <div class="container flex items-center justify-between mx-auto">
+    <nav class="p-4 bg-white shadow-md transition dark:bg-gray-800">
+      <div class="container flex justify-between items-center mx-auto">
         <a href="#" class="flex items-center">
           <img src="{% static 'images/AMSystemlogo-dark.png' %}" alt="Logo" class="h-10 dark:hidden" />
           <img src="{% static 'images/AMSystemlogo-light.png' %}" alt="Logo" class="hidden h-10 dark:block" />
@@ -65,24 +65,24 @@
       </div>
     </nav>
     <!-- Hero Section -->
-    <section class="relative flex items-center justify-center min-h-screen overflow-hidden">
+    <section class="flex overflow-hidden relative justify-center items-center min-h-screen">
       <!-- Background Animations -->
-      <div class="absolute top-0 z-0 rounded-full bg-primary-50 -left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-      <div class="absolute top-0 z-0 bg-blue-300 rounded-full -right-10 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+      <div class="absolute top-0 -left-20 z-0 w-72 h-72 rounded-full opacity-70 mix-blend-multiply filter blur-xl bg-primary-50 animate-blob"></div>
+      <div class="absolute top-0 -right-10 z-0 w-72 h-72 bg-blue-300 rounded-full opacity-70 mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
       <div class="absolute bg-[#3D5A80] rounded-full -bottom-8 left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000 z-0"></div>
 
       <!-- New Blobs -->
       <div class="absolute z-0 bg-[#d4e7ff] rounded-full bottom-10 right-20 w-80 h-80 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-3000"></div>
 
-      <div class="container flex flex-col-reverse items-center px-6 mx-auto lg:flex-row">
-        <img src="{% static 'images/people.png' %}" alt="People" class="z-10 w-full rounded-lg lg:w-1/2" />
+      <div class="container flex flex-col-reverse items-center px-6 mx-auto space-y-6 lg:flex-row lg:space-y-0">
+        <img src="{% static 'images/people.png' %}" alt="People" class="z-10 mx-auto w-full max-w-md rounded-lg lg:w-1/2" />
 
         <div class="z-10 text-center lg:text-left lg:ml-10">
-          <h1 class="text-5xl font-bold text-gray-800 dark:text-gray-200">Attendance Management <br />System</h1>
+          <h1 class="text-4xl font-bold text-gray-800 dark:text-gray-200 md:text-5xl">Attendance Management <br />System</h1>
           <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Welcome to the Attendance Management System (AMS).</p>
           <div class="mt-6">
             <a href="/login">
-              <button class="btn btn-outline btn-warning btn-wide">Login</button>
+              <button class="w-full btn btn-outline btn-warning md:w-auto">Login</button>
             </a>
           </div>
         </div>
@@ -91,13 +91,13 @@
 
     <!-- Footer -->
     <footer class="items-center p-4 bg-white footer text-neutral-content">
-      <aside class="items-center grid-flow-col">
+      <aside class="grid-flow-col items-center">
         <svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" class="fill-current">
           <path
             d="M22.672 15.226l-2.432.811.841 2.515c.33 1.019-.209 2.127-1.23 2.456-1.15.325-2.148-.321-2.463-1.226l-.84-2.518-5.013 1.677.84 2.517c.391 1.203-.434 2.542-1.831 2.542-.88 0-1.601-.564-1.86-1.314l-.842-2.516-2.431.809c-1.135.328-2.145-.317-2.463-1.229-.329-1.018.211-2.127 1.231-2.456l2.432-.809-1.621-4.823-2.432.808c-1.355.384-2.558-.59-2.558-1.839 0-.817.509-1.582 1.327-1.846l2.433-.809-.842-2.515c-.33-1.02.211-2.129 1.232-2.458 1.02-.329 2.13.209 2.461 1.229l.842 2.515 5.011-1.677-.839-2.517c-.403-1.238.484-2.553 1.843-2.553.819 0 1.585.509 1.85 1.326l.841 2.517 2.431-.81c1.02-.33 2.131.211 2.461 1.229.332 1.018-.21 2.126-1.23 2.456l-2.433.809 1.622 4.823 2.433-.809c1.242-.401 2.557.484 2.557 1.838 0 .819-.51 1.583-1.328 1.847m-8.992-6.428l-5.01 1.675 1.619 4.828 5.011-1.674-1.62-4.829z"
           ></path>
         </svg>
-        <p>Copyright © {new Date().getFullYear()} - All right reserved</p>
+        <p>Copyright &copy; <span id="currentYear"></span> - All right reserved</p>
       </aside>
       <nav class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
         <a>
@@ -141,6 +141,9 @@
           localStorage.removeItem("theme");
         }
       });
+
+      // Set current year in footer
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
     </script>
   </body>
 </html>

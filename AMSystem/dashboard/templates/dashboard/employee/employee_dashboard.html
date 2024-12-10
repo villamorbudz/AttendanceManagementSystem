@@ -3,16 +3,59 @@
 
 {% block title %}Employee Dashboard{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 500px;
+        position: relative;
+    }
+    .close-modal {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        font-size: 28px;
+        cursor: pointer;
+    }
+    .stats-card {
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .stats-card:hover {
+        transform: translateY(-2px);
+    }
+    .dark .modal-content {
+        background-color: #1a202c;
+        color: white;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="flex h-screen bg-gray-100">
+<div class="flex h-screen transition-colors duration-200 dark:border-x-gray-800 dark:bg-gray-900">
     {% include 'dashboard/employee/includes/sidebar.html' %}
 
     <!-- Main Content -->
     <main class="overflow-y-auto flex-1">
         <!-- Header -->
-        <div class="bg-white shadow-sm">
+        <div class="bg-white shadow-sm dark:bg-gray-800">
             <div class="flex justify-between items-center px-6 py-3">
-                <h1 class="text-2xl font-semibold">Dashboard</h1>
+                <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard</h1>
                 <div class="flex items-center">
                     {% include 'dashboard/employee/includes/header_buttons.html' %}
                 </div>
@@ -20,110 +63,62 @@
         </div>
 
         <!-- Dashboard Content -->
-        <div class="p-6">
-            <!-- Time Tracking Section
-            <div class="mb-6 bg-white rounded-lg shadow">
-                <div class="p-6">
-                    <h2 class="mb-4 text-lg font-semibold">Time Tracking</h2>
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-gray-600">Current Time</p>
-                            <p class="text-2xl font-bold" id="current-time">--:--:--</p>
-                        </div>
-                        <div class="space-x-4">
-                            <button id="timeInBtn" class="px-6 py-2 text-white bg-green-500 rounded-md hover:bg-green-600">
-                                Time In
-                            </button>
-                            <button id="timeOutBtn" class="px-6 py-2 text-white bg-red-500 rounded-md hover:bg-red-600">
-                                Time Out
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
+        <div class="p-6 space-y-6 animate-fade-in">
             <!-- Stats Overview -->
-            <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-3">
-                <!-- Attendance Rate -->
-                <div class="p-6 bg-white rounded-lg shadow">
-                    <div class="flex items-center">
-                        <div class="p-3 text-blue-500 bg-blue-100 rounded-full">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <h2 class="text-gray-600">Attendance Rate</h2>
-                            <p class="text-2xl font-semibold">{{ attendance_rate }}%</p>
+            <div class="w-[1077px] h-[72.16px] relative">
+                <!-- Pending Leave Requests Card -->
+                <div class="w-[344.57px] h-[72.16px] left-[732.43px] top-0 absolute stats-card" onclick="showPhoneInfo('pending')">
+                    <div class="w-[344.57px] h-[72.16px] left-0 top-0 absolute bg-white dark:bg-gray-800 rounded-[15px] shadow"></div>
+                    <div class="w-[143.17px] h-[39.47px] left-[19.39px] top-[16px] absolute">
+                        <div class="w-[142.97px] h-4 left-[0.21px] top-0 absolute text-[#293241] dark:text-gray-200 text-xs font-bold font-['Inter'] leading-[18px]">Pending Leave request</div>
+                        <div class="w-[78.41px] h-[22.55px] left-0 top-[16.92px] absolute text-[#2d3748] dark:text-white text-lg font-bold font-['Inter'] leading-relaxed">{{ pending_leave_count }}</div>
+                    </div>
+                    <div class="w-[40.59px] h-[40.59px] left-[288.19px] top-[15.79px] absolute">
+                        <div class="w-[40.59px] h-[40.59px] left-0 top-0 absolute bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                            <i class="text-xl text-white fas fa-clock"></i>
                         </div>
                     </div>
                 </div>
 
-                <!-- Leave Balance -->
-                <div class="p-6 bg-white rounded-lg shadow">
-                    <div class="flex items-center">
-                        <div class="p-3 text-green-500 bg-green-100 rounded-full">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
+                <!-- Leave Stats Card -->
+                <div class="w-[344.57px] h-[72.16px] left-[366.22px] top-0 absolute stats-card" onclick="showPhoneInfo('leave')">
+                    <div class="w-[344.57px] h-[72.16px] left-0 top-0 absolute bg-white dark:bg-gray-800 rounded-[15px] shadow"></div>
+                    <div class="w-[196.28px] h-[42.46px] left-[19.30px] top-[15.79px] absolute">
+                        <div class="w-[196.19px] h-[16.24px] left-[0.09px] top-[-0px] absolute">
+                            <span class="text-[#293241] dark:text-gray-200 text-[15px] font-bold font-['Inter'] leading-snug">Leave</span>
                         </div>
-                        <div class="ml-4">
-                            <h2 class="text-gray-600">Leave Balance</h2>
-                            <p class="text-2xl font-semibold">{{ leave_balance }} days</p>
+                        <div class="w-[87.49px] h-[22.55px] left-[-0px] top-[19.91px] absolute text-[#2d3748] dark:text-white text-lg font-bold font-['Inter'] leading-relaxed">{{ total_leave_count }}</div>
+                        <div class="w-[69.03px] h-[17.59px] left-[28.56px] top-[22.97px] absolute text-[#3d5a80] text-sm font-bold font-['Inter'] leading-tight">+5%</div>
+                    </div>
+                    <div class="w-[40.59px] h-[40.59px] left-[288.19px] top-[15.79px] absolute">
+                        <div class="w-[40.59px] h-[40.59px] left-0 top-0 absolute bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                            <i class="text-xl text-white fas fa-calendar-check"></i>
                         </div>
                     </div>
                 </div>
 
-                <!-- Pending Requests -->
-                <div class="p-6 bg-white rounded-lg shadow">
-                    <div class="flex items-center">
-                        <div class="p-3 text-yellow-500 bg-yellow-100 rounded-full">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <div class="ml-4">
-                            <h2 class="text-gray-600">Pending Requests</h2>
-                            <p class="text-2xl font-semibold">{{ pending_requests }}</p>
+                <!-- Present Stats Card -->
+                <div class="w-[344.57px] h-[72.16px] left-0 top-0 absolute stats-card" onclick="showPhoneInfo('present')">
+                    <div class="w-[344.57px] h-[72.16px] left-0 top-0 absolute bg-white dark:bg-gray-800 rounded-[15px] shadow"></div>
+                    <div class="w-[174.99px] h-[54.12px] left-[19.84px] top-[15.33px] absolute">
+                        <div class="w-[174.99px] h-[20.75px] left-0 top-0 absolute text-[#293241] dark:text-gray-200 text-[15px] font-bold font-['Inter'] leading-snug">Present</div>
+                        <div class="w-[44.20px] h-[28.86px] left-[0.90px] top-[25.26px] absolute text-[#2d3748] dark:text-white text-lg font-bold font-['Inter'] leading-relaxed">{{ present_count }}</div>
+                    </div>
+                    <div class="w-[40.59px] h-[40.59px] left-[281.49px] top-[15.30px] absolute">
+                        <div class="w-[40.59px] h-[40.59px] left-0 top-0 absolute bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                            <i class="text-xl text-white fas fa-user-check"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Activity -->
-            <div class="bg-white rounded-lg shadow">
-                <div class="px-6 py-4 border-b">
-                    <h3 class="text-lg font-semibold">Recent Activity</h3>
-                </div>
-                <div class="p-6">
-                    <div class="space-y-4">
-                        {% for activity in recent_activities %}
-                        <div class="flex justify-between items-center py-3 border-b last:border-0">
-                            <div class="flex items-center">
-                                <div class="mr-4">
-                                    <span class="px-2 py-1 text-xs rounded-full 
-                                        {% if activity.type == 'attendance' %}bg-blue-100 text-blue-800
-                                        {% elif activity.type == 'leave' %}bg-purple-100 text-purple-800
-                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
-                                        {{ activity.type|title }}
-                                    </span>
-                                </div>
-                                <div>
-                                    <p class="font-medium">{{ activity.description }}</p>
-                                    <p class="text-sm text-gray-500">{{ activity.timestamp }}</p>
-                                </div>
-                            </div>
-                            <div class="text-sm">
-                                <span class="px-2 py-1 rounded-full 
-                                    {% if activity.status == 'approved' %}bg-green-100 text-green-800
-                                    {% elif activity.status == 'pending' %}bg-yellow-100 text-yellow-800
-                                    {% elif activity.status == 'rejected' %}bg-red-100 text-red-800
-                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
-                                    {{ activity.status|title }}
-                                </span>
-                            </div>
-                        </div>
-                        {% endfor %}
+            <!-- Phone Info Modal -->
+            <div id="phoneModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="closeModal()">&times;</span>
+                    <h2 class="text-xl font-bold mb-4" id="modalTitle">Phone Information</h2>
+                    <div id="modalContent" class="space-y-4">
+                        <!-- Content will be dynamically inserted here -->
                     </div>
                 </div>
             </div>
@@ -134,23 +129,68 @@
 
 {% block extra_js %}
 <script>
-    // Update current time
+    function showPhoneInfo(type) {
+        const modal = document.getElementById('phoneModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        
+        // Set title and content based on type
+        switch(type) {
+            case 'pending':
+                modalTitle.textContent = 'Pending Leave Requests Contact Info';
+                modalContent.innerHTML = `
+                    <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <p class="mb-2"><strong>HR Department:</strong></p>
+                        <p><i class="fas fa-phone mr-2"></i>+1234567890</p>
+                        <p><i class="fas fa-envelope mr-2"></i>hr@company.com</p>
+                    </div>
+                `;
+                break;
+            case 'leave':
+                modalTitle.textContent = 'Leave Management Contact Info';
+                modalContent.innerHTML = `
+                    <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <p class="mb-2"><strong>Leave Manager:</strong></p>
+                        <p><i class="fas fa-phone mr-2"></i>+1234567891</p>
+                        <p><i class="fas fa-envelope mr-2"></i>leave@company.com</p>
+                    </div>
+                `;
+                break;
+            case 'present':
+                modalTitle.textContent = 'Attendance Support Contact';
+                modalContent.innerHTML = `
+                    <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <p class="mb-2"><strong>Attendance Support:</strong></p>
+                        <p><i class="fas fa-phone mr-2"></i>+1234567892</p>
+                        <p><i class="fas fa-envelope mr-2"></i>attendance@company.com</p>
+                    </div>
+                `;
+                break;
+        }
+        
+        modal.style.display = 'block';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('phoneModal');
+        modal.style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('phoneModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
     function updateTime() {
         const now = new Date();
-        document.getElementById('current-time').textContent = now.toLocaleTimeString();
+        const timeString = now.toLocaleTimeString();
+        document.getElementById('current-time').textContent = timeString;
     }
+
     setInterval(updateTime, 1000);
     updateTime();
-
-    // Time In/Out functionality
-    document.getElementById('timeInBtn').addEventListener('click', function() {
-        // Add your time in logic here
-        alert('Time in recorded');
-    });
-
-    document.getElementById('timeOutBtn').addEventListener('click', function() {
-        // Add your time out logic here
-        alert('Time out recorded');
-    });
 </script>
 {% endblock %}

@@ -3,137 +3,230 @@
 
 {% block title %}Manage Departments{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Modal Animation Classes */
+    .modal-enter {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    .modal-enter-active {
+        opacity: 1;
+        transform: scale(1);
+        transition: opacity 300ms ease-out, transform 300ms ease-out;
+    }
+    .modal-exit {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .modal-exit-active {
+        opacity: 0;
+        transform: scale(0.95);
+        transition: opacity 200ms ease-in, transform 200ms ease-in;
+    }
+    
+    /* Form Feedback Classes */
+    .input-success {
+        border-color: #10B981;
+    }
+    .input-error {
+        border-color: #EF4444;
+    }
+    .feedback-message {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    .success-message {
+        color: #10B981;
+    }
+    .error-message {
+        color: #EF4444;
+    }
+    
+    /* Loading Animation */
+    .loading-spinner {
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Hover Effects */
+    .hover-scale {
+        transition: transform 0.2s ease;
+    }
+    .hover-scale:hover {
+        transform: scale(1.02);
+    }
+    
+    /* Responsive Grid */
+    .departments-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="flex h-screen bg-gray-100">
-    <!-- Include the same sidebar as manager_dashboard.html -->
+<div class="flex overflow-hidden h-screen">
     {% include 'dashboard/manager/includes/sidebar.html' %}
 
     <!-- Main Content -->
-    <main class="flex-1 overflow-y-auto">
-        <!-- Top Bar -->
-        <div class="bg-white shadow-sm">
-            <div class="flex items-center justify-between px-6 py-3">
-                <h1 class="text-2xl font-semibold">Department Management</h1>
-                <div class="flex items-center">
-                    {% include 'dashboard/manager/includes/header_buttons.html' %}
-                </div>
+    <main class="overflow-y-auto flex-1 bg-gray-100 dark:bg-gray-900">
+        <!-- Header -->
+        <div class="bg-white shadow-sm dark:bg-gray-800">
+            <div class="flex justify-between items-center px-6 py-4">
+                <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Department Management</h1>
+                {% include 'dashboard/manager/includes/header_buttons.html' %}
             </div>
         </div>
 
         <!-- Department Management Content -->
         <div class="p-6">
             <!-- Actions Bar -->
-            <div class="mb-6 flex justify-between items-center">
-                <button onclick="openModal('addDepartmentModal')" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                    Add New Department
-                </button>
+            <div class="flex justify-between items-center mb-6">
                 <div class="flex space-x-4">
+                    <button id="addDepartmentBtn" class="flex items-center px-4 py-2 text-white rounded-lg transition-colors duration-200 bg-coral hover:bg-coral/90">
+                        <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Add Department
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
                     <div class="relative">
-                        <input type="text" placeholder="Search departments..." class="w-64 pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <input type="text" placeholder="Search departments..." class="py-2 pr-4 pl-10 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-coral focus:border-coral dark:bg-gray-700 dark:text-white">
+                        <svg class="absolute left-3 top-1/2 w-5 h-5 text-gray-400 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                     </div>
                 </div>
             </div>
 
-            <!-- Departments Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for department in departments %}
-                <div class="bg-white rounded-lg shadow">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900">{{ department.name }}</h3>
-                                <p class="text-sm text-gray-500 mt-1">{{ department.employees_count }} Employees</p>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button onclick="openModal('editDepartmentModal-{{ department.id }}')" class="text-blue-600 hover:text-blue-800">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                </button>
-                                <button onclick="openModal('deleteDepartmentModal-{{ department.id }}')" class="text-red-600 hover:text-red-800">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div class="flex items-center justify-between text-sm">
-                                <span class="text-gray-600">Manager:</span>
-                                <span class="font-medium">{{ department.manager_name }}</span>
-                            </div>
-                            <div class="flex items-center justify-between text-sm mt-2">
-                                <span class="text-gray-600">Created:</span>
-                                <span>{{ department.created_at|date:"M d, Y" }}</span>
-                            </div>
-                        </div>
-                        <div class="mt-4 pt-4 border-t">
-                            <h4 class="text-sm font-medium text-gray-900 mb-2">Associated Roles</h4>
-                            <div class="flex flex-wrap gap-2">
-                                {% for role in department.roles %}
-                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                                    {{ role.name }}
-                                </span>
-                                {% endfor %}
-                            </div>
-                        </div>
+            <!-- Departments Table -->
+            <div class="bg-white rounded-lg shadow dark:bg-gray-800">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">Department Name</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">Head of Department</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">Total Employees</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">Status</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase dark:text-gray-300">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                            {% for department in departments %}
+                            <tr class="transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.name }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.manager_name }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.employees_count }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full dark:bg-green-900 dark:text-green-100">Active</span>
+                                </td>
+                                <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                                    <button class="mr-3 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">Edit</button>
+                                    <button class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Delete</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-between items-center mt-6">
+                <div class="flex flex-1 justify-between sm:hidden">
+                    <button class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 dark:border-gray-600 dark:text-gray-200 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">Previous</button>
+                    <button class="inline-flex relative items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 dark:border-gray-600 dark:text-gray-200 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">Next</button>
+                </div>
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700 dark:text-gray-300">
+                            Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">20</span> results
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="inline-flex relative z-0 -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                            <button class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-l-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <span class="sr-only">Previous</span>
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <button class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">1</button>
+                            <button class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-white border border-gray-300 dark:border-gray-600 bg-coral">2</button>
+                            <button class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">3</button>
+                            <button class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-r-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <span class="sr-only">Next</span>
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </nav>
                     </div>
                 </div>
-                {% endfor %}
             </div>
         </div>
     </main>
 </div>
 
 <!-- Add Department Modal -->
-<div class="fixed z-10 inset-0 overflow-y-auto hidden" id="addDepartmentModal">
+<div id="addDepartmentModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
+        <!-- Background overlay with animation -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-300 ease-out" aria-hidden="true"></div>
+
+        <!-- This element is to trick the browser into centering the modal contents. -->
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <form id="addDepartmentForm">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Add New Department</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Department Name</label>
-                            <input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Department Manager</label>
-                            <select name="manager" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                <option value="">Select a manager</option>
-                                {% for manager in managers %}
-                                <option value="{{ manager.id }}">{{ manager.get_full_name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Associated Roles</label>
-                            <div class="mt-2 space-y-2">
-                                {% for role in roles %}
-                                <div class="flex items-center">
-                                    <input type="checkbox" name="roles" value="{{ role.id }}" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                    <label class="ml-2 text-sm text-gray-700">{{ role.name }}</label>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
+
+        <!-- Modal panel with animation -->
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800 hover-scale">
+            <form id="addDepartmentForm" class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white" id="modal-title">Add New Department</h3>
+                    <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <span class="sr-only">Close</span>
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="departmentName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department Name</label>
+                        <input type="text" id="departmentName" name="name" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-coral focus:ring-coral dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm transition-all duration-200"
+                               required
+                               minlength="2"
+                               onkeyup="validateInput(this)">
+                        <div class="feedback-message hidden"></div>
+                    </div>
+                    <div>
+                        <label for="departmentDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+                        <textarea id="departmentDescription" name="description" rows="3" 
+                                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-coral focus:ring-coral dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm transition-all duration-200"
+                                  required
+                                  minlength="10"
+                                  onkeyup="validateInput(this)"></textarea>
+                        <div class="feedback-message hidden"></div>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+
+                <div class="mt-6 flex flex-col sm:flex-row-reverse sm:gap-2">
+                    <button type="submit" id="submitBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-coral text-base font-medium text-white hover:bg-coral/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral sm:w-auto sm:text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg id="loadingSpinner" class="w-5 h-5 mr-2 loading-spinner hidden" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
                         Add Department
                     </button>
-                    <button type="button" onclick="closeModal('addDepartmentModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button type="button" onclick="closeModal()" class="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral sm:w-auto sm:text-sm dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-all duration-200">
                         Cancel
                     </button>
                 </div>
@@ -141,23 +234,128 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    function openModal(modalId) {
-        document.getElementById(modalId).classList.remove('hidden');
+    const addDepartmentModal = document.getElementById('addDepartmentModal');
+    const addDepartmentBtn = document.getElementById('addDepartmentBtn');
+    const addDepartmentForm = document.getElementById('addDepartmentForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    function openModal() {
+        addDepartmentModal.classList.remove('hidden');
+        addDepartmentModal.classList.add('modal-enter');
+        document.body.style.overflow = 'hidden';
+        
+        // Trigger reflow
+        void addDepartmentModal.offsetWidth;
+        
+        addDepartmentModal.classList.add('modal-enter-active');
+        addDepartmentModal.classList.remove('modal-enter');
     }
 
-    function closeModal(modalId) {
-        document.getElementById(modalId).classList.add('hidden');
+    function closeModal() {
+        addDepartmentModal.classList.add('modal-exit');
+        
+        // Trigger reflow
+        void addDepartmentModal.offsetWidth;
+        
+        addDepartmentModal.classList.add('modal-exit-active');
+        
+        setTimeout(() => {
+            addDepartmentModal.classList.add('hidden');
+            addDepartmentModal.classList.remove('modal-exit', 'modal-exit-active');
+            document.body.style.overflow = 'auto';
+        }, 200);
     }
 
-    // Add event listeners for the department form
-    document.getElementById('addDepartmentForm').addEventListener('submit', function(e) {
+    function validateInput(input) {
+        const feedbackDiv = input.nextElementSibling;
+        const isValid = input.checkValidity();
+        
+        // Remove existing classes
+        input.classList.remove('input-success', 'input-error');
+        feedbackDiv.classList.remove('success-message', 'error-message');
+        
+        if (input.value.length > 0) {
+            feedbackDiv.classList.remove('hidden');
+            if (isValid) {
+                input.classList.add('input-success');
+                feedbackDiv.classList.add('success-message');
+                feedbackDiv.textContent = 'Looks good!';
+            } else {
+                input.classList.add('input-error');
+                feedbackDiv.classList.add('error-message');
+                feedbackDiv.textContent = input.validationMessage;
+            }
+        } else {
+            feedbackDiv.classList.add('hidden');
+        }
+        
+        // Check if form is valid
+        const form = document.getElementById('addDepartmentForm');
+        submitBtn.disabled = !form.checkValidity();
+    }
+
+    addDepartmentBtn.addEventListener('click', openModal);
+
+    // Close modal when clicking outside
+    addDepartmentModal.addEventListener('click', (e) => {
+        if (e.target === addDepartmentModal) {
+            closeModal();
+        }
+    });
+
+    // Handle form submission
+    addDepartmentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        // Add your form submission logic here
-        closeModal('addDepartmentModal');
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        loadingSpinner.classList.remove('hidden');
+        
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Show success message
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 translate-y-full';
+            toast.textContent = 'Department added successfully!';
+            document.body.appendChild(toast);
+            
+            // Animate toast in
+            setTimeout(() => {
+                toast.style.transform = 'translateY(0)';
+            }, 100);
+            
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateY(full)';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 500);
+            }, 3000);
+            
+            closeModal();
+            addDepartmentForm.reset();
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            // Reset loading state
+            submitBtn.disabled = false;
+            loadingSpinner.classList.add('hidden');
+        }
+    });
+
+    // Handle keyboard events
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !addDepartmentModal.classList.contains('hidden')) {
+            closeModal();
+        }
     });
 </script>
 {% endblock %}

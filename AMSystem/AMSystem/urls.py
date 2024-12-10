@@ -29,7 +29,7 @@ urlpatterns = [
     # App URLs
     path('', include('userauth.urls')),
     path('', include('dashboard.urls')),
-    path('', include('leave.urls')),
+    path('leave/', include('leave.urls')),
     path('management/', include('management.urls')),
     path('attendance/', include('attendance.urls')),
     path("__reload__/", include("django_browser_reload.urls")),

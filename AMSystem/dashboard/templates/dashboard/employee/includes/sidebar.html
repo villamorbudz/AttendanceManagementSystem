@@ -1,86 +1,151 @@
 {% load static %}
 
 <!-- Sidebar -->
-<aside class="flex flex-col w-64 h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300">
+<aside class="flex flex-col w-64 h-screen bg-white border-r border-gray-200 transition-all duration-300 dark:bg-gray-900 dark:border-gray-700">
     <!-- Logo Section -->
-    <div class="flex items-center justify-center p-4 border-b border-gray-200 dark:border-gray-700">
-        <img src="{% static 'images/AMSystemlogo-dark.png' %}" alt="AM System Logo" class="h-8 transition-transform duration-300 hover:scale-105">
+    <div class="flex justify-between items-center p-4 bg-white border-b border-gray-200 dark:border-gray-800 dark:bg-gray-900">
+        <!-- Dark Theme Logo -->
+        <img src="{% static 'images/AMSystemlogo-light.png' %}" 
+             alt="AM System Logo Dark" 
+             class="hidden h-8 transition-transform duration-300 hover:scale-105 dark:block">
+        <!-- Light Theme Logo -->
+        <img src="{% static 'images/AMSystemlogo-dark.png' %}" 
+             alt="AM System Logo Light" 
+             class="block h-8 transition-transform duration-300 hover:scale-105 dark:hidden">
+        
+        <!-- Theme Toggle Button
+        <button id="theme-toggle" class="p-2 text-gray-500 rounded-lg transition-all duration-300 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 hover:scale-105">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path>
+            </svg>
+        </button> -->
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+    <nav class="overflow-y-auto flex-1 px-4 py-6 space-y-2 bg-white dark:bg-gray-900">
         <!-- Dashboard -->
         <a href="{% url 'dashboard:employee_dashboard' %}" 
-           class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 rounded-lg group relative overflow-hidden {% if request.resolver_match.url_name == 'employee_dashboard' %}bg-coral text-white{% endif %}">
-            <!-- Hover Effect Background -->
-            <div class="absolute inset-0 bg-coral opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg -z-10"></div>
+           class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gradient-to-r hover:from-gray-100 hover:to-white dark:hover:from-gray-800 dark:hover:to-gray-900 group relative overflow-hidden transition-all duration-300 {% if request.resolver_match.url_name == 'employee_dashboard' %}bg-gradient-to-r from-coral to-coral-light text-white dark:from-coral dark:to-coral-dark{% endif %}">
             <!-- Icon with animation -->
-            <svg class="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110 {% if request.resolver_match.url_name == 'employee_dashboard' %}text-white{% else %}text-gray-500 group-hover:text-white{% endif %}" 
+            <svg class="w-5 h-5 mr-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 {% if request.resolver_match.url_name == 'employee_dashboard' %}text-white{% else %}text-gray-500 dark:text-gray-400 group-hover:text-coral dark:group-hover:text-coral{% endif %}" 
                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                       d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
             <!-- Text with hover effect -->
-            <span class="font-medium transition-colors duration-300 group-hover:text-white">Dashboard</span>
+            <span class="font-medium transition-all duration-300 group-hover:translate-x-1 group-hover:text-coral dark:group-hover:text-coral">Dashboard</span>
+            {% if request.resolver_match.url_name == 'employee_dashboard' %}
+            <span class="absolute right-4 w-2 h-2 bg-white rounded-full shadow-glow"></span>
+            {% endif %}
         </a>
 
         <!-- Attendance -->
         <a href="{% url 'dashboard:employee_attendance' %}" 
-           class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 rounded-lg group relative overflow-hidden {% if request.resolver_match.url_name == 'employee_attendance' %}bg-coral text-white{% endif %}">
-            <div class="absolute inset-0 bg-coral opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg -z-10"></div>
-            <svg class="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110 {% if request.resolver_match.url_name == 'employee_attendance' %}text-white{% else %}text-gray-500 group-hover:text-white{% endif %}" 
+           class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gradient-to-r hover:from-gray-100 hover:to-white dark:hover:from-gray-800 dark:hover:to-gray-900 group relative overflow-hidden transition-all duration-300 {% if request.resolver_match.url_name == 'employee_attendance' %}bg-gradient-to-r from-coral to-coral-light text-white dark:from-coral dark:to-coral-dark{% endif %}">
+            <!-- Icon with animation -->
+            <svg class="w-5 h-5 mr-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 {% if request.resolver_match.url_name == 'employee_attendance' %}text-white{% else %}text-gray-500 dark:text-gray-400 group-hover:text-coral dark:group-hover:text-coral{% endif %}" 
                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
             </svg>
-            <span class="font-medium transition-colors duration-300 group-hover:text-white">Attendance</span>
-            <!-- Active indicator dot -->
+            <!-- Text with hover effect -->
+            <span class="font-medium transition-all duration-300 group-hover:translate-x-1 group-hover:text-coral dark:group-hover:text-coral">Attendance</span>
             {% if request.resolver_match.url_name == 'employee_attendance' %}
-            <span class="absolute right-4 w-2 h-2 bg-white rounded-full"></span>
+            <span class="absolute right-4 w-2 h-2 bg-white rounded-full shadow-glow"></span>
             {% endif %}
         </a>
 
         <!-- Leave Management -->
         <a href="{% url 'dashboard:employee_leave' %}" 
-           class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-200 rounded-lg group relative overflow-hidden {% if request.resolver_match.url_name == 'employee_leave' %}bg-coral text-white{% endif %}">
-            <div class="absolute inset-0 bg-coral opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg -z-10"></div>
-            <svg class="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110 {% if request.resolver_match.url_name == 'employee_leave' %}text-white{% else %}text-gray-500 group-hover:text-white{% endif %}" 
+           class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gradient-to-r hover:from-gray-100 hover:to-white dark:hover:from-gray-800 dark:hover:to-gray-900 group relative overflow-hidden transition-all duration-300 {% if request.resolver_match.url_name == 'employee_leave' %}bg-gradient-to-r from-coral to-coral-light text-white dark:from-coral dark:to-coral-dark{% endif %}">
+            <!-- Icon with animation -->
+            <svg class="w-5 h-5 mr-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 {% if request.resolver_match.url_name == 'employee_leave' %}text-white{% else %}text-gray-500 dark:text-gray-400 group-hover:text-coral dark:group-hover:text-coral{% endif %}" 
                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
             </svg>
-            <span class="font-medium transition-colors duration-300 group-hover:text-white">Leave Management</span>
-            <!-- Active indicator dot -->
+            <!-- Text with hover effect -->
+            <span class="font-medium transition-all duration-300 group-hover:translate-x-1 group-hover:text-coral dark:group-hover:text-coral">Leave Management</span>
             {% if request.resolver_match.url_name == 'employee_leave' %}
-            <span class="absolute right-4 w-2 h-2 bg-white rounded-full"></span>
+            <span class="absolute right-4 w-2 h-2 bg-white rounded-full shadow-glow"></span>
             {% endif %}
         </a>
     </nav>
 
     <!-- User Info Section -->
-    <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+    <div class="p-4 bg-white border-t border-gray-200 dark:border-gray-800 dark:bg-gray-900">
         <div class="flex items-center space-x-3 group">
-            <img src="{% static 'images/default-avatar.png' %}" alt="User Avatar" 
-                 class="w-10 h-10 rounded-full border-2 border-transparent group-hover:border-coral transition-all duration-300">
+            <div class="relative">
+                <img src="{% static 'images/default-avatar.png' %}" alt="User Avatar" 
+                     class="w-10 h-10 rounded-full border-2 border-transparent transition-all duration-300 group-hover:border-coral group-hover:scale-105">
+                <div class="absolute -right-1 -bottom-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white dark:border-gray-900"></div>
+            </div>
             <div class="flex-1">
-                <h3 class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ request.user.get_full_name }}</h3>
+                <p class="text-sm font-medium text-gray-700 transition-all duration-300 dark:text-gray-200 group-hover:text-coral dark:group-hover:text-coral">{{ request.user.get_full_name }}</p>
                 <p class="text-xs text-gray-500 dark:text-gray-400">Employee</p>
             </div>
         </div>
     </div>
 </aside>
 
-<script>
-    // Add hover effect for navigation items
-    document.querySelectorAll('nav a').forEach(item => {
-        item.addEventListener('mouseenter', () => {
-            const icon = item.querySelector('svg');
-            icon.classList.add('scale-110');
-        });
-        
-        item.addEventListener('mouseleave', () => {
-            const icon = item.querySelector('svg');
-            icon.classList.remove('scale-110');
-        });
+<style>
+    .shadow-glow {
+        box-shadow: 0 0 10px rgba(238, 108, 77, 0.5);
+    }
+    .from-coral {
+        --tw-gradient-from: #EE6C4D;
+        --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(238, 108, 77, 0));
+    }
+    .to-coral-light {
+        --tw-gradient-to: #FF8A6C;
+    }
+    .to-coral-dark {
+        --tw-gradient-to: #D65B40;
+    }
+</style>
+
+<!-- <script>
+    // Theme toggle functionality
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+    const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+    // Change the icons inside the button based on previous settings
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        themeToggleLightIcon.classList.remove('hidden');
+        document.documentElement.classList.add('dark');
+    } else {
+        themeToggleDarkIcon.classList.remove('hidden');
+        document.documentElement.classList.remove('dark');
+    }
+
+    themeToggleBtn.addEventListener('click', function() {
+        // Toggle icons with smooth transition
+        themeToggleDarkIcon.classList.toggle('hidden');
+        themeToggleLightIcon.classList.toggle('hidden');
+        this.classList.add('scale-110');
+        setTimeout(() => this.classList.remove('scale-110'), 200);
+
+        // If is set in localStorage
+        if (localStorage.getItem('color-theme')) {
+            if (localStorage.getItem('color-theme') === 'light') {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            }
+        } else {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('color-theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('color-theme', 'dark');
+            }
+        }
     });
-</script>
+</script> -->

@@ -1,5 +1,16 @@
 from django.shortcuts import render
 import json
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .serializers import ChartDataSerializer
+import logging
+from django.db.models import Count
+from django.utils import timezone
+from datetime import timedelta
+from rest_framework import status
+
+logger = logging.getLogger(__name__)
 
 def dashboard_home(request):
     return render(request, 'dashboard/home.html')
@@ -201,3 +212,8 @@ def logout_view(request):
     
     logout(request)
     return redirect('login')  # Redirect to your login page URL name
+
+@api_view(['GET'])
+def get_chart_data(request):
+    serializer = ChartDataSerializer(instance={})
+    return Response(serializer.data)

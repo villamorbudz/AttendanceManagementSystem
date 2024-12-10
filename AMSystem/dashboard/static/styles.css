@@ -1,0 +1,61 @@
+/* Theme transitions */
+.theme-transition {
+    @apply transition-colors duration-200;
+}
+
+/* Card styles with dark mode */
+.card {
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm transition-all duration-200;
+}
+
+/* Button styles with dark mode */
+.btn-primary {
+    @apply bg-coral hover:bg-coral-dark text-white transition-all duration-300;
+}
+
+.btn-secondary {
+    @apply bg-blue hover:bg-blue-light text-white transition-all duration-300;
+}
+
+/* Table styles with dark mode */
+.table-row {
+    @apply border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200;
+}
+
+/* Form styles with dark mode */
+.form-input {
+    @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-coral focus:border-transparent transition-all duration-200;
+    background-color: white;
+    border-width: 1px;
+    border-color: rgb(209 213 219);
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    transition-property: all;
+}
+
+/* Text colors with dark mode */
+.text-primary {
+    @apply text-gray-900 dark:text-white;
+}
+
+.text-secondary {
+    @apply text-gray-600 dark:text-gray-400;
+}
+
+/* Background colors with dark mode */
+.bg-primary {
+    @apply bg-white dark:bg-gray-800;
+}
+
+.bg-secondary {
+    @apply bg-gray-50 dark:bg-gray-900;
+}
+
+/* Border colors with dark mode */
+.border-primary {
+    @apply border-gray-200 dark:border-gray-700;
+}
+
+.border-secondary {
+    @apply border-gray-300 dark:border-gray-600;
+}

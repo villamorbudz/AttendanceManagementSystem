@@ -21,6 +21,9 @@ urlpatterns = [
     path('employee/attendance/', views.employee_attendance, name='employee_attendance'),
     path('employee/leave/', views.employee_leave, name='employee_leave'),
     
+    # API routes
+    path('api/chart-data/', views.get_chart_data, name='chart_data'),
+    
     # Authentication routes
     path('logout/', views.logout_view, name='logout'),
 ]

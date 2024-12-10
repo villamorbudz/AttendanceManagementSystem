@@ -4,16 +4,16 @@
 {% block title %}Leave Management{% endblock %}
 
 {% block content %}
-<div class="flex h-screen bg-gray-100">
+<div class="flex h-screen bg-gray-100 dark:bg-gray-900">
     {% include 'dashboard/employee/includes/sidebar.html' %}
 
     <!-- Main Content -->
     <main class="overflow-y-auto flex-1">
         <!-- Header -->
-        <div class="bg-white shadow-sm">
+        <div class="bg-white shadow-sm dark:bg-gray-800">
             <div class="flex justify-between items-center px-6 py-3">
-                <h1 class="text-2xl font-semibold">Leave Management</h1>
-                <button id="newLeaveBtn" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">
+                <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Leave Management</h1>
+                <button id="newLeaveBtn" class="px-4 py-2 text-white bg-blue-500 rounded-md transition-colors duration-200 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700">
                     New Leave Request
                 </button>
             </div>
@@ -21,51 +21,51 @@
 
         <!-- Leave Requests List -->
         <div class="p-6">
-            <div class="overflow-hidden bg-white rounded-lg shadow">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+            <div class="overflow-hidden bg-white rounded-lg shadow dark:bg-gray-800">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
                                 Leave Type
                             </th>
-                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
                                 Start Date
                             </th>
-                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
                                 End Date
                             </th>
-                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
                                 Status
                             </th>
-                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                            <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                         {% for leave in leaves %}
-                        <tr>
+                        <tr class="transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-700">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ leave.type }}</div>
+                                <div class="text-sm text-gray-900 dark:text-gray-100">{{ leave.type }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ leave.start_date }}</div>
+                                <div class="text-sm text-gray-900 dark:text-gray-100">{{ leave.start_date }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ leave.end_date }}</div>
+                                <div class="text-sm text-gray-900 dark:text-gray-100">{{ leave.end_date }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    {% if leave.status == 'Approved' %}bg-green-100 text-green-800
-                                    {% elif leave.status == 'Pending' %}bg-yellow-100 text-yellow-800
-                                    {% else %}bg-red-100 text-red-800{% endif %}">
+                                    {% if leave.status == 'Approved' %}bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100
+                                    {% elif leave.status == 'Pending' %}bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100
+                                    {% else %}bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100{% endif %}">
                                     {{ leave.status }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                                <button class="text-blue-600 hover:text-blue-900">View</button>
+                            <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap dark:text-gray-400">
+                                <button class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">View</button>
                                 {% if leave.status == 'Pending' %}
-                                <button class="ml-3 text-red-600 hover:text-red-900">Cancel</button>
+                                <button class="ml-3 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Cancel</button>
                                 {% endif %}
                             </td>
                         </tr>
@@ -76,14 +76,204 @@
         </div>
     </main>
 </div>
+
+<!-- New Leave Request Modal -->
+<div id="leaveRequestModal" class="hidden overflow-y-auto fixed inset-0 z-50 w-screen h-full bg-gray-600 bg-opacity-50 transition-opacity duration-300">
+    <div class="relative top-20 p-5 mx-auto max-w-2xl w-full opacity-0 transition-all duration-300 transform translate-y-4" id="modalContent">
+        <div class="bg-white rounded-lg border shadow-xl dark:bg-gray-800 dark:border-gray-700">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b dark:border-gray-700">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">New Leave Request</h3>
+                    <button id="closeModal" class="text-gray-400 transition-colors duration-200 hover:text-gray-500 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="px-6 py-4">
+                <form id="leaveRequestForm" class="space-y-4">
+                    <!-- Leave Type -->
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Leave Type</label>
+                        <div class="relative">
+                            <select name="leaveType" required class="px-3 py-2 w-full rounded-md border border-gray-300 shadow-sm transition-colors duration-200 appearance-none dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                <option value="">Select a leave type</option>
+                                <option value="annual">Annual Leave</option>
+                                <option value="sick">Sick Leave</option>
+                                <option value="personal">Personal Leave</option>
+                                <option value="emergency">Emergency Leave</option>
+                            </select>
+                            <div class="flex absolute inset-y-0 right-0 items-center px-2 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date Range -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
+                            <input type="date" name="startDate" required class="px-3 py-2 w-full rounded-md border border-gray-300 shadow-sm transition-colors duration-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
+                            <input type="date" name="endDate" required class="px-3 py-2 w-full rounded-md border border-gray-300 shadow-sm transition-colors duration-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                    </div>
+
+                    <!-- Reason -->
+                    <div>
+                        <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Reason</label>
+                        <textarea name="reason" required rows="3" class="px-3 py-2 w-full rounded-md border border-gray-300 shadow-sm transition-colors duration-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Please provide a detailed reason for your leave request"></textarea>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="hidden p-3 text-sm text-red-500 bg-red-100 rounded-md dark:bg-red-900 dark:text-red-200"></div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 bg-gray-50 rounded-b-lg border-t dark:bg-gray-700 dark:border-gray-600">
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancelLeaveRequest" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-600 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                        Cancel
+                    </button>
+                    <button type="submit" form="leaveRequestForm" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md transition-colors duration-200 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Submit Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // New Leave Request button handler
-    document.getElementById('newLeaveBtn').addEventListener('click', function() {
-        // Add your leave request form logic here
-        alert('New leave request form will be implemented soon.');
+    // Modal elements
+    const modal = document.getElementById('leaveRequestModal');
+    const modalContent = document.getElementById('modalContent');
+    const openModalBtn = document.getElementById('newLeaveBtn');
+    const closeModalBtn = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelLeaveRequest');
+    const leaveForm = document.getElementById('leaveRequestForm');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Open modal with animation
+    openModalBtn.addEventListener('click', function() {
+        modal.classList.remove('hidden');
+        // Trigger reflow
+        modal.offsetHeight;
+        modal.classList.add('opacity-100');
+        modalContent.classList.remove('opacity-0', 'translate-y-4');
+        document.body.style.overflow = 'hidden';
+    });
+
+    // Close modal function with animation
+    function closeModal() {
+        modal.classList.remove('opacity-100');
+        modalContent.classList.add('opacity-0', 'translate-y-4');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            // Reset form
+            leaveForm.reset();
+            errorMessage.classList.add('hidden');
+        }, 300);
+    }
+
+    // Close modal events
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Date validation function
+    function validateDates(startDate, endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (start < today) {
+            return "Start date cannot be in the past";
+        }
+        if (end < start) {
+            return "End date must be after start date";
+        }
+        return null;
+    }
+
+    // Handle form submission
+    leaveForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(leaveForm);
+        const data = Object.fromEntries(formData.entries());
+
+        // Validate dates
+        const dateError = validateDates(data.startDate, data.endDate);
+        if (dateError) {
+            errorMessage.textContent = dateError;
+            errorMessage.classList.remove('hidden');
+            return;
+        }
+
+        // Validate reason
+        if (data.reason.trim().length < 10) {
+            errorMessage.textContent = "Please provide a detailed reason (at least 10 characters)";
+            errorMessage.classList.remove('hidden');
+            return;
+        }
+
+        // Hide any previous error
+        errorMessage.classList.add('hidden');
+        
+        // Here you would typically send the data to your backend
+        console.log('Leave request data:', data);
+        
+        // Show success message and close modal
+        const successMessage = document.createElement('div');
+        successMessage.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 translate-y-20 opacity-0';
+        successMessage.textContent = 'Leave request submitted successfully!';
+        document.body.appendChild(successMessage);
+
+        // Animate success message
+        setTimeout(() => {
+            successMessage.classList.remove('translate-y-20', 'opacity-0');
+        }, 100);
+
+        // Remove success message after delay
+        setTimeout(() => {
+            successMessage.classList.add('translate-y-20', 'opacity-0');
+            setTimeout(() => successMessage.remove(), 500);
+        }, 3000);
+
+        // Close modal
+        closeModal();
+    });
+
+    // Set minimum date for date inputs
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelector('input[name="startDate"]').min = today;
+    document.querySelector('input[name="endDate"]').min = today;
+
+    // Update end date min value when start date changes
+    document.querySelector('input[name="startDate"]').addEventListener('change', function(e) {
+        document.querySelector('input[name="endDate"]').min = e.target.value;
     });
 </script>
 {% endblock %}

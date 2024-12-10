@@ -33,8 +33,6 @@ INSTALLED_APPS = [
     'unfold.contrib.import_export',
     'unfold.contrib.filters',
     'django_light',
-    'admin_tools_stats',
-    'django_nvd3',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,6 +49,7 @@ INSTALLED_APPS = [
     'leave',
     'django_browser_reload',
     'django_apscheduler',
+    'rest_framework',
 ]
 
 
