@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AMS System{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'coral': '#EE6C4D',
+                        'coral-dark': '#D85C3D',
+                        'navy': '#293241',
+                        'blue': '#3D5A80',
+                        'lightblue': '#98C1D9',
+                        'ice': '#E0FBFC',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Light mode styles */
+        :root {
+            --background: theme('colors.black');
+            --text: theme('colors.white');
+        }
+
+        /* Dark mode styles */
+        .dark {
+            --background: theme('colors.black');
+            --text: theme('colors.white');
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+        }
+
+        /* Hover styles */
+        .hover\:bg-gray-100:hover {
+            background-color: rgba(243, 244, 246, 0.2);
+        }
+
+        .dark .dark\:hover\:bg-blue:hover {
+            background-color: rgba(61, 90, 128, 0.3);
+        }
+
+        /* Custom icon colors */
+        .icon-coral {
+            color: #EE6C4D;
+        }
+
+        .dark .dark\:icon-coral {
+            color: #EE6C4D;
+        }
+
+        /* Custom text colors */
+        .text-navy {
+            color: #293241;
+        }
+
+        .hover\:text-white:hover {
+            color: #FFFFFF;
+        }
+
+        .dark .dark\:hover\:text-white:hover {
+            color: #FFFFFF;
+        }
+
+        /* Chart colors */
+        .chart-color-1 { color: #3D5A80; }
+        .chart-color-2 { color: #EE6C4D; }
+        .chart-color-3 { color: #98C1D9; }
+        .chart-color-4 { color: #E0FBFC; }
+    </style>
+    {% block extra_css %}{% endblock %}
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
+    <div class="min-h-full">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Dark mode toggle script -->
+    <script>
+        // Check for saved theme preference, otherwise use system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+
+        // Function to toggle theme
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark')
+                localStorage.theme = 'light'
+            } else {
+                document.documentElement.classList.add('dark')
+                localStorage.theme = 'dark'
+            }
+        }
+
+        // Add event listener to theme toggle buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggles = document.querySelectorAll('[data-theme-toggle]')
+            themeToggles.forEach(button => {
+                button.addEventListener('click', toggleTheme)
+            })
+        })
+    </script>
+
+    {% block extra_js %}{% endblock %}
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

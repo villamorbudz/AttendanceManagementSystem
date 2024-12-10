@@ -51,15 +51,15 @@
     </div>
 
     <!-- Background Animations -->
-    <div class="fixed inset-0 overflow-hidden">
-        <div class="absolute rounded-full bg-primary-50 -left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div class="absolute bg-blue-300 rounded-full -right-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+    <div class="overflow-hidden fixed inset-0">
+        <div class="absolute -left-20 w-72 h-72 rounded-full opacity-70 mix-blend-multiply filter blur-xl bg-primary-50 animate-blob"></div>
+        <div class="absolute -right-20 w-72 h-72 bg-blue-300 rounded-full opacity-70 mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
         <div class="absolute rounded-full bg-[#3D5A80] -bottom-10 left-20 w-72 h-72 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
         <div class="absolute z-0 bg-[#d4e7ff] rounded-full bottom-20 right-20 w-80 h-80 mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-3000"></div>
     </div>
 
     <!-- Main Container -->
-    <div class="relative z-10 flex items-center justify-center min-h-screen">
+    <div class="flex relative z-10 justify-center items-center min-h-screen">
         <div class="flex items-center space-x-0.5">
             
         <!-- Form Container -->
@@ -68,9 +68,9 @@
                 <form class="card-body" method="POST" action="{% url 'userauth:login' %}?next={{ request.GET.next }}">
                     {% csrf_token %}
                     <div class="mb-6 text-center lg:text-center lg:mb-0">
-                        <h1 class="text-3xl font-bold text-gray-800 mb-14 dark:text-white">LOGIN</h1>
+                        <h1 class="mb-14 text-3xl font-bold text-gray-800 dark:text-white">LOGIN</h1>
                     </div>
-                    <div class="form-control ">
+                    <div class="form-control">
                         <label class="w-full max-w-xs text-left label">
                             <span class="label-text">Employee ID</span>
                         </label>

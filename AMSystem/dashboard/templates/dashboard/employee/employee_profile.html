@@ -1,0 +1,256 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Employee Profile{% endblock %}
+
+{% block content %}
+<div class="flex h-screen bg-gray-100">
+    {% include 'dashboard/employee/includes/sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto">
+        <!-- Header -->
+        <div class="bg-white shadow-sm">
+            <div class="flex justify-between items-center px-6 py-3">
+                <h1 class="text-2xl font-semibold">My Profile</h1>
+                <div class="flex items-center">
+                    {% include 'dashboard/employee/includes/header_buttons.html' %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="overflow-hidden bg-white shadow sm:rounded-lg">
+            <div class="flex justify-between items-center px-4 py-5 sm:px-6">
+                <div>
+                    <h3 class="text-lg font-medium leading-6 text-gray-900">Personal Information</h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">Update your personal details and preferences.</p>
+                </div>
+            </div>
+
+            <!-- Profile Information -->
+            <div class="border-t border-gray-200">
+                <dl>
+                    <!-- Profile Picture -->
+                    <div class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Profile Picture</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <div class="flex items-center">
+                                <img src="{% static 'images/default-avatar.png' %}" alt="Profile Picture" class="w-20 h-20 rounded-full">
+                                <button class="px-3 py-1 ml-4 text-sm text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+                                    Change Photo
+                                </button>
+                            </div>
+                        </dd>
+                    </div>
+
+                    <!-- Basic Information -->
+                    <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Full name</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.get_full_name }}</dd>
+                    </div>
+
+                    <div class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Employee ID</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.employee_id }}</dd>
+                    </div>
+
+                    <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Department</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.department.name }}</dd>
+                    </div>
+
+                    <div class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Position</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.position }}</dd>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Email address</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.email }}</dd>
+                    </div>
+
+                    <div class="px-4 py-5 bg-gray-50 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Phone number</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ user.phone_number }}</dd>
+                    </div>
+
+                    <!-- Emergency Contact -->
+                    <div class="px-4 py-5 bg-white sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Emergency contact</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <p>{{ user.emergency_contact_name }}</p>
+                            <p class="text-gray-500">{{ user.emergency_contact_phone }}</p>
+                            <p class="text-gray-500">{{ user.emergency_contact_relationship }}</p>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Change Password Section -->
+        <div class="overflow-hidden mt-6 bg-white shadow sm:rounded-lg">
+            <div class="px-4 py-5 sm:px-6">
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Change Password</h3>
+                <p class="mt-1 max-w-2xl text-sm text-gray-500">Ensure your account is secure by using a strong password.</p>
+            </div>
+
+            <div class="px-4 py-5 border-t border-gray-200 sm:px-6">
+                <form id="changePasswordForm" class="space-y-4">
+                    <div>
+                        <label for="currentPassword" class="block text-sm font-medium text-gray-700">Current Password</label>
+                        <input type="password" name="currentPassword" id="currentPassword" required
+                               class="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label for="newPassword" class="block text-sm font-medium text-gray-700">New Password</label>
+                        <input type="password" name="newPassword" id="newPassword" required
+                               class="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                        <input type="password" name="confirmPassword" id="confirmPassword" required
+                               class="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600">
+                            Change Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="editProfileModal" class="hidden fixed inset-0 justify-center items-center bg-gray-500 bg-opacity-75">
+    <div class="mx-4 w-full max-w-2xl bg-white rounded-lg">
+        <div class="flex justify-between items-center px-4 py-5 border-b sm:px-6">
+            <h3 class="text-lg font-medium text-gray-900">Edit Profile</h3>
+            <button id="closeModalBtn" class="text-gray-400 hover:text-gray-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <form id="editProfileForm" class="px-4 py-5 sm:p-6">
+            <div class="grid grid-cols-6 gap-6">
+                <div class="col-span-6 sm:col-span-3">
+                    <label for="firstName" class="block text-sm font-medium text-gray-700">First name</label>
+                    <input type="text" name="firstName" id="firstName" value="{{ user.first_name }}"
+                           class="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div class="col-span-6 sm:col-span-3">
+                    <label for="lastName" class="block text-sm font-medium text-gray-700">Last name</label>
+                    <input type="text" name="lastName" id="lastName" value="{{ user.last_name }}"
+                           class="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div class="col-span-6">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                    <input type="email" name="email" id="email" value="{{ user.email }}"
+                           class="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div class="col-span-6">
+                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone number</label>
+                    <input type="tel" name="phone" id="phone" value="{{ user.phone_number }}"
+                           class="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <!-- Emergency Contact Information -->
+                <div class="col-span-6">
+                    <h4 class="mb-4 text-sm font-medium text-gray-900">Emergency Contact</h4>
+                    
+                    <div class="grid grid-cols-6 gap-6">
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="emergencyName" class="block text-sm font-medium text-gray-700">Contact Name</label>
+                            <input type="text" name="emergencyName" id="emergencyName" value="{{ user.emergency_contact_name }}"
+                                   class="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="emergencyPhone" class="block text-sm font-medium text-gray-700">Contact Phone</label>
+                            <input type="tel" name="emergencyPhone" id="emergencyPhone" value="{{ user.emergency_contact_phone }}"
+                                   class="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+
+                        <div class="col-span-6">
+                            <label for="emergencyRelationship" class="block text-sm font-medium text-gray-700">Relationship</label>
+                            <input type="text" name="emergencyRelationship" id="emergencyRelationship" value="{{ user.emergency_contact_relationship }}"
+                                   class="block px-3 py-2 mt-1 w-full rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end mt-6 space-x-3">
+                <button type="button" id="cancelEditBtn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Cancel
+                </button>
+                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md border border-transparent shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modal = document.getElementById('editProfileModal');
+
+    function showModal() {
+        modal.classList.remove('hidden');
+        document.body.classList.add('modal-open');
+    }
+
+    function hideModal() {
+        modal.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+    }
+
+    editProfileBtn.addEventListener('click', showModal);
+    closeModalBtn.addEventListener('click', hideModal);
+
+    // Close modal if clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            hideModal();
+        }
+    });
+
+    // Handle form submission
+    const profileForm = document.getElementById('editProfileForm');
+    profileForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Add your form submission logic here
+        hideModal();
+    });
+
+    // Handle password change
+    const passwordForm = document.getElementById('changePasswordForm');
+    passwordForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (newPassword !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
+
+        // Add your password change logic here
+    });
+</script>
+{% endblock %}

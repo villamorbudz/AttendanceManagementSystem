@@ -1,0 +1,148 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="flex h-screen bg-gray-100 dark:bg-gray-900">
+    {% include 'dashboard/employee/includes/sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="overflow-y-auto overflow-x-hidden flex-1">
+        <!-- Top Bar -->
+        <div class="bg-white shadow-sm dark:bg-gray-800">
+            <div class="flex justify-between items-center px-6 py-3">
+                <h1 class="text-2xl font-semibold text-navy dark:text-ice">Leave Requests</h1>
+                <div class="flex items-center">
+                    {% include 'dashboard/employee/includes/header_buttons.html' %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+            <!-- New Leave Request Button -->
+            <div class="mb-6">
+                <button id="newLeaveRequestBtn" class="px-4 py-2 text-white rounded-lg transition-colors duration-200 bg-coral hover:bg-opacity-90">
+                    <div class="flex items-center">
+                        <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        New Leave Request
+                    </button>
+            </div>
+
+            <!-- Leave Requests Table -->
+            <div class="bg-white rounded-lg shadow dark:bg-gray-800">
+                <div class="p-6">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-navy dark:text-ice">Type</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-navy dark:text-ice">Start Date</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-navy dark:text-ice">End Date</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-navy dark:text-ice">Status</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-navy dark:text-ice">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Sample data - replace with dynamic data -->
+                            <tr>
+                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-300">Annual Leave</td>
+                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-300">2024-01-01</td>
+                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-300">2024-01-05</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex px-2 text-xs font-semibold leading-5 text-yellow-800 bg-yellow-100 rounded-full">Pending</span>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-300">
+                                    <button class="text-coral hover:text-opacity-80">View Details</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Leave Request Modal -->
+    <div id="leaveRequestModal" class="hidden fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
+        <div class="mx-4 w-full max-w-md bg-white rounded-lg dark:bg-gray-800">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-navy dark:text-ice">New Leave Request</h3>
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <form id="leaveRequestForm" class="space-y-4">
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-navy dark:text-ice">Leave Type</label>
+                        <select class="px-3 py-2 w-full rounded-lg border text-navy dark:bg-gray-700 dark:border-gray-600 dark:text-ice">
+                            <option value="">Select Leave Type</option>
+                            <option value="annual">Annual Leave</option>
+                            <option value="sick">Sick Leave</option>
+                            <option value="personal">Personal Leave</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-navy dark:text-ice">Start Date</label>
+                        <input type="date" class="px-3 py-2 w-full rounded-lg border text-navy dark:bg-gray-700 dark:border-gray-600 dark:text-ice">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-navy dark:text-ice">End Date</label>
+                        <input type="date" class="px-3 py-2 w-full rounded-lg border text-navy dark:bg-gray-700 dark:border-gray-600 dark:text-ice">
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-sm font-medium text-navy dark:text-ice">Reason</label>
+                        <textarea class="px-3 py-2 w-full rounded-lg border text-navy dark:bg-gray-700 dark:border-gray-600 dark:text-ice" rows="3"></textarea>
+                    </div>
+                    <div class="flex justify-end mt-6 space-x-3">
+                        <button type="button" id="cancelRequest" class="px-4 py-2 text-navy dark:text-ice hover:text-coral dark:hover:text-coral">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-white rounded-lg bg-coral hover:bg-opacity-90 hover:text-navy">
+                            Submit Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Modal functionality
+    const modal = document.getElementById('leaveRequestModal');
+    const openModalBtn = document.getElementById('newLeaveRequestBtn');
+    const closeModalBtn = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelRequest');
+    const form = document.getElementById('leaveRequestForm');
+
+    function openModal() {
+        modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+        modal.classList.add('hidden');
+    }
+
+    openModalBtn.addEventListener('click', openModal);
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Add your form submission logic here
+        closeModal();
+    });
+</script>
+{% endblock %}
