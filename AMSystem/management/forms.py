@@ -11,9 +11,11 @@ class UserRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'password', 'department']
+        fields = ['user_id', 'first_name', 'last_name', 'email', 'contact_number', 'department', 'birthdate']
         widgets = {
-            'password': forms.PasswordInput(attrs={'class': 'input input-bordered'}),
+            'user_id': forms.TextInput(attrs={'class': 'input input-bordered'}),
+            'contact_number': forms.TextInput(attrs={'class': 'input input-bordered'}),
+            'birthdate': forms.DateInput(attrs={'class': 'input input-bordered', 'type': 'date'})
         }
 
 class UserProfileForm(forms.ModelForm):

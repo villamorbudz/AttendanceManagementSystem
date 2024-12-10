@@ -1,0 +1,87 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/AMSystemlogoWhite.png' %}" />
+    <title>Bulk Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% tailwind_css %}
+    <script>
+        // Clear messages when the page is refreshed
+        if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_RELOAD) {
+            window.location.href = window.location.pathname;
+        }
+
+        // Clear messages when browser back/forward buttons are used
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.href = window.location.pathname;
+            }
+        };
+    </script>
+</head>
+<body class="bg-[#1a1a1a]">
+    <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <div class="flex flex-col lg:flex-row bg-[#f9f9f9] shadow-lg rounded-[47px] w-full max-w-5xl min-h-[400px] p-6 lg:space-x-8">
+            
+            <!-- Form Section -->
+            <div class="w-full space-y-6">
+                <h2 class="text-3xl font-bold text-center text-gray-800">Bulk User Registration</h2>
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="p-4 mb-4 text-sm rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <form method="post" enctype="multipart/form-data" class="space-y-4">
+                    {% csrf_token %}
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Upload CSV File</span>
+                        </label>
+                        <input type="file" class="w-full p-2 border rounded-lg" id="csv_file" name="csv_file" accept=".csv" required>
+                    </div>
+                    <div class="mt-6">
+                        <button type="submit" class="w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+                            Upload and Register Users
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-8 space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-800">CSV Format Instructions</h3>
+                    <p class="text-gray-600">Your CSV file should include the following columns:</p>
+                    <ul class="pl-5 space-y-2 text-gray-600 list-disc">
+                        <li>user_id (required)</li>
+                        <li>first_name (required)</li>
+                        <li>last_name (required)</li>
+                        <li>contact_number (required)</li>
+                        <li>email (required, must be unique)</li>
+                        <li>department (required, must match an existing department name)</li>
+                    </ul>
+                    
+                    <div class="p-4 mt-4 text-sm text-blue-700 bg-blue-100 rounded-lg">
+                        <h4 class="font-semibold">Important Notes:</h4>
+                        <ul class="pl-5 mt-2 space-y-1 list-disc">
+                            <li>All users will be created with the default password '123456'</li>
+                            <li>Department names must exactly match existing departments in the system</li>
+                            <li>Email addresses and contact numbers must be unique for each user</li>
+                            <li>If any error occurs during import, the entire process will be aborted</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="p-4 mt-4 text-sm text-yellow-700 bg-yellow-100 rounded-lg">
+                        <h4 class="font-semibold">Required CSV Format:</h4>
+                        <pre class="mt-2 overflow-x-auto">user_id,first_name,last_name,contact_number,email,department<br>AMS-0001,John,Doe,01234567890,johndoe@ams.com,Quality Assurance</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
