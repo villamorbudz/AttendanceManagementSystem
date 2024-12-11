@@ -92,7 +92,7 @@
     <ul>
         <li>Create a virtual environment:</li>
         <pre>python3 -m venv env</pre>
-         <p>Navigate to the project directory:</p>
+         <li>Navigate to the project directory:</li>
         <pre>cd AMSystem</pre>
         <li>Activate the virtual environment:</li>
         <pre>../env/bin/Activate</pre>
