@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -9,9 +9,9 @@ from django.db.models import Count
 from django.utils import timezone
 from datetime import timedelta
 from rest_framework import status
-from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
-from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from attendance.models import Attendance
+from leave.models import LeaveRequest  # Import LeaveRequest model
 
 logger = logging.getLogger(__name__)
 
@@ -183,29 +183,89 @@ def employee_profile(request):
     context = {'user': user}
     return render(request, 'dashboard/employee/employee_profile.html', context)
 
+@login_required
 def employee_attendance(request):
-    return render(request, 'dashboard/employee/employee_manage_attendance.html')
-
-def employee_leave(request):
-    """
-    View for employee leave management.
-    """
+    # Get the time period filter from the request, default to all_time
+    time_period = request.GET.get('time_period', 'all_time')
+    
+    # Debug information
+    print(f"Current user: {request.user}")
+    print(f"User ID: {request.user.user_id}")
+    print(f"Is authenticated: {request.user.is_authenticated}")
+    
+    # First, let's check if there are any attendance records at all
+    all_records = Attendance.objects.all()
+    print(f"Total attendance records in database: {all_records.count()}")
+    
+    # Then check records for the current user
+    user_records = Attendance.objects.filter(user=request.user)
+    print(f"Records for current user: {user_records.count()}")
+    
+    # Get the current date
+    today = timezone.now().date()
+    print(f"Current date: {today}")
+    
+    # Define the date range based on the selected time period
+    if time_period == 'this_week':
+        start_date = today - timedelta(days=today.weekday())
+    elif time_period == 'this_month':
+        start_date = today.replace(day=1)
+    elif time_period == 'last_6_months':
+        start_date = today - timedelta(days=180)
+    elif time_period == 'this_year':
+        start_date = today.replace(month=1, day=1)
+    else:  # all_time or invalid filter
+        start_date = None
+    
+    # Query attendance records
+    attendance_query = user_records
+    if start_date:
+        attendance_query = attendance_query.filter(date__gte=start_date)
+        print(f"Filtered by date >= {start_date}: {attendance_query.count()} records")
+    
+    attendance_records = attendance_query.order_by('-date', '-time_in')
+    
+    # Debug the final query
+    print(f"Final query: {attendance_records.query}")
+    print(f"Number of records to display: {attendance_records.count()}")
+    
     context = {
-        'user': request.user,
-        'leaves': [  # Sample leave data
-            {
-                'type': 'Annual Leave',
-                'start_date': '2024-01-15',
-                'end_date': '2024-01-20',
-                'status': 'Pending'
-            },
-            {
-                'type': 'Sick Leave',
-                'start_date': '2024-02-01',
-                'end_date': '2024-02-02',
-                'status': 'Approved'
-            }
-        ]
+        'attendance_records': attendance_records,
+        'selected_period': time_period
+    }
+    return render(request, 'dashboard/employee/employee_manage_attendance.html', context)
+
+@login_required
+def employee_leave(request):
+    # Get the time period filter from the request, default to all_time
+    time_period = request.GET.get('time_period', 'all_time')
+    
+    # Get the current date
+    today = timezone.now().date()
+    
+    # Define the date range based on the selected time period
+    if time_period == 'this_week':
+        start_date = today - timedelta(days=today.weekday())
+    elif time_period == 'this_month':
+        start_date = today.replace(day=1)
+    elif time_period == 'last_6_months':
+        start_date = today - timedelta(days=180)
+    elif time_period == 'this_year':
+        start_date = today.replace(month=1, day=1)
+    else:  # all_time
+        start_date = None
+    
+    # Query leave requests for the current user
+    leave_query = LeaveRequest.objects.filter(user=request.user)
+    if start_date:
+        leave_query = leave_query.filter(start_date__gte=start_date)
+    
+    # Order by start date, most recent first
+    leave_requests = leave_query.order_by('-start_date')
+    
+    context = {
+        'leave_requests': leave_requests,
+        'selected_period': time_period
     }
     return render(request, 'dashboard/employee/employee_leave.html', context)
 

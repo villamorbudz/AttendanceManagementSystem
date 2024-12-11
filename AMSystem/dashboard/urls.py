@@ -13,7 +13,6 @@ urlpatterns = [
     path('management/departments/', views.manager_departments, name='manager_departments'),
     path('management/roles/', views.manager_roles, name='manager_roles'),
     path('management/leave-types/', views.manager_leave_types, name='manager_leave_types'),
-   
     
     # Employee routes
     path('employee/dashboard', views.employee_dashboard, name='employee_dashboard'),

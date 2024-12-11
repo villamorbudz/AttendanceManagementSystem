@@ -7,8 +7,7 @@
 <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
     {% include 'dashboard/employee/includes/sidebar.html' %}
 
-    <!-- Main Content -->
-    <main class="overflow-y-auto flex-1">
+    <div class="overflow-y-auto overflow-x-hidden flex-1">
         <!-- Header -->
         <div class="bg-white shadow-sm dark:bg-gray-800">
             <div class="flex justify-between items-center px-6 py-3">
@@ -21,10 +20,20 @@
 
         <!-- Attendance Content -->
         <div class="p-6">
-            <!-- Attendance History -->
             <div class="bg-white rounded-lg shadow dark:bg-gray-800">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Attendance History</h3>
+                    <form method="get" class="flex justify-end items-center space-x-2">
+                        <label for="timePeriodFilter" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Select Time Period:
+                        </label>
+                        <select id="timePeriodFilter" onchange="this.form.submit()" name="time_period" class="px-4 py-2 text-gray-900 bg-white rounded-md border border-gray-300 shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 focus:outline-none focus:ring focus:ring-blue-200">
+                            <option value="this_week" {% if selected_period == 'this_week' %}selected{% endif %}>This Week</option>
+                            <option value="this_month" {% if selected_period == 'this_month' %}selected{% endif %}>This Month</option>
+                            <option value="last_6_months" {% if selected_period == 'last_6_months' %}selected{% endif %}>Last 6 Months</option>
+                            <option value="this_year" {% if selected_period == 'this_year' %}selected{% endif %}>This Year</option>
+                            <option value="all_time" {% if selected_period == 'all_time' %}selected{% endif %}>All Time</option>
+                        </select>
+                    </form>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -40,9 +49,6 @@
                                     Time Out
                                 </th>
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
-                                    Total Hours
-                                </th>
-                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
                                     Status
                                 </th>
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
@@ -51,19 +57,16 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                            {% for attendance in attendances %}
-                            <tr class="transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            {% for attendance in attendance_records %}
+                            <tr>
                                 <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
-                                    {{ attendance.date }}
+                                    {{ attendance.date|date:"M d, Y" }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
-                                    {{ attendance.time_in }}
+                                    {{ attendance.time_in|time:"g:i A"|default:"-" }}
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
-                                    {{ attendance.time_out }}
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
-                                    {{ attendance.total_hours }}
+                                    {{ attendance.time_out|time:"g:i A"|default:"-" }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -73,13 +76,14 @@
                                         {{ attendance.status }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        {% if attendance.status == 'Present' %}bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100
-                                        {% elif attendance.status == 'Late' %}bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100
-                                        {% else %}bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100{% endif %}">
-                                        {{ attendance.remarks }}
-                                    </span>
+                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">
+                                    {{ attendance.remarks|default:"-" }}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-sm text-center text-gray-500 dark:text-gray-400">
+                                    No attendance records found for the selected period.
                                 </td>
                             </tr>
                             {% endfor %}
@@ -88,7 +92,7 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 </div>
 {% endblock %}
 
