@@ -18,6 +18,8 @@ urlpatterns = [
     # Employee routes
     path('employee/dashboard', views.employee_dashboard, name='employee_dashboard'),
     path('employee/profile/', views.employee_profile, name='employee_profile'),
+    path('employee/profile/update/', views.update_profile, name='update_profile'),
+    path('employee/change-password/', views.change_password, name='change_password'),
     path('employee/attendance/', views.employee_attendance, name='employee_attendance'),
     path('employee/leave/', views.employee_leave, name='employee_leave'),
     

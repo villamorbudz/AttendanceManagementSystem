@@ -1,156 +1,126 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Employee | Dashboard{% endblock %}
-
-{% block extra_css %}
-<style>
-    .stats-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1rem;
-        padding: 1rem;
-    }
-
-    /* Modal Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        animation: fadeIn 0.3s ease;
-    }
-
-    .modal-content {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        max-width: 90%;
-        width: 400px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .close-modal {
-        position: absolute;
-        right: 1rem;
-        top: 1rem;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: #666;
-        transition: color 0.2s ease;
-    }
-
-    .close-modal:hover {
-        color: #000;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .modal-content {
-            background: #1f2937;
-            color: #e5e7eb;
-        }
-
-        .close-modal {
-            color: #9ca3af;
-        }
-
-        .close-modal:hover {
-            color: #f3f4f6;
-        }
-    }
-</style>
-{% endblock %}
+{% block title %}Manager Dashboard{% endblock %}
 
 {% block content %}
 <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
     {% include 'dashboard/employee/includes/sidebar.html' %}
     
     <main class="overflow-y-auto overflow-x-hidden flex-1">
-       <!-- Header -->
-       <div class="bg-white shadow-sm dark:bg-gray-800">
-        <div class="flex justify-between items-center px-6 py-3">
-            <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard</h1>
-            <div class="flex items-center">
+        <!-- Header -->
+        <div class="bg-white shadow-sm dark:bg-gray-800">
+            <div class="flex justify-between items-center px-6 py-4">
+                <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Dashboard</h1>
                 {% include 'dashboard/employee/includes/header_buttons.html' %}
             </div>
         </div>
-    </div>
-        <div class="container px-4 py-6 mx-auto">
-            <div class="stats-container">
-                <div class="w-full max-w-[1077px] h-[72.16px] relative">
-                    <!-- Pending Leave Requests -->
-                    <div class="w-[344.57px] h-[72.16px] absolute right-0 top-0" onclick="showPhoneInfo('pending')">
-                        <div class="w-[344.57px] h-[72.16px] absolute left-0 top-0 bg-white dark:bg-gray-800 rounded-[15px] shadow transition-all duration-200 hover:shadow-md"></div>
-                        <div class="w-[143.17px] h-[39.47px] absolute left-[19.39px] top-[16px]">
-                            <div class="w-[142.97px] h-4 absolute left-[0.21px] top-0 text-[#293241] dark:text-gray-200 text-xs font-bold leading-[18px]">Pending Leave Requests</div>
-                            <div class="w-[78.41px] h-[22.55px] absolute left-0 top-[16.92px] text-[#2d3748] dark:text-white text-lg font-bold leading-relaxed">{{ pending_leave_count }}</div>
-                        </div>
-                        <div class="w-[40.59px] h-[40.59px] absolute left-[288.19px] top-[15.79px]">
-                            <div class="w-[40.59px] h-[40.59px] absolute left-0 top-0 bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
+
+        <!-- Main Content -->
+        <div class="p-6">
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2 lg:grid-cols-3">
+                <!-- Active Employees Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
+                    <div class="flex justify-between items-center">
+                        <div class="space-y-2">
+                            <h3 class="text-[15px] font-bold text-[#293241] dark:text-gray-200 leading-snug">Active Employee Today</h3>
+                            <div class="flex gap-3 items-center">
+                                <span class="text-lg font-bold text-[#2d3748] dark:text-white">{{ active_employees }}</span>
+                                <span class="text-sm font-bold text-[#3d5a80] dark:text-blue-400">+12%</span>
                             </div>
+                        </div>
+                        <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Total Leave -->
-                    <div class="w-[344.57px] h-[72.16px] absolute left-[366.22px] top-0" onclick="showPhoneInfo('leave')">
-                        <div class="w-[344.57px] h-[72.16px] absolute left-0 top-0 bg-white dark:bg-gray-800 rounded-[15px] shadow transition-all duration-200 hover:shadow-md"></div>
-                        <div class="w-[196.28px] h-[42.46px] absolute left-[19.30px] top-[15.79px]">
-                            <div class="w-[196.19px] h-[16.24px] absolute left-[0.09px] top-0">
-                                <span class="text-[#293241] dark:text-gray-200 text-[15px] font-bold leading-snug">Leave</span>
+                <!-- Employee Leave Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
+                    <div class="flex justify-between items-center">
+                        <div class="space-y-2">
+                            <h3 class="text-xs font-bold text-[#293241] dark:text-gray-200 leading-[18px]">Employee Leave Today</h3>
+                            <div class="flex gap-3 items-center">
+                                <span class="text-lg font-bold text-[#2d3748] dark:text-white">25</span>
+                                <span class="text-sm font-bold text-[#3d5a80] dark:text-blue-400">+5%</span>
                             </div>
-                            <div class="w-[87.49px] h-[22.55px] absolute left-0 top-[19.91px] text-[#2d3748] dark:text-white text-lg font-bold  leading-relaxed">{{ total_leave_count }}</div>
-                            <div class="w-[69.03px] h-[17.59px] absolute left-[28.56px] top-[22.97px] text-[#3d5a80] dark:text-blue-400 text-sm font-bold  leading-tight">+5%</div>
                         </div>
-                        <div class="w-[40.59px] h-[40.59px] absolute left-[288.19px] top-[15.79px]">
-                            <div class="w-[40.59px] h-[40.59px] absolute left-0 top-0 bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
+                        <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Present -->
-                    <div class="w-[344.57px] h-[72.16px] absolute left-0 top-0" onclick="showPhoneInfo('present')">
-                        <div class="w-[344.57px] h-[72.16px] absolute left-0 top-0 bg-white dark:bg-gray-800 rounded-[15px] shadow transition-all duration-200 hover:shadow-md"></div>
-                        <div class="w-[174.99px] h-[54.12px] absolute left-[19.84px] top-[15.33px]">
-                            <div class="w-[174.99px] h-[20.75px] absolute left-0 top-0 text-[#293241] dark:text-gray-200 text-[15px] font-bold  leading-snug">Present</div>
-                            <div class="w-[44.20px] h-[28.86px] absolute left-[0.90px] top-[25.26px] text-[#2d3748] dark:text-white text-lg font-bold  leading-relaxed">{{ present_count }}</div>
-                        </div>
-                        <div class="w-[40.59px] h-[40.59px] absolute left-[281.49px] top-[15.30px]">
-                            <div class="w-[40.59px] h-[40.59px] absolute left-0 top-0 bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
+                <!-- New Users Card -->
+                <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
+                    <div class="flex justify-between items-center">
+                        <div class="space-y-2">
+                            <h3 class="text-xs font-bold text-[#293241] dark:text-gray-200 leading-[18px]">New Users</h3>
+                            <div class="flex gap-3 items-center">
+                                <span class="text-lg font-bold text-[#2d3748] dark:text-white">+3,052</span>
+                                <span class="text-sm font-bold text-[#ee6c4d]">-14%</span>
                             </div>
+                        </div>
+                        <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Phone Information Modal -->
-            <div id="phoneModal" class="modal">
-                <div class="modal-content dark:bg-gray-800">
-                    <span class="close-modal" onclick="closeModal()">&times;</span>
-                    <h2 class="mb-4 text-xl font-bold dark:text-white" id="modalTitle">Phone Information</h2>
-                    <div id="modalContent" class="space-y-4">
-                        <!-- Content will be dynamically inserted here -->
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <!-- Active Users Chart -->
+                <div class="bg-gradient-to-br from-[#98c1d9] to-[#3d5a80] dark:from-[#3d5a80] dark:to-[#2b2d42] rounded-[15px] p-6">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-medium text-white">Active Users <span class="text-sm text-green-400">(+23)</span> <span class="text-sm text-gray-300">than last week</span></h3>
+                        <div class="flex gap-6 mt-4">
+                            <div class="flex gap-2 items-center">
+                                <div class="p-2 bg-white bg-opacity-10 rounded">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <div class="text-white">
+                                    <span class="block text-2xl font-bold">32,984</span>
+                                    <span class="text-sm opacity-70">Employee</span>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 items-center">
+                                <div class="p-2 bg-white bg-opacity-10 rounded">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div class="text-white">
+                                    <span class="block text-2xl font-bold">1</span>
+                                    <span class="text-sm opacity-70">Leave</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative h-[180px] mt-4">
+                        <canvas id="activeUsersChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Attendance Report Chart -->
+                <div class="bg-white dark:bg-gray-800 rounded-[15px] p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="text-[#2b2d42] dark:text-white text-lg font-medium">Employee Attendance Report</h3>
+                            <p class="mt-1 text-sm text-red-500">1,243 more in 2023</p>
+                        </div>
+                    </div>
+                    <div class="relative h-[180px] mt-4">
+                        <canvas id="attendanceChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -160,82 +130,183 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const modal = document.getElementById('phoneModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalContent = document.getElementById('modalContent');
+    function initializeCharts() {
+        // Active Users Chart
+        const activeUsersCtx = document.getElementById('activeUsersChart').getContext('2d');
+        const activeUsersChart = new Chart(activeUsersCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                datasets: [{
+                    data: [300, 220, 150, 280, 450, 380, 420, 280, 180],
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    borderRadius: 0,
+                    barThickness: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: -10,
+                        right: -10,
+                        top: 0,
+                        bottom: -10
+                    }
+                },
+                scales: {
+                    y: {
+                        display: true,
+                        position: 'left',
+                        max: 500,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            font: {
+                                size: 10,
+                                weight: '400'
+                            },
+                            padding: 0,
+                            stepSize: 100,
+                            callback: function(value) {
+                                return value === 0 ? '' : value;
+                            }
+                        },
+                        border: {
+                            display: false
+                        }
+                    },
+                    x: {
+                        display: false
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                }
+            }
+        });
 
-    function showPhoneInfo(type) {
-        modal.style.display = 'block';
+        // Attendance Chart
+        const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+        const isDark = document.documentElement.classList.contains('dark');
         
-        switch(type) {
-            case 'pending':
-                modalTitle.textContent = 'Pending Leave Requests Contact Info';
-                modalContent.innerHTML = `
-                    <div class="p-4 bg-gray-100 rounded-lg dark:bg-gray-700">
-                        <p class="mb-2 font-semibold dark:text-white">HR Department:</p>
-                        <p class="flex items-center mb-2 dark:text-gray-200">
-                            <i class="mr-2 fas fa-phone text-coral"></i>
-                            <a href="tel:+1234567890" class="transition-colors hover:text-coral">+1234567890</a>
-                        </p>
-                        <p class="flex items-center dark:text-gray-200">
-                            <i class="mr-2 fas fa-envelope text-coral"></i>
-                            <a href="mailto:hr@company.com" class="transition-colors hover:text-coral">hr@company.com</a>
-                        </p>
-                    </div>
-                `;
-                break;
-            case 'leave':
-                modalTitle.textContent = 'Leave Management Contact Info';
-                modalContent.innerHTML = `
-                    <div class="p-4 bg-gray-100 rounded-lg dark:bg-gray-700">
-                        <p class="mb-2 font-semibold dark:text-white">Leave Manager:</p>
-                        <p class="flex items-center mb-2 dark:text-gray-200">
-                            <i class="mr-2 fas fa-phone text-coral"></i>
-                            <a href="tel:+1234567891" class="transition-colors hover:text-coral">+1234567891</a>
-                        </p>
-                        <p class="flex items-center dark:text-gray-200">
-                            <i class="mr-2 fas fa-envelope text-coral"></i>
-                            <a href="mailto:leave@company.com" class="transition-colors hover:text-coral">leave@company.com</a>
-                        </p>
-                    </div>
-                `;
-                break;
-            case 'present':
-                modalTitle.textContent = 'Attendance Support Contact';
-                modalContent.innerHTML = `
-                    <div class="p-4 bg-gray-100 rounded-lg dark:bg-gray-700">
-                        <p class="mb-2 font-semibold dark:text-white">Attendance Support:</p>
-                        <p class="flex items-center mb-2 dark:text-gray-200">
-                            <i class="mr-2 fas fa-phone text-coral"></i>
-                            <a href="tel:+1234567892" class="transition-colors hover:text-coral">+1234567892</a>
-                        </p>
-                        <p class="flex items-center dark:text-gray-200">
-                            <i class="mr-2 fas fa-envelope text-coral"></i>
-                            <a href="mailto:attendance@company.com" class="transition-colors hover:text-coral">attendance@company.com</a>
-                        </p>
-                    </div>
-                `;
-                break;
-        }
+        // Create gradients
+        const gradientBlue = attendanceCtx.createLinearGradient(0, 0, 0, 240);
+        gradientBlue.addColorStop(0, isDark ? 'rgba(152, 193, 217, 0.3)' : 'rgba(152, 193, 217, 0.4)');
+        gradientBlue.addColorStop(1, isDark ? 'rgba(152, 193, 217, 0.02)' : 'rgba(152, 193, 217, 0.0)');
+
+        const gradientPink = attendanceCtx.createLinearGradient(0, 0, 0, 240);
+        gradientPink.addColorStop(0, isDark ? 'rgba(238, 108, 77, 0.3)' : 'rgba(255, 182, 193, 0.4)');
+        gradientPink.addColorStop(1, isDark ? 'rgba(238, 108, 77, 0.02)' : 'rgba(255, 182, 193, 0.0)');
+
+        const attendanceChart = new Chart(attendanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Present',
+                    data: [450, 380, 320, 280, 300, 380, 400, 360, 320, 300, 340, 360],
+                    borderColor: isDark ? '#98c1d9' : '#3d5a80',
+                    backgroundColor: gradientBlue,
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 2,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Absent',
+                    data: [300, 250, 200, 180, 220, 280, 320, 280, 240, 200, 180, 160],
+                    borderColor: isDark ? '#ee6c4d' : '#e76f51',
+                    backgroundColor: gradientPink,
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 2,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: 20,
+                        right: 20,
+                        bottom: 0,
+                        left: 0
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 500,
+                        position: 'right',
+                        grid: {
+                            color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                            drawBorder: false,
+                            borderDash: [5, 5]
+                        },
+                        ticks: {
+                            color: isDark ? '#98c1d9' : '#3d5a80',
+                            font: {
+                                size: 10,
+                                weight: '400'
+                            },
+                            padding: 10,
+                            stepSize: 100,
+                            callback: function(value) {
+                                return value === 0 ? '' : value;
+                            }
+                        },
+                        border: {
+                            display: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: isDark ? '#98c1d9' : '#3d5a80',
+                            font: {
+                                size: 10,
+                                weight: '400'
+                            },
+                            padding: 5
+                        },
+                        border: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
     }
 
-    function closeModal() {
-        modal.style.display = 'none';
-    }
+    // Initialize charts when DOM is loaded
+    document.addEventListener('DOMContentLoaded', initializeCharts);
 
-    // Close modal when clicking outside
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            closeModal();
-        }
-    }
-
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && modal.style.display === 'block') {
-            closeModal();
-        }
-    });
+    // Update charts when theme changes
+    document.addEventListener('themeChanged', initializeCharts);
 </script>
 {% endblock %}

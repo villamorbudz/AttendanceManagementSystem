@@ -9,6 +9,9 @@ from django.db.models import Count
 from django.utils import timezone
 from datetime import timedelta
 from rest_framework import status
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import redirect
 
 logger = logging.getLogger(__name__)
 
@@ -205,6 +208,63 @@ def employee_leave(request):
         ]
     }
     return render(request, 'dashboard/employee/employee_leave.html', context)
+
+def update_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        
+        # Update user information
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        
+        # Update additional fields if they exist in your User model
+        if hasattr(user, 'birthdate'):
+            birthdate = request.POST.get('birthdate')
+            if birthdate:
+                user.birthdate = birthdate
+                
+        if hasattr(user, 'contact_number'):
+            contact_number = request.POST.get('contact_number')
+            if contact_number:
+                user.contact_number = contact_number
+        
+        try:
+            user.save()
+            messages.success(request, 'Profile updated successfully.')
+        except Exception as e:
+            messages.error(request, f'Error updating profile: {str(e)}')
+            
+    return redirect('dashboard:employee_profile')
+
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        user = request.user
+
+        # Verify current password
+        if not user.check_password(current_password):
+            messages.error(request, 'Current password is incorrect.')
+            return redirect('dashboard:employee_profile')
+
+        # Check if new passwords match
+        if new_password != confirm_password:
+            messages.error(request, 'New passwords do not match.')
+            return redirect('dashboard:employee_profile')
+
+        # Set new password
+        user.set_password(new_password)
+        user.save()
+
+        # Update session to prevent logout
+        update_session_auth_hash(request, user)
+
+        messages.success(request, 'Password changed successfully.')
+        return redirect('dashboard:employee_profile')
+
+    return redirect('dashboard:employee_profile')
 
 @api_view(['GET'])
 def get_chart_data(request):
