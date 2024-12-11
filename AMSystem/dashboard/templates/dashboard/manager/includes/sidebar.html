@@ -93,6 +93,27 @@
                     {% endif %}
                 </a>
             </li>
+            <!-- Leave Requests -->
+<li>
+    <a href="{% url 'dashboard:manager_leave_requests' %}" 
+       class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gradient-to-r hover:from-gray-100 hover:to-white dark:hover:from-gray-800 dark:hover:to-gray-900 group relative overflow-hidden transition-all duration-300 {% if request.resolver_match.url_name == 'manager_leave_requests' %}bg-gradient-to-r from-coral to-coral-light text-white dark:from-coral dark:to-coral-dark{% endif %}">
+        <div class="absolute inset-0 rounded-lg opacity-0 transition-opacity duration-300 bg-coral group-hover:opacity-100 -z-10"></div>
+        <svg class="w-5 h-5 mr-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 {% if request.resolver_match.url_name == 'manager_leave_requests' %}text-white{% else %}text-gray-500 dark:text-gray-400 group-hover:text-coral dark:group-hover:text-coral{% endif %}" 
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+        </svg>
+        <span class="font-medium transition-all duration-300 group-hover:translate-x-1 group-hover:text-coral dark:group-hover:text-coral">Leave Requests</span>
+        {% if pending_leave_count > 0 %}
+        <span class="px-2 py-1 ml-auto text-xs font-semibold text-white rounded-full bg-coral">
+            {{ pending_leave_count }}
+        </span>
+        {% endif %}
+        {% if request.resolver_match.url_name == 'manager_leave_requests' %}
+        <span class="absolute right-4 w-2 h-2 bg-white rounded-full shadow-glow"></span>
+        {% endif %}
+    </a>
+</li>
 
             <!-- Roles -->
             <li>
@@ -127,6 +148,8 @@
             </div>
         </div>
     </div>
+    
+    
 </aside>
 
 <style>

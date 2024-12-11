@@ -13,6 +13,8 @@ urlpatterns = [
     path('management/departments/', views.manager_departments, name='manager_departments'),
     path('management/roles/', views.manager_roles, name='manager_roles'),
     path('management/leave-types/', views.manager_leave_types, name='manager_leave_types'),
+    path('manager/leave-requests/', views.manager_leave_requests, name='manager_leave_requests'),
+    path('manager/leave-request/<int:request_id>/<str:action>/', views.process_leave_request, name='process_leave_request'),
     
     # Employee routes
     path('employee/dashboard', views.employee_dashboard, name='employee_dashboard'),

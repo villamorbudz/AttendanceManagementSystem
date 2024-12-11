@@ -12,6 +12,12 @@ from rest_framework import status
 from django.contrib.auth.decorators import login_required
 from attendance.models import Attendance
 from leave.models import LeaveRequest  # Import LeaveRequest model
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.http import JsonResponse
+from django.core.paginator import Paginator
+from django.db.models import Q
+from management.models import User, Role, Department  # Import from management app
 
 logger = logging.getLogger(__name__)
 
@@ -19,17 +25,81 @@ def dashboard_home(request):
     return render(request, 'dashboard/home.html')
 
 # Manager views
+@login_required
 def manager_dashboard(request):
-    # Sample data for the charts
-    attendance_labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
-    attendance_data = [45, 42, 47, 44, 45]
-    leave_stats = [10, 5, 2]  # Approved, Pending, Rejected
+    today = timezone.now().date()
+    
+    # Get active employees today
+    active_employees = Attendance.objects.filter(
+        date=today,
+        status__in=['Present', 'Working']
+    ).count()
+
+    # Get present and absent counts
+    present_employees = Attendance.objects.filter(
+        date=today,
+        status='Present'
+    ).count()
+    
+    absent_employees = Attendance.objects.filter(
+        date=today,
+        status='Absent'
+    ).count()
+
+    # Calculate trends for present and absent
+    yesterday = today - timedelta(days=1)
+    
+    yesterday_present = Attendance.objects.filter(
+        date=yesterday,
+        status='Present'
+    ).count()
+    
+    yesterday_absent = Attendance.objects.filter(
+        date=yesterday,
+        status='Absent'
+    ).count()
+
+    # Calculate weekly attendance data
+    weekly_data = []
+    for i in range(7):
+        date = today - timedelta(days=i)
+        present_count = Attendance.objects.filter(date=date, status='Present').count()
+        absent_count = Attendance.objects.filter(date=date, status='Absent').count()
+        weekly_data.append({
+            'date': date.strftime('%Y-%m-%d'),
+            'present': present_count,
+            'absent': absent_count
+        })
+    
+    weekly_data.reverse()  # Show oldest to newest
+
+    # Calculate trends
+    if yesterday_present > 0:
+        present_trend = ((present_employees - yesterday_present) / yesterday_present) * 100
+    else:
+        present_trend = 100 if present_employees > 0 else 0
+
+    if yesterday_absent > 0:
+        absent_trend = ((absent_employees - yesterday_absent) / yesterday_absent) * 100
+    else:
+        absent_trend = 100 if absent_employees > 0 else 0
+
+    # Get pending leave count
+    pending_leave_count = LeaveRequest.objects.filter(status='pending').count()
 
     context = {
-        'attendance_labels': json.dumps(attendance_labels),
-        'attendance_data': json.dumps(attendance_data),
-        'leave_stats': json.dumps(leave_stats),
+        'active_employees': active_employees,
+        'present_employees': present_employees,
+        'absent_employees': absent_employees,
+        'present_trend': present_trend,
+        'absent_trend': absent_trend,
+        'weekly_data': weekly_data,
+        'weekly_labels': [day['date'] for day in weekly_data],
+        'weekly_present': [day['present'] for day in weekly_data],
+        'weekly_absent': [day['absent'] for day in weekly_data],
+        'pending_leave_count': pending_leave_count
     }
+    
     return render(request, 'dashboard/manager/manager_dashboard.html', context)
 
 def manager_profile(request):
@@ -43,24 +113,102 @@ def manager_profile(request):
     return render(request, 'dashboard/manager/manager_profile.html', context)
 
 def manager_user_management(request):
-    # Sample user data
-    users = [
-        {
-            'name': 'John Doe',
-            'email': 'john.doe@example.com',
-            'role': 'Employee',
-            'department': 'IT',
-            'status': 'Active'
-        },
-        {
-            'name': 'Jane Smith',
-            'email': 'jane.smith@example.com',
-            'role': 'Team Lead',
-            'department': 'HR',
-            'status': 'Active'
+    # Get filter parameters
+    department_filter = request.GET.get('department')
+    role_filter = request.GET.get('role')
+    search_query = request.GET.get('search')
+    per_page = request.GET.get('per_page', 10)  # Default to 10 items per page
+    
+    try:
+        per_page = int(per_page)
+        if per_page not in [10, 25, 50, 100]:
+            per_page = 10
+    except (ValueError, TypeError):
+        per_page = 10
+    
+    # Start with all users
+    users_list = User.objects.select_related('department').all()
+    
+    # Apply filters
+    if department_filter and department_filter != 'all':
+        try:
+            users_list = users_list.filter(department_id=int(department_filter))
+        except (ValueError, TypeError):
+            department_filter = 'all'
+    
+    if role_filter and role_filter != 'all':
+        try:
+            role = Role.objects.get(id=int(role_filter))
+            users_list = users_list.filter(department__role=role)
+        except (Role.DoesNotExist, ValueError, TypeError):
+            role_filter = 'all'
+    
+    if search_query:
+        users_list = users_list.filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(user_id__icontains=search_query)
+        )
+    
+    # Order by name
+    users_list = users_list.order_by('first_name', 'last_name')
+    
+    # Pagination
+    paginator = Paginator(users_list, per_page)
+    page = request.GET.get('page', 1)
+    
+    try:
+        page = int(page)
+        if page < 1:
+            page = 1
+    except (ValueError, TypeError):
+        page = 1
+    
+    try:
+        users = paginator.page(page)
+    except Paginator.PageNotAnInteger:
+        users = paginator.page(1)
+    except Paginator.EmptyPage:
+        users = paginator.page(paginator.num_pages)
+    
+    # Calculate visible page range
+    page_range = []
+    current_page = users.number
+    total_pages = paginator.num_pages
+
+    # Always show first page, last page, and pages around current page
+    if total_pages <= 7:
+        page_range = range(1, total_pages + 1)
+    else:
+        # Always include first and last page
+        if current_page <= 4:
+            page_range = list(range(1, 6)) + ['...', total_pages]
+        elif current_page >= total_pages - 3:
+            page_range = [1, '...'] + list(range(total_pages - 4, total_pages + 1))
+        else:
+            page_range = [1, '...'] + list(range(current_page - 1, current_page + 2)) + ['...', total_pages]
+    
+    # Get departments and roles for filters
+    departments = Department.objects.all()
+    roles = Role.objects.all()
+    
+    context = {
+        'users': users,
+        'departments': departments,
+        'roles': roles,
+        'total_users': paginator.count,
+        'total_pages': total_pages,
+        'page_range': page_range,
+        'current_page': current_page,
+        'per_page': per_page,
+        'current_filters': {
+            'department': department_filter or 'all',
+            'role': role_filter or 'all',
+            'search': search_query or ''
         }
-    ]
-    context = {'users': users}
+    }
+    
     return render(request, 'dashboard/manager/manager_user_management.html', context)
 
 def manager_attendance(request):
@@ -85,27 +233,34 @@ def manager_attendance(request):
     return render(request, 'dashboard/manager/manager_attendance.html', context)
 
 def manager_departments(request):
-    departments = [
-        {
-            'name': 'Information Technology',
-            'head': 'John Smith',
-            'employee_count': 25,
-            'status': 'Active'
-        },
-        {
-            'name': 'Human Resources',
-            'head': 'Sarah Johnson',
-            'employee_count': 12,
-            'status': 'Active'
-        },
-        {
-            'name': 'Finance',
-            'head': 'Michael Brown',
-            'employee_count': 15,
-            'status': 'Active'
-        }
-    ]
-    return render(request, 'dashboard/manager/manager_manage_departments.html', {'departments': departments})
+    # Get all departments from the database
+    departments_list = Department.objects.all().order_by('name')
+    
+    # Number of departments per page
+    per_page = 10
+    
+    # Create a paginator instance
+    paginator = Paginator(departments_list, per_page)
+    
+    # Get the current page number from the request's GET parameters
+    page = request.GET.get('page', 1)
+    
+    try:
+        # Get the Page object for the requested page
+        departments = paginator.page(page)
+    except Paginator.PageNotAnInteger:
+        # If page is not an integer, deliver first page
+        departments = paginator.page(1)
+    except Paginator.EmptyPage:
+        # If page is out of range, deliver last page of results
+        departments = paginator.page(paginator.num_pages)
+    
+    return render(request, 'dashboard/manager/manager_manage_departments.html', {
+        'departments': departments,
+        'total_departments': paginator.count,
+        'total_pages': paginator.num_pages,
+        'current_page': int(page)
+    })
 
 def manager_roles(request):
     return render(request, 'dashboard/manager/manager_manage_roles.html')
@@ -155,6 +310,80 @@ def manager_leave(request):
     ]
     context = {'leave_requests': leave_requests}
     return render(request, 'dashboard/manager/manager_leave.html', context)
+
+@login_required
+def manager_leave_requests(request):
+    # Get all leave requests with related data
+    leave_requests_list = LeaveRequest.objects.select_related(
+        'user', 'department', 'leave_type'
+    ).order_by('-created_at')
+    
+    # Apply filters if provided
+    status_filter = request.GET.get('status')
+    date_filter = request.GET.get('date')
+    department_filter = request.GET.get('department')
+    
+    if status_filter and status_filter != 'all':
+        leave_requests_list = leave_requests_list.filter(status=status_filter)
+    if date_filter:
+        leave_requests_list = leave_requests_list.filter(start_date__lte=date_filter, end_date__gte=date_filter)
+    if department_filter and department_filter != 'all':
+        leave_requests_list = leave_requests_list.filter(department_id=department_filter)
+    
+    # Number of leave requests per page
+    per_page = 10
+    paginator = Paginator(leave_requests_list, per_page)
+    page = request.GET.get('page', 1)
+    
+    try:
+        leave_requests = paginator.page(page)
+    except Paginator.PageNotAnInteger:
+        leave_requests = paginator.page(1)
+    except Paginator.EmptyPage:
+        leave_requests = paginator.page(paginator.num_pages)
+    
+    # Get all departments for the filter
+    departments = Department.objects.all()
+    
+    context = {
+        'leave_requests': leave_requests,
+        'departments': departments,
+        'total_requests': paginator.count,
+        'total_pages': paginator.num_pages,
+        'current_page': int(page),
+        'current_filters': {
+            'status': status_filter or 'all',
+            'date': date_filter or '',
+            'department': department_filter or 'all'
+        }
+    }
+    
+    return render(request, 'dashboard/manager/manager_leave_requests.html', context)
+
+@login_required
+def process_leave_request(request, request_id, action):
+    if not request.user.is_manager:
+        return JsonResponse({'success': False, 'message': 'Unauthorized'}, status=403)
+
+    try:
+        leave_request = LeaveRequest.objects.get(id=request_id)
+        
+        if action == 'approve':
+            leave_request.status = 'approved'
+        elif action == 'reject':
+            leave_request.status = 'rejected'
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid action'}, status=400)
+        
+        leave_request.processed_by = request.user
+        leave_request.processed_at = timezone.now()
+        leave_request.save()
+
+        return JsonResponse({'success': True})
+    except LeaveRequest.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Leave request not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 # Employee views
 def employee_dashboard(request):

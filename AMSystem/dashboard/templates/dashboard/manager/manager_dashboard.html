@@ -27,7 +27,9 @@
                             <h3 class="text-[15px] font-bold text-[#293241] dark:text-gray-200 leading-snug">Active Employee Today</h3>
                             <div class="flex gap-3 items-center">
                                 <span class="text-lg font-bold text-[#2d3748] dark:text-white">{{ active_employees }}</span>
-                                <span class="text-sm font-bold text-[#3d5a80] dark:text-blue-400">+12%</span>
+                                <span class="text-sm font-bold {% if attendance_trend >= 0 %}text-[#3d5a80] dark:text-blue-400{% else %}text-red-500 dark:text-red-400{% endif %}">
+                                    {% if attendance_trend >= 0 %}+{% endif %}{{ attendance_trend|floatformat:1 }}%
+                                </span>
                             </div>
                         </div>
                         <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
@@ -38,14 +40,16 @@
                     </div>
                 </div>
 
-                <!-- Employee Leave Card -->
+                <!-- Employee Absent Card -->
                 <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
                     <div class="flex justify-between items-center">
                         <div class="space-y-2">
-                            <h3 class="text-xs font-bold text-[#293241] dark:text-gray-200 leading-[18px]">Employee Leave Today</h3>
+                            <h3 class="text-xs font-bold text-[#293241] dark:text-gray-200 leading-[18px]">Absents</h3>
                             <div class="flex gap-3 items-center">
-                                <span class="text-lg font-bold text-[#2d3748] dark:text-white">25</span>
-                                <span class="text-sm font-bold text-[#3d5a80] dark:text-blue-400">+5%</span>
+                                <span class="text-lg font-bold text-[#2d3748] dark:text-white">{{ absent_employees }}</span>
+                                <span class="text-sm font-bold {% if absent_trend >= 0 %}text-[#3d5a80] dark:text-blue-400{% else %}text-red-500 dark:text-red-400{% endif %}">
+                                    {% if absent_trend >= 0 %}+{% endif %}{{ absent_trend|floatformat:1 }}%
+                                </span>
                             </div>
                         </div>
                         <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
@@ -56,14 +60,16 @@
                     </div>
                 </div>
 
-                <!-- New Users Card -->
+                <!-- Employee Present Card -->
                 <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
                     <div class="flex justify-between items-center">
                         <div class="space-y-2">
-                            <h3 class="text-xs font-bold text-[#293241] dark:text-gray-200 leading-[18px]">New Users</h3>
+                            <h3 class="text-xs font-bold text-[#293241] dark:text-gray-200 leading-[18px]">Present</h3>
                             <div class="flex gap-3 items-center">
-                                <span class="text-lg font-bold text-[#2d3748] dark:text-white">+3,052</span>
-                                <span class="text-sm font-bold text-[#ee6c4d]">-14%</span>
+                                <span class="text-lg font-bold text-[#2d3748] dark:text-white">{{ present_employees }}</span>
+                                <span class="text-sm font-bold {% if present_trend >= 0 %}text-[#3d5a80] dark:text-blue-400{% else %}text-red-500 dark:text-red-400{% endif %}">
+                                    {% if present_trend >= 0 %}+{% endif %}{{ present_trend|floatformat:1 }}%
+                                </span>
                             </div>
                         </div>
                         <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
@@ -77,38 +83,36 @@
 
             <!-- Charts Section -->
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <!-- Active Users Chart -->
+                <!-- Active Employees Chart -->
                 <div class="bg-gradient-to-br from-[#98c1d9] to-[#3d5a80] dark:from-[#3d5a80] dark:to-[#2b2d42] rounded-[15px] p-6">
                     <div class="mb-4">
-                        <h3 class="text-white text-lg font-medium">Active Users <span class="text-green-400 text-sm">(+23)</span> <span class="text-sm text-gray-300">than last week</span></h3>
+                        <h3 class="text-lg font-medium text-white">Active Employees 
+                            <span class="text-sm {% if present_trend >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
+                                {% if present_trend >= 0 %}+{% endif %}{{ present_trend|floatformat:1 }}%
+                            </span> 
+                            <span class="text-sm text-gray-300">than yesterday</span>
+                        </h3>
                         <div class="flex gap-6 mt-4">
-                            <div class="flex items-center gap-2">
+                            <div class="flex gap-2 items-center">
                                 <div class="p-2 bg-white bg-opacity-10 rounded">
                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                                        <path d="M12 6v6l4 2" stroke-width="2"/>
                                     </svg>
                                 </div>
-                                <div class="text-white">
-                                    <span class="block text-2xl font-bold">32,984</span>
-                                    <span class="text-sm opacity-70">Employee</span>
-                                </div>
+                                <span class="text-sm text-white">Present</span>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex gap-2 items-center">
                                 <div class="p-2 bg-white bg-opacity-10 rounded">
                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        <path d="M20 12H4m16 0l-4-4m4 4l-4 4" stroke-width="2"/>
                                     </svg>
                                 </div>
-                                <div class="text-white">
-                                    <span class="block text-2xl font-bold">1</span>
-                                    <span class="text-sm opacity-70">Leave</span>
-                                </div>
+                                <span class="text-sm text-white">Absent</span>
                             </div>
                         </div>
                     </div>
-                    <div class="relative h-[180px] mt-4">
-                        <canvas id="activeUsersChart"></canvas>
-                    </div>
+                    <canvas id="activeEmployeesChart" class="w-full h-64"></canvas>
                 </div>
 
                 <!-- Attendance Report Chart -->
@@ -116,7 +120,7 @@
                     <div class="flex justify-between items-center mb-4">
                         <div>
                             <h3 class="text-[#2b2d42] dark:text-white text-lg font-medium">Employee Attendance Report</h3>
-                            <p class="text-red-500 text-sm mt-1">1,243 more in 2023</p>
+                            <p class="mt-1 text-sm text-red-500">1,243 more in 2023</p>
                         </div>
                     </div>
                     <div class="relative h-[180px] mt-4">
@@ -132,175 +136,171 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Store chart instances
+    let activeEmployeesChart = null;
+    let attendanceChart = null;
+    let leaveRequestsChart = null;
+
     function initializeCharts() {
-        // Active Users Chart
-        const activeUsersCtx = document.getElementById('activeUsersChart').getContext('2d');
-        const activeUsersChart = new Chart(activeUsersCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-                datasets: [{
-                    data: [300, 220, 150, 280, 450, 380, 420, 280, 180],
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    borderRadius: 0,
-                    barThickness: 8,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
-                    padding: {
-                        left: -10,
-                        right: -10,
-                        top: 0,
-                        bottom: -10
-                    }
+        const isDark = document.documentElement.classList.contains('dark');
+        const textColor = isDark ? '#ffffff' : '#293241';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(41, 50, 65, 0.1)';
+
+        // Destroy existing charts if they exist
+        if (activeEmployeesChart) {
+            activeEmployeesChart.destroy();
+        }
+        if (attendanceChart) {
+            attendanceChart.destroy();
+        }
+        if (leaveRequestsChart) {
+            leaveRequestsChart.destroy();
+        }
+
+        // Active Employees Chart
+        const activeCtx = document.getElementById('activeEmployeesChart');
+        if (activeCtx) {
+            activeEmployeesChart = new Chart(activeCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: {{ weekly_labels|safe }},
+                    datasets: [{
+                        label: 'Present',
+                        data: {{ weekly_present|safe }},
+                        borderColor: isDark ? '#ffffff' : '#3d5a80',
+                        backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(61, 90, 128, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Absent',
+                        data: {{ weekly_absent|safe }},
+                        borderColor: '#ee6c4d',
+                        backgroundColor: 'rgba(238, 108, 77, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
                 },
-                scales: {
-                    y: {
-                        display: true,
-                        position: 'left',
-                        max: 500,
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            font: {
-                                size: 10,
-                                weight: '400'
-                            },
-                            padding: 0,
-                            stepSize: 100,
-                            callback: function(value) {
-                                return value === 0 ? '' : value;
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: textColor
                             }
-                        },
-                        border: {
-                            display: false
                         }
                     },
-                    x: {
-                        display: false
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        enabled: false
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor
+                            }
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
         // Attendance Chart
-        const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
-        const isDark = document.documentElement.classList.contains('dark');
-        
-        // Create gradients
-        const gradientBlue = attendanceCtx.createLinearGradient(0, 0, 0, 240);
-        gradientBlue.addColorStop(0, isDark ? 'rgba(152, 193, 217, 0.3)' : 'rgba(152, 193, 217, 0.4)');
-        gradientBlue.addColorStop(1, isDark ? 'rgba(152, 193, 217, 0.02)' : 'rgba(152, 193, 217, 0.0)');
+        const attendanceCtx = document.getElementById('attendanceChart');
+        if (attendanceCtx) {
+            const ctx = attendanceCtx.getContext('2d');
+            const gradientBlue = ctx.createLinearGradient(0, 0, 0, 240);
+            gradientBlue.addColorStop(0, isDark ? 'rgba(61, 90, 128, 0.5)' : 'rgba(152, 193, 217, 0.5)');
+            gradientBlue.addColorStop(1, isDark ? 'rgba(61, 90, 128, 0)' : 'rgba(152, 193, 217, 0)');
 
-        const gradientPink = attendanceCtx.createLinearGradient(0, 0, 0, 240);
-        gradientPink.addColorStop(0, isDark ? 'rgba(238, 108, 77, 0.3)' : 'rgba(255, 182, 193, 0.4)');
-        gradientPink.addColorStop(1, isDark ? 'rgba(238, 108, 77, 0.02)' : 'rgba(255, 182, 193, 0.0)');
-
-        const attendanceChart = new Chart(attendanceCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                    label: 'Present',
-                    data: [450, 380, 320, 280, 300, 380, 400, 360, 320, 300, 340, 360],
-                    borderColor: isDark ? '#98c1d9' : '#3d5a80',
-                    backgroundColor: gradientBlue,
-                    tension: 0.4,
-                    fill: true,
-                    borderWidth: 2,
-                    pointRadius: 0
+            attendanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                    datasets: [{
+                        label: 'Attendance',
+                        data: [65, 59, 80, 81, 56],
+                        borderColor: isDark ? '#3d5a80' : '#98c1d9',
+                        backgroundColor: gradientBlue,
+                        tension: 0.4,
+                        fill: true
+                    }]
                 },
-                {
-                    label: 'Absent',
-                    data: [300, 250, 200, 180, 220, 280, 320, 280, 240, 200, 180, 160],
-                    borderColor: isDark ? '#ee6c4d' : '#e76f51',
-                    backgroundColor: gradientPink,
-                    tension: 0.4,
-                    fill: true,
-                    borderWidth: 2,
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
-                    padding: {
-                        top: 20,
-                        right: 20,
-                        bottom: 0,
-                        left: 0
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 500,
-                        position: 'right',
-                        grid: {
-                            color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                            drawBorder: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            color: isDark ? '#98c1d9' : '#3d5a80',
-                            font: {
-                                size: 10,
-                                weight: '400'
-                            },
-                            padding: 10,
-                            stepSize: 100,
-                            callback: function(value) {
-                                return value === 0 ? '' : value;
-                            }
-                        },
-                        border: {
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
                             display: false
                         }
                     },
-                    x: {
-                        grid: {
-                            display: false,
-                            drawBorder: false
-                        },
-                        ticks: {
-                            color: isDark ? '#98c1d9' : '#3d5a80',
-                            font: {
-                                size: 10,
-                                weight: '400'
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: gridColor
                             },
-                            padding: 5
+                            ticks: {
+                                color: textColor
+                            }
                         },
-                        border: {
-                            display: false
+                        x: {
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor
+                            }
                         }
                     }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
                 }
-            }
-        });
+            });
+        }
+
+        // Leave Requests Chart
+        const leaveCtx = document.getElementById('leaveRequestsChart');
+        if (leaveCtx) {
+            leaveRequestsChart = new Chart(leaveCtx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Approved', 'Pending', 'Rejected'],
+                    datasets: [{
+                        data: [12, 5, 3],
+                        backgroundColor: [
+                            isDark ? '#98c1d9' : '#3d5a80',
+                            isDark ? '#ee6c4d' : '#e76f51',
+                            isDark ? '#293241' : '#2b2d42'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: textColor,
+                                padding: 20,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     // Initialize charts when DOM is loaded
@@ -308,5 +308,15 @@
 
     // Update charts when theme changes
     document.addEventListener('themeChanged', initializeCharts);
+
+    // Dark mode toggle functionality
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            const event = new Event('themeChanged');
+            document.dispatchEvent(event);
+        });
+    }
 </script>
 {% endblock %}

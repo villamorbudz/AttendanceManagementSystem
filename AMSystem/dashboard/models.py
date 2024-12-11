@@ -5,17 +5,24 @@
 # User = get_user_model()
 
 # class Attendance(models.Model):
+#     STATUS_CHOICES = [
+#         ('present', 'Present'),
+#         ('absent', 'Absent'),
+#         ('late', 'Late'),
+#     ]
+    
 #     user = models.ForeignKey(User, on_delete=models.CASCADE)
 #     date = models.DateField(default=timezone.now)
-#     check_in = models.DateTimeField(null=True, blank=True)
-#     check_out = models.DateTimeField(null=True, blank=True)
-#     status = models.CharField(max_length=20, default='pending')
+#     time_in = models.DateTimeField(null=True, blank=True)
+#     time_out = models.DateTimeField(null=True, blank=True)
+#     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='absent')
+#     remarks = models.TextField(blank=True, null=True)
     
 #     class Meta:
 #         unique_together = ['user', 'date']
         
 #     def __str__(self):
-#         return f"{self.user.username} - {self.date}"
+#         return f"{self.user.username} - {self.date} - {self.status}"
 
 # class Leave(models.Model):
 #     LEAVE_TYPES = [
