@@ -18,3 +18,11 @@ class LeaveRequest(models.Model):
     status = models.CharField(max_length=50)
     remarks = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def duration(self):
+        # Add 1 to include both start and end dates
+        return (self.end_date - self.start_date).days + 1
+
+    def __str__(self):
+        return f"{self.user.username} - {self.leave_type} ({self.start_date} to {self.end_date})"
