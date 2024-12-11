@@ -85,8 +85,6 @@
     <h2>🚀 Step 1: Clone the Repository</h2>
     <p>Open your terminal and run the following command to clone the repository:</p>
     <pre>git clone <repository_url></pre>
-    <p>Navigate to the project directory:</p>
-    <pre>cd AMSystem</pre>
 </div>
 
 <div class="section">
@@ -94,6 +92,8 @@
     <ul>
         <li>Create a virtual environment:</li>
         <pre>python3 -m venv env</pre>
+         <p>Navigate to the project directory:</p>
+        <pre>cd AMSystem</pre>
         <li>Activate the virtual environment:</li>
         <pre>../env/bin/Activate</pre>
     </ul>
@@ -118,8 +118,4 @@
     <pre>python manage.py runserver</pre>
     <p>Visit the app by going to:</p>
     <pre>http://127.0.0.1:8000/</pre>
-</div>
-
-<div align="center">
-    <p>Made with ❤️ by Team AMSystem</p>
 </div>
