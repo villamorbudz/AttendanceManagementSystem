@@ -1,0 +1,15 @@
+{% load static %}
+{% with user_name=request.user.get_full_name|default:request.user.username %}
+<div class="relative group">
+    {% if request.user.profile_image %}
+        <img src="{{ request.user.profile_image.url }}" alt="{{ user_name }}" class="w-{{ size|default:8 }} h-{{ size|default:8 }} rounded-full border-2 border-transparent transition-all duration-300 group-hover:border-coral object-cover">
+    {% else %}
+        <div class="w-{{ size|default:8 }} h-{{ size|default:8 }} rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-2 border-transparent transition-all duration-300 group-hover:border-coral">
+            <span class="text-white font-medium text-{{ text_size|default:'sm' }}">
+                {{ user_name|make_list|slice:":2"|join:""|upper }}
+            </span>
+        </div>
+    {% endif %}
+    <div class="absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 bg-coral group-hover:opacity-20"></div>
+</div>
+{% endwith %}
