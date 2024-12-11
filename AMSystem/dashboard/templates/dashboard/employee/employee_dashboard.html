@@ -4,119 +4,153 @@
 {% block title %}Employee Dashboard{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    /* Modal Styles */
     .modal {
         display: none;
         position: fixed;
-        z-index: 1000;
-        left: 0;
         top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
     }
+
     .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border-radius: 8px;
-        width: 80%;
-        max-width: 500px;
-        position: relative;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        max-width: 90%;
+        width: 400px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+
     .close-modal {
         position: absolute;
-        right: 20px;
-        top: 10px;
-        font-size: 28px;
+        right: 1rem;
+        top: 1rem;
+        font-size: 1.5rem;
         cursor: pointer;
+        color: #666;
+        transition: color 0.2s ease;
     }
-    .stats-card {
-        cursor: pointer;
-        transition: transform 0.2s;
+
+    .close-modal:hover {
+        color: #000;
     }
-    .stats-card:hover {
-        transform: translateY(-2px);
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
-    .dark .modal-content {
-        background-color: #1a202c;
-        color: white;
+
+    @media (prefers-color-scheme: dark) {
+        .modal-content {
+            background: #1f2937;
+            color: #e5e7eb;
+        }
+
+        .close-modal {
+            color: #9ca3af;
+        }
+
+        .close-modal:hover {
+            color: #f3f4f6;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="flex h-screen transition-colors duration-200 dark:border-x-gray-800 dark:bg-gray-900">
+<div class="flex h-screen bg-gray-100 dark:bg-gray-900">
     {% include 'dashboard/employee/includes/sidebar.html' %}
-
-    <!-- Main Content -->
-    <main class="overflow-y-auto flex-1">
-        <!-- Header -->
-        <div class="bg-white shadow-sm dark:bg-gray-800">
-            <div class="flex justify-between items-center px-6 py-3">
-                <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard</h1>
-                <div class="flex items-center">
-                    {% include 'dashboard/employee/includes/header_buttons.html' %}
-                </div>
+    
+    <main class="overflow-y-auto overflow-x-hidden flex-1">
+       <!-- Header -->
+       <div class="bg-white shadow-sm dark:bg-gray-800">
+        <div class="flex justify-between items-center px-6 py-3">
+            <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard</h1>
+            <div class="flex items-center">
+                {% include 'dashboard/employee/includes/header_buttons.html' %}
             </div>
         </div>
-
-        <!-- Dashboard Content -->
-        <div class="p-6 space-y-6 animate-fade-in">
-            <!-- Stats Overview -->
-            <div class="w-[1077px] h-[72.16px] relative">
-                <!-- Pending Leave Requests Card -->
-                <div class="w-[344.57px] h-[72.16px] left-[732.43px] top-0 absolute stats-card" onclick="showPhoneInfo('pending')">
-                    <div class="w-[344.57px] h-[72.16px] left-0 top-0 absolute bg-white dark:bg-gray-800 rounded-[15px] shadow"></div>
-                    <div class="w-[143.17px] h-[39.47px] left-[19.39px] top-[16px] absolute">
-                        <div class="w-[142.97px] h-4 left-[0.21px] top-0 absolute text-[#293241] dark:text-gray-200 text-xs font-bold font-['Inter'] leading-[18px]">Pending Leave request</div>
-                        <div class="w-[78.41px] h-[22.55px] left-0 top-[16.92px] absolute text-[#2d3748] dark:text-white text-lg font-bold font-['Inter'] leading-relaxed">{{ pending_leave_count }}</div>
-                    </div>
-                    <div class="w-[40.59px] h-[40.59px] left-[288.19px] top-[15.79px] absolute">
-                        <div class="w-[40.59px] h-[40.59px] left-0 top-0 absolute bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
-                            <i class="text-xl text-white fas fa-clock"></i>
+    </div>
+        <div class="container px-4 py-6 mx-auto">
+            <h2 class="mb-6 text-2xl font-semibold text-gray-900 dark:text-white">Stats Overview</h2>
+            
+            <div class="stats-container">
+                <div class="w-full max-w-[1077px] h-[72.16px] relative">
+                    <!-- Pending Leave Requests -->
+                    <div class="w-[344.57px] h-[72.16px] absolute right-0 top-0" onclick="showPhoneInfo('pending')">
+                        <div class="w-[344.57px] h-[72.16px] absolute left-0 top-0 bg-white dark:bg-gray-800 rounded-[15px] shadow transition-all duration-200 hover:shadow-md"></div>
+                        <div class="w-[143.17px] h-[39.47px] absolute left-[19.39px] top-[16px]">
+                            <div class="w-[142.97px] h-4 absolute left-[0.21px] top-0 text-[#293241] dark:text-gray-200 text-xs font-bold leading-[18px]">Pending Leave Requests</div>
+                            <div class="w-[78.41px] h-[22.55px] absolute left-0 top-[16.92px] text-[#2d3748] dark:text-white text-lg font-bold leading-relaxed">{{ pending_leave_count }}</div>
+                        </div>
+                        <div class="w-[40.59px] h-[40.59px] absolute left-[288.19px] top-[15.79px]">
+                            <div class="w-[40.59px] h-[40.59px] absolute left-0 top-0 bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Leave Stats Card -->
-                <div class="w-[344.57px] h-[72.16px] left-[366.22px] top-0 absolute stats-card" onclick="showPhoneInfo('leave')">
-                    <div class="w-[344.57px] h-[72.16px] left-0 top-0 absolute bg-white dark:bg-gray-800 rounded-[15px] shadow"></div>
-                    <div class="w-[196.28px] h-[42.46px] left-[19.30px] top-[15.79px] absolute">
-                        <div class="w-[196.19px] h-[16.24px] left-[0.09px] top-[-0px] absolute">
-                            <span class="text-[#293241] dark:text-gray-200 text-[15px] font-bold font-['Inter'] leading-snug">Leave</span>
+                    <!-- Total Leave -->
+                    <div class="w-[344.57px] h-[72.16px] absolute left-[366.22px] top-0" onclick="showPhoneInfo('leave')">
+                        <div class="w-[344.57px] h-[72.16px] absolute left-0 top-0 bg-white dark:bg-gray-800 rounded-[15px] shadow transition-all duration-200 hover:shadow-md"></div>
+                        <div class="w-[196.28px] h-[42.46px] absolute left-[19.30px] top-[15.79px]">
+                            <div class="w-[196.19px] h-[16.24px] absolute left-[0.09px] top-0">
+                                <span class="text-[#293241] dark:text-gray-200 text-[15px] font-bold leading-snug">Leave</span>
+                            </div>
+                            <div class="w-[87.49px] h-[22.55px] absolute left-0 top-[19.91px] text-[#2d3748] dark:text-white text-lg font-bold  leading-relaxed">{{ total_leave_count }}</div>
+                            <div class="w-[69.03px] h-[17.59px] absolute left-[28.56px] top-[22.97px] text-[#3d5a80] dark:text-blue-400 text-sm font-bold  leading-tight">+5%</div>
                         </div>
-                        <div class="w-[87.49px] h-[22.55px] left-[-0px] top-[19.91px] absolute text-[#2d3748] dark:text-white text-lg font-bold font-['Inter'] leading-relaxed">{{ total_leave_count }}</div>
-                        <div class="w-[69.03px] h-[17.59px] left-[28.56px] top-[22.97px] absolute text-[#3d5a80] text-sm font-bold font-['Inter'] leading-tight">+5%</div>
-                    </div>
-                    <div class="w-[40.59px] h-[40.59px] left-[288.19px] top-[15.79px] absolute">
-                        <div class="w-[40.59px] h-[40.59px] left-0 top-0 absolute bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
-                            <i class="text-xl text-white fas fa-calendar-check"></i>
+                        <div class="w-[40.59px] h-[40.59px] absolute left-[288.19px] top-[15.79px]">
+                            <div class="w-[40.59px] h-[40.59px] absolute left-0 top-0 bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Present Stats Card -->
-                <div class="w-[344.57px] h-[72.16px] left-0 top-0 absolute stats-card" onclick="showPhoneInfo('present')">
-                    <div class="w-[344.57px] h-[72.16px] left-0 top-0 absolute bg-white dark:bg-gray-800 rounded-[15px] shadow"></div>
-                    <div class="w-[174.99px] h-[54.12px] left-[19.84px] top-[15.33px] absolute">
-                        <div class="w-[174.99px] h-[20.75px] left-0 top-0 absolute text-[#293241] dark:text-gray-200 text-[15px] font-bold font-['Inter'] leading-snug">Present</div>
-                        <div class="w-[44.20px] h-[28.86px] left-[0.90px] top-[25.26px] absolute text-[#2d3748] dark:text-white text-lg font-bold font-['Inter'] leading-relaxed">{{ present_count }}</div>
-                    </div>
-                    <div class="w-[40.59px] h-[40.59px] left-[281.49px] top-[15.30px] absolute">
-                        <div class="w-[40.59px] h-[40.59px] left-0 top-0 absolute bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
-                            <i class="text-xl text-white fas fa-user-check"></i>
+                    <!-- Present -->
+                    <div class="w-[344.57px] h-[72.16px] absolute left-0 top-0" onclick="showPhoneInfo('present')">
+                        <div class="w-[344.57px] h-[72.16px] absolute left-0 top-0 bg-white dark:bg-gray-800 rounded-[15px] shadow transition-all duration-200 hover:shadow-md"></div>
+                        <div class="w-[174.99px] h-[54.12px] absolute left-[19.84px] top-[15.33px]">
+                            <div class="w-[174.99px] h-[20.75px] absolute left-0 top-0 text-[#293241] dark:text-gray-200 text-[15px] font-bold  leading-snug">Present</div>
+                            <div class="w-[44.20px] h-[28.86px] absolute left-[0.90px] top-[25.26px] text-[#2d3748] dark:text-white text-lg font-bold  leading-relaxed">{{ present_count }}</div>
+                        </div>
+                        <div class="w-[40.59px] h-[40.59px] absolute left-[281.49px] top-[15.30px]">
+                            <div class="w-[40.59px] h-[40.59px] absolute left-0 top-0 bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Phone Info Modal -->
+            <!-- Phone Information Modal -->
             <div id="phoneModal" class="modal">
-                <div class="modal-content">
+                <div class="modal-content dark:bg-gray-800">
                     <span class="close-modal" onclick="closeModal()">&times;</span>
-                    <h2 class="text-xl font-bold mb-4" id="modalTitle">Phone Information</h2>
+                    <h2 class="mb-4 text-xl font-bold dark:text-white" id="modalTitle">Phone Information</h2>
                     <div id="modalContent" class="space-y-4">
                         <!-- Content will be dynamically inserted here -->
                     </div>
@@ -129,68 +163,81 @@
 
 {% block extra_js %}
 <script>
+    const modal = document.getElementById('phoneModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+
     function showPhoneInfo(type) {
-        const modal = document.getElementById('phoneModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalContent = document.getElementById('modalContent');
+        modal.style.display = 'block';
         
-        // Set title and content based on type
         switch(type) {
             case 'pending':
                 modalTitle.textContent = 'Pending Leave Requests Contact Info';
                 modalContent.innerHTML = `
-                    <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                        <p class="mb-2"><strong>HR Department:</strong></p>
-                        <p><i class="fas fa-phone mr-2"></i>+1234567890</p>
-                        <p><i class="fas fa-envelope mr-2"></i>hr@company.com</p>
+                    <div class="p-4 bg-gray-100 rounded-lg dark:bg-gray-700">
+                        <p class="mb-2 font-semibold dark:text-white">HR Department:</p>
+                        <p class="flex items-center mb-2 dark:text-gray-200">
+                            <i class="mr-2 fas fa-phone text-coral"></i>
+                            <a href="tel:+1234567890" class="transition-colors hover:text-coral">+1234567890</a>
+                        </p>
+                        <p class="flex items-center dark:text-gray-200">
+                            <i class="mr-2 fas fa-envelope text-coral"></i>
+                            <a href="mailto:hr@company.com" class="transition-colors hover:text-coral">hr@company.com</a>
+                        </p>
                     </div>
                 `;
                 break;
             case 'leave':
                 modalTitle.textContent = 'Leave Management Contact Info';
                 modalContent.innerHTML = `
-                    <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                        <p class="mb-2"><strong>Leave Manager:</strong></p>
-                        <p><i class="fas fa-phone mr-2"></i>+1234567891</p>
-                        <p><i class="fas fa-envelope mr-2"></i>leave@company.com</p>
+                    <div class="p-4 bg-gray-100 rounded-lg dark:bg-gray-700">
+                        <p class="mb-2 font-semibold dark:text-white">Leave Manager:</p>
+                        <p class="flex items-center mb-2 dark:text-gray-200">
+                            <i class="mr-2 fas fa-phone text-coral"></i>
+                            <a href="tel:+1234567891" class="transition-colors hover:text-coral">+1234567891</a>
+                        </p>
+                        <p class="flex items-center dark:text-gray-200">
+                            <i class="mr-2 fas fa-envelope text-coral"></i>
+                            <a href="mailto:leave@company.com" class="transition-colors hover:text-coral">leave@company.com</a>
+                        </p>
                     </div>
                 `;
                 break;
             case 'present':
                 modalTitle.textContent = 'Attendance Support Contact';
                 modalContent.innerHTML = `
-                    <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                        <p class="mb-2"><strong>Attendance Support:</strong></p>
-                        <p><i class="fas fa-phone mr-2"></i>+1234567892</p>
-                        <p><i class="fas fa-envelope mr-2"></i>attendance@company.com</p>
+                    <div class="p-4 bg-gray-100 rounded-lg dark:bg-gray-700">
+                        <p class="mb-2 font-semibold dark:text-white">Attendance Support:</p>
+                        <p class="flex items-center mb-2 dark:text-gray-200">
+                            <i class="mr-2 fas fa-phone text-coral"></i>
+                            <a href="tel:+1234567892" class="transition-colors hover:text-coral">+1234567892</a>
+                        </p>
+                        <p class="flex items-center dark:text-gray-200">
+                            <i class="mr-2 fas fa-envelope text-coral"></i>
+                            <a href="mailto:attendance@company.com" class="transition-colors hover:text-coral">attendance@company.com</a>
+                        </p>
                     </div>
                 `;
                 break;
         }
-        
-        modal.style.display = 'block';
     }
 
     function closeModal() {
-        const modal = document.getElementById('phoneModal');
         modal.style.display = 'none';
     }
 
     // Close modal when clicking outside
     window.onclick = function(event) {
-        const modal = document.getElementById('phoneModal');
         if (event.target == modal) {
-            modal.style.display = 'none';
+            closeModal();
         }
     }
 
-    function updateTime() {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString();
-        document.getElementById('current-time').textContent = timeString;
-    }
-
-    setInterval(updateTime, 1000);
-    updateTime();
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modal.style.display === 'block') {
+            closeModal();
+        }
+    });
 </script>
 {% endblock %}

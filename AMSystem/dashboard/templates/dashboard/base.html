@@ -5,10 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/AMSystemlogoWhite.png' %}" />
     {% load static tailwind_tags %}
     {% tailwind_css %}
     <link href="{% static 'styles.css' %}" rel="stylesheet">
     <style>
+        /* Dark Mode Styles */
+        [data-theme="dark"] {
+            background-color: #1a202c;
+            color: #e5e7eb;
+        }
+
+        [data-theme="dark"] .bg-white {
+            background-color: #2d3748;
+        }
+
+        [data-theme="dark"] .text-gray-900 {
+            color: #e5e7eb;
+        }
+
+        [data-theme="dark"] .border-gray-200 {
+            border-color: #4b5563;
+        }
+
+        [data-theme="dark"] .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
         .table-row:hover {
             background-color: rgb(243 244 246);
         }
@@ -19,12 +42,11 @@
     {% block extra_css %}{% endblock %}
     {% block extra_head %}{% endblock %}
 </head>
-<body class="h-full bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
+<body class="h-full bg-gray-100 transition-colors duration-200 dark:bg-gray-900">
     <div class="min-h-full">
         {% block content %}{% endblock %}
     </div>
 
-    <!-- Dark mode toggle script -->
     <script>
         // Check for saved theme preference, otherwise use system preference
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -32,25 +54,6 @@
         } else {
             document.documentElement.classList.remove('dark')
         }
-
-        // Function to toggle theme
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark')
-                localStorage.theme = 'light'
-            } else {
-                document.documentElement.classList.add('dark')
-                localStorage.theme = 'dark'
-            }
-        }
-
-        // Add event listener to theme toggle buttons
-        document.addEventListener('DOMContentLoaded', function() {
-            const themeToggles = document.querySelectorAll('[data-theme-toggle]')
-            themeToggles.forEach(button => {
-                button.addEventListener('click', toggleTheme)
-            })
-        })
     </script>
 
     <!-- Scripts -->
