@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Manage Roles{% endblock %}
+{% block title %}Management | Roles {% endblock %}
 
 {% block extra_css %}
 <style>
@@ -79,7 +79,7 @@
        <!-- Header -->
        <div class="bg-white shadow-sm dark:bg-gray-800">
         <div class="flex justify-between items-center px-6 py-4">
-            <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Role Management</h1>
+            <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Roles</h1>
             {% include 'dashboard/manager/includes/header_buttons.html' %}
         </div>
     </div>
@@ -88,7 +88,7 @@
         <div class="p-6">
             <!-- Actions Bar -->
             <div class="flex justify-between items-center mb-6">
-                <button onclick="openModal('addRoleModal')" class="flex items-center px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors duration-200">
+                {% comment %} <button onclick="openModal('addRoleModal')" class="flex items-center px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 transition-colors duration-200">
                     <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                     </svg>
@@ -101,7 +101,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                     </div>
-                </div>
+                </div> {% endcomment %}
             </div>
 
             <!-- Roles Table -->
@@ -113,16 +113,10 @@
                                 Role Name
                             </th>
                             <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 dark:text-gray-400 uppercase">
-                                Staff Status
+                                Access Level
                             </th>
                             <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 dark:text-gray-400 uppercase">
-                                Admin Access
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 dark:text-gray-400 uppercase">
-                                Users Count
-                            </th>
-                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 dark:text-gray-400 uppercase">
-                                Actions
+                                Employee Count
                             </th>
                         </tr>
                     </thead>
@@ -137,20 +131,10 @@
                                     {{ role.is_staff|yesno:"Staff,Non-Staff" }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if role.is_superuser %}bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-100{% else %}bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300{% endif %}">
-                                    {{ role.is_superuser|yesno:"Admin,Regular" }}
-                                </span>
-                            </td>
                             <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
                                 {{ role.users_count }} users
                             </td>
-                            <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
-                                <div class="flex space-x-3">
-                                    <button onclick="openModal('editRoleModal-{{ role.id }}')" class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 transition-colors duration-200">Edit</button>
-                                    <button onclick="openModal('deleteRoleModal-{{ role.id }}')" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors duration-200">Delete</button>
-                                </div>
-                            </td>
+
                         </tr>
                         {% endfor %}
                     </tbody>

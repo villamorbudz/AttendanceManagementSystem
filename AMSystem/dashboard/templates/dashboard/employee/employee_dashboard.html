@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Manager Dashboard{% endblock %}
+{% block title %}Employee | Dashboard{% endblock %}
 
 {% block content %}
 <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
@@ -24,10 +24,9 @@
                 <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
                     <div class="flex justify-between items-center">
                         <div class="space-y-2">
-                            <h3 class="text-[15px] font-bold text-[#293241] dark:text-gray-200 leading-snug">Active Employee Today</h3>
+                            <h3 class="text-[15px] font-bold text-[#293241] dark:text-gray-200 leading-snug">Attendance Rating</h3>
                             <div class="flex gap-3 items-center">
                                 <span class="text-lg font-bold text-[#2d3748] dark:text-white">{{ active_employees }}</span>
-                                <span class="text-sm font-bold text-[#3d5a80] dark:text-blue-400">+12%</span>
                             </div>
                         </div>
                         <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
@@ -38,11 +37,11 @@
                     </div>
                 </div>
 
-                <!-- Employee Leave Card -->
+                <!-- Absences -->
                 <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
                     <div class="flex justify-between items-center">
                         <div class="space-y-2">
-                            <h3 class="text-xs font-bold text-[#293241] dark:text-gray-200 leading-[18px]">Employee Leave Today</h3>
+                            <h3 class="text-[15px] font-bold text-[#293241] dark:text-gray-200 leading-[18px]">Absences</h3>
                             <div class="flex gap-3 items-center">
                                 <span class="text-lg font-bold text-[#2d3748] dark:text-white">25</span>
                                 <span class="text-sm font-bold text-[#3d5a80] dark:text-blue-400">+5%</span>
@@ -60,7 +59,7 @@
                 <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
                     <div class="flex justify-between items-center">
                         <div class="space-y-2">
-                            <h3 class="text-xs font-bold text-[#293241] dark:text-gray-200 leading-[18px]">New Users</h3>
+                            <h3 class="text-[15px] font-bold text-[#293241] dark:text-gray-200 leading-[18px]">Approved Leave Days</h3>
                             <div class="flex gap-3 items-center">
                                 <span class="text-lg font-bold text-[#2d3748] dark:text-white">+3,052</span>
                                 <span class="text-sm font-bold text-[#ee6c4d]">-14%</span>

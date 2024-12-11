@@ -9,12 +9,15 @@ import csv
 import io
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from .models import Department
+from .models import Department, Role
 from django.db import transaction
 from datetime import datetime
 from attendance.models import Attendance
 from leave.models import LeaveRequest, LeaveType
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 # User CRUD Views
 @login_required
@@ -40,57 +43,38 @@ def user_detail(request, user_id):
         return JsonResponse({'error': 'User not found'}, status=404)
 
 @login_required
-def user_create(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            department = Department.objects.get(id=data['department'])
-            user = get_user_model().objects.create(
-                user_id=data['user_id'],
-                first_name=data['first_name'],
-                last_name=data['last_name'],
-                email=data['email'],
-                contact_number=data['contact_number'],
-                birthdate=data['birthdate'],
-                department=department
-            )
-            user.set_password(data.get('password', '123456'))  # Default password if not provided
-            user.save()
-            return JsonResponse({'message': 'User created successfully'})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-@login_required
 def user_update(request, user_id):
-    if request.method == 'PUT':
-        try:
-            user = get_user_model().objects.get(user_id=user_id, is_active=True)
+    if request.method not in ['PUT', 'POST']:
+        return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
+    
+    try:
+        user = get_user_model().objects.get(user_id=user_id, is_active=True)
+        
+        if request.method == 'POST':
+            data = request.POST.dict()
+        else:  # PUT
             data = json.loads(request.body)
-            
-            if 'first_name' in data:
-                user.first_name = data['first_name']
-            if 'last_name' in data:
-                user.last_name = data['last_name']
-            if 'email' in data:
-                user.email = data['email']
-            if 'contact_number' in data:
-                user.contact_number = data['contact_number']
-            if 'birthdate' in data:
-                user.birthdate = data['birthdate']
-            if 'department' in data:
-                department = Department.objects.get(id=data['department'])
-                user.department = department
-            if 'password' in data:
-                user.set_password(data['password'])
-            
-            user.save()
-            return JsonResponse({'message': 'User updated successfully'})
-        except get_user_model().DoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+        
+        if 'first_name' in data:
+            user.first_name = data['first_name']
+        if 'last_name' in data:
+            user.last_name = data['last_name']
+        if 'email' in data:
+            user.email = data['email']
+        if 'contact_number' in data:
+            user.contact_number = data['contact_number']
+        if 'birthdate' in data:
+            user.birthdate = data['birthdate']
+        if 'department' in data:
+            department = Department.objects.get(id=data['department'])
+            user.department = department
+        
+        user.save()
+        return JsonResponse({'success': True, 'message': 'User updated successfully'})
+    except get_user_model().DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 @login_required
 def user_delete(request, user_id):
@@ -123,127 +107,153 @@ def role_detail(request, role_id):
     except get_user_model()._meta.get_field('role').related_model.DoesNotExist:
         return JsonResponse({'error': 'Role not found'}, status=404)
 
-@login_required
-def role_create(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            role = get_user_model()._meta.get_field('role').related_model.objects.create(
-                name=data['name'],
-                is_staff=data.get('is_staff', False),
-                is_superuser=data.get('is_superuser', False)
-            )
-            return JsonResponse({'message': 'Role created successfully'})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-@login_required
-def role_update(request, role_id):
-    if request.method == 'PUT':
-        try:
-            role = get_user_model()._meta.get_field('role').related_model.objects.get(id=role_id)
-            data = json.loads(request.body)
-            
-            if 'name' in data:
-                role.name = data['name']
-            if 'is_staff' in data:
-                role.is_staff = data['is_staff']
-            if 'is_superuser' in data:
-                role.is_superuser = data['is_superuser']
-            
-            role.save()
-            return JsonResponse({'message': 'Role updated successfully'})
-        except get_user_model()._meta.get_field('role').related_model.DoesNotExist:
-            return JsonResponse({'error': 'Role not found'}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-@login_required
-def role_delete(request, role_id):
-    if request.method == 'DELETE':
-        try:
-            role = get_user_model()._meta.get_field('role').related_model.objects.get(id=role_id)
-            # Check if any departments are using this role
-            if role.departments.exists():
-                return JsonResponse({'error': 'Cannot delete role as it is associated with departments'}, status=400)
-            role.delete()  # Roles don't have is_active field
-            return JsonResponse({'message': 'Role deleted successfully'})
-        except get_user_model()._meta.get_field('role').related_model.DoesNotExist:
-            return JsonResponse({'error': 'Role not found'}, status=404)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
 # Department CRUD Views
 @login_required
 def department_list(request):
-    departments = Department.objects.all()
-    return JsonResponse({'departments': [{
-        'id': dept.id,
-        'name': dept.name,
-        'roles': list(dept.role.values('id', 'name'))
-    } for dept in departments]})
+    departments = Department.objects.filter(is_active=True)
+    return JsonResponse({'departments': list(departments.values())})
 
 @login_required
 def department_detail(request, department_id):
     try:
-        department = Department.objects.get(id=department_id)
-        return JsonResponse({'department': {
-            'id': department.id,
-            'name': department.name,
-            'roles': list(department.role.values('id', 'name'))
-        }})
+        department = Department.objects.get(id=department_id, is_active=True)
+        return JsonResponse({
+            'department': {
+                'id': department.id,
+                'name': department.name,
+                'role': list(department.role.values('id', 'name'))
+            }
+        })
     except Department.DoesNotExist:
         return JsonResponse({'error': 'Department not found'}, status=404)
 
 @login_required
 def department_create(request):
-    if request.method == 'POST':
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
+    
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+        name = data.get('name')
+        role_name = data.get('role')
+
+        # Validate required fields
+        if not name:
+            return JsonResponse({'success': False, 'message': 'Department name is required'}, status=400)
+        if not role_name:
+            return JsonResponse({'success': False, 'message': 'Role is required'}, status=400)
+
+        # Check if department with this name already exists
+        if Department.objects.filter(name=name).exists():
+            return JsonResponse({'success': False, 'message': 'A department with this name already exists'}, status=400)
+
+        # Get role by name
         try:
-            data = json.loads(request.body)
-            department = Department.objects.create(name=data['name'])
-            if 'roles' in data:
-                roles = get_user_model()._meta.get_field('role').related_model.objects.filter(id__in=data['roles'])
-                department.role.set(roles)
-            return JsonResponse({'message': 'Department created successfully'})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+            role = Role.objects.get(name=role_name)
+        except Role.DoesNotExist:
+            return JsonResponse({'success': False, 'message': f'Role "{role_name}" not found'}, status=404)
+
+        # Create department and set role
+        department = Department.objects.create(name=name)
+        department.role.set([role])
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Department created successfully',
+            'department': {
+                'id': department.id,
+                'name': department.name,
+                'role': list(department.role.values('id', 'name'))
+            }
+        })
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Invalid JSON data'}, status=400)
+    except Exception as e:
+        logger.error(f'Error creating department: {str(e)}')
+        return JsonResponse({'success': False, 'message': 'An error occurred while creating the department'}, status=500)
 
 @login_required
 def department_update(request, department_id):
-    if request.method == 'PUT':
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
+    
+    try:
+        department = Department.objects.get(id=department_id, is_active=True)
+        data = json.loads(request.body)
+        
+        # Validate required fields
+        if 'name' not in data:
+            return JsonResponse({'success': False, 'message': 'Department name is required'}, status=400)
+        if 'role' not in data:
+            return JsonResponse({'success': False, 'message': 'Role is required'}, status=400)
+
+        # Check if another department with this name exists
+        if Department.objects.filter(name=data['name']).exclude(id=department_id).exists():
+            return JsonResponse({'success': False, 'message': 'A department with this name already exists'}, status=400)
+
+        # Get role by name
         try:
-            department = Department.objects.get(id=department_id)
-            data = json.loads(request.body)
-            
-            if 'name' in data:
-                department.name = data['name']
-            if 'roles' in data:
-                roles = get_user_model()._meta.get_field('role').related_model.objects.filter(id__in=data['roles'])
-                department.role.set(roles)
-            
-            department.save()
-            return JsonResponse({'message': 'Department updated successfully'})
-        except Department.DoesNotExist:
-            return JsonResponse({'error': 'Department not found'}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+            role = Role.objects.get(name=data['role'])
+        except Role.DoesNotExist:
+            return JsonResponse({'success': False, 'message': f'Role "{data["role"]}" not found'}, status=404)
+
+        # Update department
+        department.name = data['name']
+        department.role.set([role])
+        department.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Department updated successfully',
+            'department': {
+                'id': department.id,
+                'name': department.name,
+                'role': list(department.role.values('id', 'name'))
+            }
+        })
+    except Department.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Department not found'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Invalid JSON data'}, status=400)
+    except Exception as e:
+        logger.error(f'Error updating department: {str(e)}')
+        return JsonResponse({'success': False, 'message': 'An error occurred while updating the department'}, status=500)
 
 @login_required
 def department_delete(request, department_id):
-    if request.method == 'DELETE':
-        try:
-            department = Department.objects.get(id=department_id)
-            # Check if any users are in this department
-            if get_user_model().objects.filter(department=department, is_active=True).exists():
-                return JsonResponse({'error': 'Cannot delete department as it has active users'}, status=400)
-            department.delete()  # Departments don't have is_active field
-            return JsonResponse({'message': 'Department deleted successfully'})
-        except Department.DoesNotExist:
-            return JsonResponse({'error': 'Department not found'}, status=404)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
+    
+    try:
+        department = Department.objects.get(id=department_id, is_active=True)
+        department.is_active = False  # Soft delete
+        department.save()
+        return JsonResponse({
+            'success': True,
+            'message': 'Department deleted successfully'
+        })
+    except Department.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Department not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+@login_required
+def department_restore(request, department_id):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
+    
+    try:
+        department = Department.objects.get(id=department_id, is_active=False)
+        department.is_active = True
+        department.save()
+        return JsonResponse({
+            'success': True,
+            'message': 'Department restored successfully'
+        })
+    except Department.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Department not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 # User Registration Views
 @login_required
@@ -252,7 +262,7 @@ def register(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
+            user.set_password('123456')
             user.save()
             messages.success(request, 'User registered successfully')
             
@@ -516,3 +526,27 @@ def bulk_leave_requests(request):
             messages.error(request, str(e))
             return redirect('management:bulk_leave_requests')
     return render(request, 'management/bulk_leave_requests.html')
+
+@login_required
+def change_password(request):
+    """Handle employee password changes."""
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        user = request.user
+        if not user.check_password(current_password):
+            messages.error(request, 'Current password is incorrect.')
+            return redirect('dashboard:employee_profile')
+
+        if new_password != confirm_password:
+            messages.error(request, 'New passwords do not match.')
+            return redirect('dashboard:employee_profile')
+
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)
+        request.session['password_text'] = new_password
+        messages.success(request, 'Password changed successfully.')
+    return redirect('dashboard:employee_profile')

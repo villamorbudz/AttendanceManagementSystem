@@ -22,6 +22,8 @@ def login_view(request):
             user = authenticate(request, user_id=user_id, password=password)
             if user:
                 login(request, user)
+                # Store the actual password in session
+                request.session['password_text'] = password
                 
                 if next_url:
                     return redirect(next_url)
@@ -37,8 +39,12 @@ def logout_view(request):
     from django.contrib.auth import logout
     from django.shortcuts import redirect
     
+    # Clear the password from session before logout
+    if 'password_text' in request.session:
+        del request.session['password_text']
+    request.session.flush()
     logout(request)
-    return redirect('login')
+    return redirect('userauth:login')
 
 def index(request):
     return render(request, 'userauth/index.html')

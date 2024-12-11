@@ -26,6 +26,7 @@ class Department(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
     role = models.ManyToManyField(Role, related_name='departments')
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.id} - {self.name}"

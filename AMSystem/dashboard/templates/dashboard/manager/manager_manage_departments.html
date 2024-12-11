@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Manage Departments{% endblock %}
+{% block title %}Management | Departments{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -112,26 +112,27 @@
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">Department Name</th>
-                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">Head of Department</th>
-                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">Total Employees</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">Role</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">Number of Employees</th>
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300">Status</th>
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 uppercase dark:text-gray-300">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                             {% for department in departments %}
-                            <tr class="transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.name }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.manager_name }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.employees_count }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full dark:bg-green-900 dark:text-green-100">Active</span>
-                                </td>
-                                <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                    <button class="mr-3 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">Edit</button>
-                                    <button class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Delete</button>
-                                </td>
-                            </tr>
+                            {% if department.name != 'Development Team'%}
+                                <tr class="transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.role_name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.employees_count }}</td>                                <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full dark:bg-green-900 dark:text-green-100">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                                        <button onclick="editDepartment('{{ department.id }}', '{{ department.name }}', '{{ department.role_name }}')" class="mr-3 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">Edit</button>
+                                        <button onclick="deleteDepartment('{{ department.id }}')" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Delete</button>
+                                    </td>
+                                </tr>
+                            {% endif %}
                             {% endfor %}
                         </tbody>
                     </table>
@@ -207,17 +208,23 @@
                                onkeyup="validateInput(this)">
                         <div class="feedback-message hidden"></div>
                     </div>
-                    <div>
-                        <label for="departmentDescription" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                        <textarea id="departmentDescription" name="description" rows="3" 
-                                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-coral focus:ring-coral dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm transition-all duration-200"
-                                  required
-                                  minlength="10"
-                                  onkeyup="validateInput(this)"></textarea>
-                        <div class="feedback-message hidden"></div>
+
+                    <div class="mt-4">
+                        <label for="departmentRole" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Role</label>
+                        <select id="departmentRole" name="role" 
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-coral focus:ring-coral dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm transition-all duration-200"
+                               required>
+                            <option value="">Select a role</option>
+                            {% for role in roles %}
+                                {% if role.name != "Administrator" %}
+                                    <option value="{{ role.name }}">{{ role.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
-
+                
+                
                 <div class="mt-6 flex flex-col sm:flex-row-reverse sm:gap-2">
                     <button type="submit" id="submitBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-coral text-base font-medium text-white hover:bg-coral/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral sm:w-auto sm:text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                         <svg id="loadingSpinner" class="w-5 h-5 mr-2 loading-spinner hidden" viewBox="0 0 24 24">
@@ -226,9 +233,86 @@
                         </svg>
                         Add Department
                     </button>
-                    <button type="button" onclick="closeModal()" class="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral sm:w-auto sm:text-sm dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600 transition-all duration-200">
+                    <button type="button" onclick="closeModal()" class="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral sm:w-auto sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600 transition-all duration-200">
                         Cancel
                     </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Department Modal -->
+<div id="editDepartmentModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800">
+            <form id="editDepartmentForm" method="POST">
+                {% csrf_token %}
+                <input type="hidden" id="edit_department_id" name="department_id">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Edit Department</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="editDepartmentName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department Name</label>
+                            <input type="text" id="editDepartmentName" name="name" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-coral focus:ring-coral dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm transition-all duration-200"
+                                   required
+                                   minlength="2"
+                                   onkeyup="validateInput(this)">
+                            <div class="feedback-message hidden"></div>
+                        </div>
+                        <div>
+                            <label for="editDepartmentRole" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Role</label>
+                            <select id="editDepartmentRole" name="role" 
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-coral focus:ring-coral dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm transition-all duration-200"
+                                   required>
+                                <option value="">Select a role</option>
+                                {% for role in roles %}
+                                    {% if role.name != "Administrator" %}
+                                        <option value="{{ role.name }}">{{ role.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex flex-col sm:flex-row-reverse sm:gap-2">
+                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-coral text-base font-medium text-white hover:bg-coral/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
+                            Update Department
+                        </button>
+                        <button type="button" onclick="closeEditDepartmentModal()" class="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral sm:w-auto sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600 transition-colors duration-200">
+                            Cancel
+                        </button>
+                    </div>
+                    <div id="editResponseMessage" class="mt-4 hidden"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Department Modal -->
+<div id="deleteDepartmentModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800">
+            <form id="deleteDepartmentForm" method="POST">
+                {% csrf_token %}
+                <input type="hidden" id="delete_department_id" name="department_id">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Delete Department</h3>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Are you sure you want to delete this department? This action cannot be undone.</p>
+                    <div class="mt-6 flex flex-col sm:flex-row-reverse sm:gap-2">
+                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
+                            Delete
+                        </button>
+                        <button type="button" onclick="closeDeleteDepartmentModal()" class="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral sm:w-auto sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600 transition-colors duration-200">
+                            Cancel
+                        </button>
+                    </div>
+                    <div id="deleteResponseMessage" class="mt-4 hidden"></div>
                 </div>
             </form>
         </div>
@@ -239,123 +323,189 @@
 
 {% block extra_js %}
 <script>
+    // Modal elements
     const addDepartmentModal = document.getElementById('addDepartmentModal');
+    const editDepartmentModal = document.getElementById('editDepartmentModal');
+    const deleteDepartmentModal = document.getElementById('deleteDepartmentModal');
     const addDepartmentBtn = document.getElementById('addDepartmentBtn');
     const addDepartmentForm = document.getElementById('addDepartmentForm');
     const submitBtn = document.getElementById('submitBtn');
     const loadingSpinner = document.getElementById('loadingSpinner');
 
+    // Add Department Modal Functions
     function openModal() {
         addDepartmentModal.classList.remove('hidden');
-        addDepartmentModal.classList.add('modal-enter');
-        document.body.style.overflow = 'hidden';
-        
-        // Trigger reflow
-        void addDepartmentModal.offsetWidth;
-        
-        addDepartmentModal.classList.add('modal-enter-active');
-        addDepartmentModal.classList.remove('modal-enter');
     }
 
     function closeModal() {
-        addDepartmentModal.classList.add('modal-exit');
-        
-        // Trigger reflow
-        void addDepartmentModal.offsetWidth;
-        
-        addDepartmentModal.classList.add('modal-exit-active');
-        
-        setTimeout(() => {
-            addDepartmentModal.classList.add('hidden');
-            addDepartmentModal.classList.remove('modal-exit', 'modal-exit-active');
-            document.body.style.overflow = 'auto';
-        }, 200);
-    }
-
-    function validateInput(input) {
-        const feedbackDiv = input.nextElementSibling;
-        const isValid = input.checkValidity();
-        
-        // Remove existing classes
-        input.classList.remove('input-success', 'input-error');
-        feedbackDiv.classList.remove('success-message', 'error-message');
-        
-        if (input.value.length > 0) {
-            feedbackDiv.classList.remove('hidden');
-            if (isValid) {
-                input.classList.add('input-success');
-                feedbackDiv.classList.add('success-message');
-                feedbackDiv.textContent = 'Looks good!';
-            } else {
-                input.classList.add('input-error');
-                feedbackDiv.classList.add('error-message');
-                feedbackDiv.textContent = input.validationMessage;
-            }
-        } else {
-            feedbackDiv.classList.add('hidden');
-        }
-        
-        // Check if form is valid
-        const form = document.getElementById('addDepartmentForm');
-        submitBtn.disabled = !form.checkValidity();
+        addDepartmentModal.classList.add('hidden');
+        addDepartmentForm.reset();
+        const feedbackMessages = document.querySelectorAll('.feedback-message');
+        feedbackMessages.forEach(message => message.classList.add('hidden'));
+        submitBtn.disabled = false;
+        loadingSpinner.classList.add('hidden');
     }
 
     addDepartmentBtn.addEventListener('click', openModal);
 
-    // Close modal when clicking outside
-    addDepartmentModal.addEventListener('click', (e) => {
-        if (e.target === addDepartmentModal) {
-            closeModal();
-        }
-    });
+    // Edit Department Modal Functions
+    function editDepartment(departmentId, departmentName, roleName) {
+        document.getElementById('edit_department_id').value = departmentId;
+        document.getElementById('editDepartmentName').value = departmentName;
+        document.getElementById('editDepartmentRole').value = roleName;
+        editDepartmentModal.classList.remove('hidden');
+    }
 
-    // Handle form submission
-    addDepartmentForm.addEventListener('submit', async (e) => {
+    function closeEditDepartmentModal() {
+        editDepartmentModal.classList.add('hidden');
+        document.getElementById('editResponseMessage').classList.add('hidden');
+    }
+
+    // Delete Department Modal Functions
+    function deleteDepartment(departmentId) {
+        document.getElementById('delete_department_id').value = departmentId;
+        deleteDepartmentModal.classList.remove('hidden');
+    }
+
+    function closeDeleteDepartmentModal() {
+        deleteDepartmentModal.classList.add('hidden');
+        document.getElementById('deleteResponseMessage').classList.add('hidden');
+    }
+
+    // Validation Functions
+    function validateInput(input) {
+        const feedbackMessage = input.nextElementSibling;
+        if (input.value.length < 2) {
+            feedbackMessage.textContent = 'Name must be at least 2 characters long';
+            feedbackMessage.classList.remove('hidden', 'text-green-600');
+            feedbackMessage.classList.add('text-red-600');
+            submitBtn.disabled = true;
+        } else {
+            feedbackMessage.textContent = 'Looks good!';
+            feedbackMessage.classList.remove('hidden', 'text-red-600');
+            feedbackMessage.classList.add('text-green-600');
+            submitBtn.disabled = false;
+        }
+    }
+
+    // Form Submission Handlers
+    addDepartmentForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        // Show loading state
         submitBtn.disabled = true;
         loadingSpinner.classList.remove('hidden');
-        
-        try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Show success message
-            const toast = document.createElement('div');
-            toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 translate-y-full';
-            toast.textContent = 'Department added successfully!';
-            document.body.appendChild(toast);
-            
-            // Animate toast in
-            setTimeout(() => {
-                toast.style.transform = 'translateY(0)';
-            }, 100);
-            
-            // Remove toast after 3 seconds
-            setTimeout(() => {
-                toast.style.transform = 'translateY(full)';
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 500);
-            }, 3000);
-            
-            closeModal();
-            addDepartmentForm.reset();
-        } catch (error) {
-            console.error('Error:', error);
-        } finally {
-            // Reset loading state
+
+        const formData = new FormData(this);
+        const data = {
+            name: formData.get('name'),
+            role: formData.get('role')
+        };
+
+        fetch("{% url 'dashboard:add_department' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeModal();
+                window.location.reload();
+            } else if (data.error || data.message) {
+                const nameInput = document.getElementById('departmentName');
+                const feedbackMessage = nameInput.nextElementSibling;
+                feedbackMessage.textContent = data.error || data.message;
+                feedbackMessage.classList.remove('hidden', 'text-green-600');
+                feedbackMessage.classList.add('text-red-600');
+            }
             submitBtn.disabled = false;
             loadingSpinner.classList.add('hidden');
-        }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const nameInput = document.getElementById('departmentName');
+            const feedbackMessage = nameInput.nextElementSibling;
+            feedbackMessage.textContent = 'An error occurred while creating the department';
+            feedbackMessage.classList.remove('hidden', 'text-green-600');
+            feedbackMessage.classList.add('text-red-600');
+            submitBtn.disabled = false;
+            loadingSpinner.classList.add('hidden');
+        });
     });
 
-    // Handle keyboard events
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !addDepartmentModal.classList.contains('hidden')) {
-            closeModal();
-        }
+    document.getElementById('editDepartmentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const departmentId = document.getElementById('edit_department_id').value;
+        const formData = {
+            name: document.getElementById('editDepartmentName').value,
+            role: document.getElementById('editDepartmentRole').value
+        };
+
+        fetch(`{% url 'dashboard:update_department' department_id=0 %}`.replace('0', departmentId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeEditDepartmentModal();
+                window.location.reload();
+            } else if (data.error || data.message) {
+                const nameInput = document.getElementById('editDepartmentName');
+                const feedbackMessage = nameInput.nextElementSibling;
+                feedbackMessage.textContent = data.error || data.message;
+                feedbackMessage.classList.remove('hidden', 'text-green-600');
+                feedbackMessage.classList.add('text-red-600');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const nameInput = document.getElementById('editDepartmentName');
+            const feedbackMessage = nameInput.nextElementSibling;
+            feedbackMessage.textContent = 'An error occurred while updating the department';
+            feedbackMessage.classList.remove('hidden', 'text-green-600');
+            feedbackMessage.classList.add('text-red-600');
+        });
+    });
+
+    document.getElementById('deleteDepartmentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const departmentId = document.getElementById('delete_department_id').value;
+
+        fetch(`{% url 'dashboard:delete_department' department_id=0 %}`.replace('0', departmentId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const messageDiv = document.getElementById('deleteResponseMessage');
+            messageDiv.textContent = data.message || data.error;
+            messageDiv.classList.remove('hidden');
+            messageDiv.classList.toggle('text-green-600', !!data.message);
+            messageDiv.classList.toggle('text-red-600', !!data.error);
+
+            if (data.message) {
+                setTimeout(() => {
+                    closeDeleteDepartmentModal();
+                    window.location.reload();
+                }, 1500);
+            }
+        })
+        .catch(error => {
+            const messageDiv = document.getElementById('deleteResponseMessage');
+            messageDiv.textContent = 'An error occurred while deleting the department';
+            messageDiv.classList.remove('hidden');
+            messageDiv.classList.add('text-red-600');
+        });
     });
 </script>
 {% endblock %}

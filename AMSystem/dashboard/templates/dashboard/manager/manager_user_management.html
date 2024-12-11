@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}User Management{% endblock %}
+{% block title %}Management | Users{% endblock %}
 
 {% block content %}
 <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
@@ -27,24 +27,18 @@
                 <div class="flex flex-col mb-6 space-y-4 sm:flex-row sm:justify-between sm:items-center sm:space-y-0">
                     <!-- Action Buttons -->
                     <div class="flex flex-wrap gap-3">
-                        <button onclick="openModal('addUserModal')" class="flex items-center px-4 py-2 text-white bg-blue-500 rounded-md transition-colors duration-200 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700">
+                        <a href="{% url 'management:register' %}" class="flex items-center px-4 py-2 text-white bg-blue-500 rounded-md transition-colors duration-200 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700">
                             <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                             </svg>
-                            Add New User
-                        </button>
-                        <button class="flex items-center px-4 py-2 text-white bg-green-500 rounded-md transition-colors duration-200 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700">
-                            <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                            </svg>
-                            Export Users
-                        </button>
-                        <button class="flex items-center px-4 py-2 text-white bg-indigo-500 rounded-md transition-colors duration-200 dark:bg-indigo-600 hover:bg-indigo-600 dark:hover:bg-indigo-700">
+                            Register New Employee
+                        </a>
+                        <a href="{% url 'management:bulk_register' %}" class="flex items-center px-4 py-2 text-white bg-indigo-500 rounded-md transition-colors duration-200 dark:bg-indigo-600 hover:bg-indigo-600 dark:hover:bg-indigo-700">
                             <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                             </svg>
-                            Import Users
-                        </button>
+                            Import Employees (.csv)
+                        </a>
                     </div>
 
                     <!-- Search and Filter -->
@@ -60,7 +54,7 @@
                         </div>
                         <!-- Filter Dropdown -->
                         <div class="relative">
-                            <button id="filterButton" class="flex items-center px-4 py-2 text-gray-700 bg-white rounded-md border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600">
+                            <button id="filterButton" class="flex items-center px-4 py-2 text-gray-700 bg-white rounded-md border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
                                 <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                                 </svg>
@@ -71,16 +65,15 @@
                                     <label class="block mb-2 text-sm text-gray-700 dark:text-gray-300">Department</label>
                                     <select class="px-2 py-1 w-full text-sm bg-white rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800">
                                         <option value="">All Departments</option>
-                                        {% for dept in departments %}
+                                        {% for dept in user.dept.all %}
+                                        {% if dept.name != "System Administrator" %}
                                         <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                        {% endif %}
                                         {% endfor %}
                                     </select>
                                     <label class="block mt-3 mb-2 text-sm text-gray-700 dark:text-gray-300">Role</label>
                                     <select class="px-2 py-1 w-full text-sm bg-white rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800">
                                         <option value="">All Roles</option>
-                                        <option value="admin">Admin</option>
-                                        <option value="manager">Manager</option>
-                                        <option value="employee">Employee</option>
                                     </select>
                                 </div>
                             </div>
@@ -89,115 +82,101 @@
                 </div>
 
                 <!-- Users Table -->
-                <div class="overflow-hidden bg-white rounded-lg shadow dark:bg-gray-800">
+                <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-800">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
-                                    User
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
-                                    Department
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
-                                    Role
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
-                                    Status
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-400">
-                                    Actions
-                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Employee ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Department</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Is Active</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                        <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
                             {% for user in users %}
-                            <tr class="transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 w-10 h-10">
-                                            <img class="w-10 h-10 rounded-full" src="{% static 'images/default-avatar.png' %}" alt="">
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                {{ user.get_full_name }}
+                                {% if user.department.name != 'Development Team' %}
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ user.user_id }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ user.first_name }} {{ user.last_name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ user.email }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ user.department.name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm {% if user.is_active %}text-green-500 dark:text-green-400{% else %}text-red-500 dark:text-red-400{% endif %}">
+                                                {{ user.is_active|yesno:"Active,Inactive" }}
                                             </div>
-                                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                                {{ user.email }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900 dark:text-gray-100">{{ user.department.name }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900 dark:text-gray-100">{{ user.role.name }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if user.is_active %}bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100{% else %}bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100{% endif %}">
-                                        {{ user.is_active|yesno:"Active,Inactive" }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
-                                    <div class="flex space-x-3">
-                                        <button class="text-blue-600 transition-colors duration-200 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">Edit</button>
-                                        <button class="text-red-600 transition-colors duration-200 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="edit-user-btn" data-user-id="{{ user.user_id }}" onclick="fetchUserInfo('{{ user.user_id }}')">Edit</button>
+                                            {% if user.is_active %}
+                                                <button onclick="openDeleteModal('{{ user.user_id }}')" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Delete</button>
+                                            {% else %}
+                                                <button onclick="openRestoreModal('{{ user.user_id }}')" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">Restore</button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
                             {% endfor %}
                         </tbody>
                     </table>
+                </div>
 
-                    <!-- Pagination -->
-                    <div class="px-4 py-3 bg-white border-t border-gray-200 dark:bg-gray-800 dark:border-gray-700 sm:px-6">
-                        <div class="flex justify-between items-center">
-                            <div class="flex flex-1 justify-between sm:hidden">
-                                <a href="#" class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    Previous
-                                </a>
-                                <a href="#" class="inline-flex relative items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    Next
-                                </a>
+                <!-- Pagination -->
+                <div class="px-4 py-3 bg-white border-t border-gray-200 dark:bg-gray-800 dark:border-gray-700 sm:px-6">
+                    <div class="flex justify-between items-center">
+                        <div class="flex flex-1 justify-between sm:hidden">
+                            <a href="#" class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                Previous
+                            </a>
+                            <a href="#" class="inline-flex relative items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                Next
+                            </a>
+                        </div>
+                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between sm:space-y-0">
+                            <div>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">
+                                    Showing
+                                    <span class="font-medium">1</span>
+                                    to
+                                    <span class="font-medium">10</span>
+                                    of
+                                    <span class="font-medium">{{ total_users }}</span>
+                                    results
+                                </p>
                             </div>
-                            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-700 dark:text-gray-300">
-                                        Showing
-                                        <span class="font-medium">1</span>
-                                        to
-                                        <span class="font-medium">10</span>
-                                        of
-                                        <span class="font-medium">{{ total_users }}</span>
-                                        results
-                                    </p>
-                                </div>
-                                <div>
-                                    <nav class="inline-flex relative z-0 -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                                        <a href="#" class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-l-md border border-gray-300 transition-colors duration-200 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                            <span class="sr-only">Previous</span>
-                                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                            </svg>
-                                        </a>
-                                        <a href="#" class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                            1
-                                        </a>
-                                        <a href="#" class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                            2
-                                        </a>
-                                        <a href="#" class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                            3
-                                        </a>
-                                        <a href="#" class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-r-md border border-gray-300 transition-colors duration-200 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
-                                            <span class="sr-only">Next</span>
-                                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                                            </svg>
-                                        </a>
-                                    </nav>
-                                </div>
+                            <div>
+                                <nav class="inline-flex relative z-0 -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                    <a href="#" class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-l-md border border-gray-300 transition-colors duration-200 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <span class="sr-only">Previous</span>
+                                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        1
+                                    </a>
+                                    <a href="#" class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        2
+                                    </a>
+                                    <a href="#" class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        3
+                                    </a>
+                                    <a href="#" class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-r-md border border-gray-300 transition-colors duration-200 dark:text-gray-400 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <span class="sr-only">Next</span>
+                                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                        </svg>
+                                    </a>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -207,17 +186,153 @@
     </main>
 </div>
 
+<!-- Edit User Modal -->
+<div id="editUserModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="relative bg-white dark:bg-gray-800 rounded-lg max-w-lg w-full">
+            <div class="p-6">
+                <div class="absolute top-0 right-0 pt-4 pr-4">
+                    <button type="button" onclick="closeEditModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <span class="sr-only">Close</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Edit User</h3>
+                <form id="editUserForm" method="POST" action="{% url 'dashboard:update_user' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" id="edit_user_id">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
+                            <input type="text" name="first_name" id="edit_first_name" class="mt-1 block w-full text-gray-900 bg-white rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
+                            <input type="text" name="last_name" id="edit_last_name" class="mt-1 block w-full text-gray-900 bg-white rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                            <input type="email" name="email" id="edit_email" class="mt-1 block w-full text-gray-900 bg-white rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Birthdate</label>
+                            <input type="date" name="birthdate" id="edit_birthdate" class="mt-1 block w-full text-gray-900 bg-white rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Contact Number</label>
+                            <input type="text" name="contact_number" id="edit_contact_number" class="mt-1 block w-full text-gray-900 bg-white rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department</label>
+                            <select name="department" id="edit_department" class="mt-1 block w-full text-gray-900 bg-white rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600">
+                                {% for department in departments %}
+                                {% if department.name != "Development Team" %}
+                                    <option value="{{ department.id }}">{{ department.name }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" onclick="closeEditModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Save Changes
+                        </button>
+                    </div>
+                    <!-- Response Message Box -->
+                    <div id="editResponse" class="mt-4 hidden"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete User Modal -->
+<div id="deleteUserModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="relative bg-white dark:bg-gray-800 rounded-lg max-w-lg w-full">
+            <div class="p-6">
+                <div class="absolute top-0 right-0 pt-4 pr-4">
+                    <button type="button" onclick="closeModal('deleteUserModal')" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <span class="sr-only">Close</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Delete User</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Are you sure you want to delete this user? This action cannot be undone.</p>
+                <form id="deleteUserForm" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" id="delete_user_id">
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" onclick="closeModal('deleteUserModal')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Delete
+                        </button>
+                    </div>
+                    <!-- Response Message Box -->
+                    <div id="deleteResponse" class="mt-4 hidden"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Restore User Modal -->
+<div id="restoreUserModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="relative bg-white dark:bg-gray-800 rounded-lg max-w-lg w-full">
+            <div class="p-6">
+                <div class="absolute top-0 right-0 pt-4 pr-4">
+                    <button type="button" onclick="closeModal('restoreUserModal')" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <span class="sr-only">Close</span>
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Restore User</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Are you sure you want to restore this user? They will regain access to the system.</p>
+                <form id="restoreUserForm" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" id="restore_user_id">
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" onclick="closeModal('restoreUserModal')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            Restore
+                        </button>
+                    </div>
+                    <!-- Response Message Box -->
+                    <div id="restoreResponse" class="mt-4 hidden"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Add User Modal -->
 <div class="hidden overflow-y-auto fixed inset-0 z-10" id="addUserModal">
     <div class="flex justify-center items-end px-4 pt-4 pb-20 min-h-screen text-center sm:block sm:p-0">
         <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-500 opacity-75 dark:bg-gray-900"></div>
+            <div class="absolute inset-0 bg-gray-500 bg-opacity-75 dark:bg-gray-900"></div>
         </div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
         <div class="inline-block overflow-hidden text-left align-bottom bg-white rounded-lg shadow-xl transition-all transform dark:bg-gray-800 sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <form id="addUserForm">
-                <div class="px-4 pt-5 pb-4 bg-white dark:bg-gray-800 sm:p-6 sm:pb-4">
-                    <h3 class="mb-4 text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Add New User</h3>
+            <div class="px-4 pt-5 pb-4 bg-white dark:bg-gray-800 sm:p-6 sm:pb-4">
+                <h3 class="mb-4 text-lg font-medium leading-6 text-gray-900 dark:text-gray-100">Add New User</h3>
+                <form id="addUserForm">
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
@@ -253,7 +368,7 @@
                     <button type="submit" class="inline-flex justify-center px-4 py-2 w-full text-base font-medium text-white bg-blue-500 rounded-md border border-transparent shadow-sm transition-colors duration-200 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-600">
                         Add User
                     </button>
-                    <button type="button" class="inline-flex justify-center px-4 py-2 mt-3 w-full text-base font-medium text-gray-700 bg-white rounded-md border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-600" onclick="closeModal('addUserModal')">
+                    <button type="button" class="inline-flex justify-center px-4 py-2 mt-3 w-full text-base font-medium text-gray-700 bg-white rounded-md border border-gray-300 transition-colors duration-200 dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600" onclick="closeModal('addUserModal')">
                         Cancel
                     </button>
                 </div>
@@ -261,10 +376,48 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
+<!-- JavaScript for Modal Handling -->
 <script>
+    function refresh() {
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+    }
+    function openEditModal(userId) {
+        const modal = document.getElementById('editUserModal');
+        modal.classList.remove('hidden');
+        document.getElementById('edit_user_id').value = userId;
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById('editUserModal');
+        hideEditResponse(); // Hide message when closing modal
+        modal.classList.add('hidden');
+    }
+
+    function openDeleteModal(userId) {
+        const modal = document.getElementById('deleteUserModal');
+        document.getElementById('delete_user_id').value = userId;
+        modal.classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteUserModal');
+        modal.classList.add('hidden');
+    }
+
+    function openRestoreModal(userId) {
+        const modal = document.getElementById('restoreUserModal');
+        document.getElementById('restore_user_id').value = userId;
+        modal.classList.remove('hidden');
+    }
+
+    function closeRestoreModal() {
+        const modal = document.getElementById('restoreUserModal');
+        modal.classList.add('hidden');
+    }
+
     function openModal(modalId) {
         document.getElementById(modalId).classList.remove('hidden');
     }
@@ -304,5 +457,223 @@
             row.style.display = text.includes(searchValue) ? '' : 'none';
         });
     });
+
+    function showEditResponse(message, isSuccess) {
+        const responseDiv = document.getElementById('editResponse');
+        responseDiv.textContent = message;
+        responseDiv.classList.remove('hidden');
+        if (isSuccess) {
+            responseDiv.classList.remove('text-red-500');
+            responseDiv.classList.add('text-green-500');
+        } else {
+            responseDiv.classList.remove('text-green-500');
+            responseDiv.classList.add('text-red-500');
+        }
+        responseDiv.classList.add('mt-2', 'text-sm', 'font-medium');
+    }
+
+    function hideEditResponse() {
+        const responseDiv = document.getElementById('editResponse');
+        responseDiv.classList.add('hidden');
+    }
+
+    function showDeleteResponse(message, isSuccess) {
+        const responseDiv = document.getElementById('deleteResponse');
+        responseDiv.textContent = message;
+        responseDiv.classList.remove('hidden');
+        if (isSuccess) {
+            responseDiv.classList.remove('text-red-500');
+            responseDiv.classList.add('text-green-500');
+        } else {
+            responseDiv.classList.remove('text-green-500');
+            responseDiv.classList.add('text-red-500');
+        }
+        responseDiv.classList.add('mt-2', 'text-sm', 'font-medium');
+    }
+
+    function hideDeleteResponse() {
+        const responseDiv = document.getElementById('deleteResponse');
+        responseDiv.classList.add('hidden');
+    }
+
+    function showRestoreResponse(message, isSuccess) {
+        const responseDiv = document.getElementById('restoreResponse');
+        responseDiv.textContent = message;
+        responseDiv.classList.remove('hidden');
+        if (isSuccess) {
+            responseDiv.classList.remove('text-red-500');
+            responseDiv.classList.add('text-green-500');
+        } else {
+            responseDiv.classList.remove('text-green-500');
+            responseDiv.classList.add('text-red-500');
+        }
+        responseDiv.classList.add('mt-2', 'text-sm', 'font-medium');
+    }
+
+    function hideRestoreResponse() {
+        const responseDiv = document.getElementById('restoreResponse');
+        responseDiv.classList.add('hidden');
+    }
+
+    // Add delete form submission handler
+    document.getElementById('deleteUserForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const userId = document.getElementById('delete_user_id').value;
+        const formData = {
+            user_id: userId
+        };
+
+        fetch('{% url "dashboard:delete_user" %}', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showDeleteResponse("User deleted successfully!", true);
+            } else {
+                showDeleteResponse(data.message || "Failed to delete user", false);
+            }
+            refresh();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showDeleteResponse("An error occurred while deleting the user", false);
+            refresh();
+        });
+    });
+
+    // Add restore form submission handler
+    document.getElementById('restoreUserForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const userId = document.getElementById('restore_user_id').value;
+        const formData = {
+            user_id: userId
+        };
+
+        fetch('{% url "dashboard:restore_user" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showRestoreResponse("User restored successfully!", true);
+            } else {
+                showRestoreResponse(data.message || "Failed to restore user", false);
+            }
+            refresh();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showRestoreResponse("An error occurred while restoring the user", false);
+        });
+    });
+
+    // Add form submission handler
+    document.getElementById('editUserForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('{% url "dashboard:update_user" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showEditResponse("User updated successfully!", true);
+            } else {
+                showEditResponse(data.message || "Failed to update user", false);
+            }
+            refresh();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showEditResponse("An error occurred while updating the user", false);
+            refresh();
+        });
+    });
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Add click handler for edit buttons
+    document.querySelectorAll('.edit-user-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            fetchUserInfo(userId);
+        });
+    });
+
+    function fetchUserInfo(userId) {
+        // First open the modal so it's ready
+        openEditModal(userId);
+        
+        fetch(`{% url 'dashboard:get_user_info' 'placeholder' %}`.replace('placeholder', userId))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const user = data.user;
+                    // Populate the form fields
+                    const fields = {
+                        'edit_first_name': user.first_name,
+                        'edit_last_name': user.last_name,
+                        'edit_email': user.email,
+                        'edit_birthdate': user.birthdate,
+                        'edit_contact_number': user.contact_number || '',
+                        'edit_department': user.department_id || ''
+                    };
+                    
+                    // Set each field value and ensure it's not readonly
+                    Object.keys(fields).forEach(fieldId => {
+                        const field = document.getElementById(fieldId);
+                        field.value = fields[fieldId];
+                        field.removeAttribute('readonly');
+                    });
+                } else {
+                    showEditResponse(data.message || "Failed to load user information", false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showEditResponse("An error occurred while loading user information", false);
+            });
+    }
 </script>
+{% endblock %}
+
+{% block extra_js %}
 {% endblock %}

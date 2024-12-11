@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Manage Leave Types{% endblock %}
+{% block title %}Management | Leave Types{% endblock %}
 
 {% block content %}
 <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
@@ -106,29 +106,6 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Leave Type Name</label>
                             <input type="text" name="name" required class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-                            <textarea name="description" rows="3" class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Default Days</label>
-                            <input type="number" name="default_days" required min="0" class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                        </div>
-                        <div class="flex items-center">
-                            <input type="checkbox" name="is_paid" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                            <label class="block ml-2 text-sm text-gray-900 dark:text-white">Paid Leave</label>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Applicable Roles</label>
-                            <div class="mt-2 space-y-2">
-                                {% for role in roles %}
-                                <div class="flex items-center">
-                                    <input type="checkbox" name="applicable_roles" value="{{ role.id }}" class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                                    <label class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ role.name }}</label>
-                                </div>
-                                {% endfor %}
-                            </div>
                         </div>
                     </div>
                 </div>
