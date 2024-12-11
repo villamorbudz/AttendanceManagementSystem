@@ -33,6 +33,13 @@ def login_view(request):
 
     return render(request, 'userauth/login.html', {'form': form})
 
+def logout_view(request):
+    from django.contrib.auth import logout
+    from django.shortcuts import redirect
+    
+    logout(request)
+    return redirect('login')
+
 def index(request):
     return render(request, 'userauth/index.html')
 

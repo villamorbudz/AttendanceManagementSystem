@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Leave Management{% endblock %}
+{% block title %}Employee | Leave Requests{% endblock %}
 
 {% block content %}
 <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
@@ -12,15 +12,16 @@
         <!-- Header -->
         <div class="bg-white shadow-sm dark:bg-gray-800">
             <div class="flex justify-between items-center px-6 py-3">
-                <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Leave Management</h1>
-                <button id="newLeaveBtn" class="px-4 py-2 text-white bg-blue-500 rounded-md transition-colors duration-200 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700">
-                    New Leave Request
-                </button>
+                <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Leave Requests</h1>
+                <div class="flex items-center">
+                    {% include 'dashboard/employee/includes/leave_header.html' %}
+                </div>
             </div>
         </div>
 
         <!-- Leave Requests List -->
         <div class="p-6">
+            <h2 class="mb-6 text-2xl font-semibold text-gray-900 dark:text-white">Leave Request History</h2>
             <div class="overflow-hidden bg-white rounded-lg shadow dark:bg-gray-800">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-700">
@@ -130,7 +131,7 @@
                     <!-- Reason -->
                     <div>
                         <label class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Reason</label>
-                        <textarea name="reason" required rows="3" class="px-3 py-2 w-full rounded-md border border-gray-300 shadow-sm transition-colors duration-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Please provide a detailed reason for your leave request"></textarea>
+                        <textarea name="reason" required rows="3" class="px-3 py-2 w-full rounded-md border border-gray-300 shadow-sm transition-colors duration-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Please provide a reason for your leave request."></textarea>
                     </div>
 
                     <!-- Error Message -->

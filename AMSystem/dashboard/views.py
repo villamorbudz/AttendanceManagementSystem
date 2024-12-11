@@ -32,7 +32,7 @@ def manager_dashboard(request):
 def manager_profile(request):
     context = {
         'user': {
-            'get_full_name': 'John Manager',
+            'name': 'John Manager',
             'email': 'john.manager@example.com',
             'role': 'Department Manager'
         }
@@ -43,14 +43,14 @@ def manager_user_management(request):
     # Sample user data
     users = [
         {
-            'get_full_name': 'John Doe',
+            'name': 'John Doe',
             'email': 'john.doe@example.com',
             'role': 'Employee',
             'department': 'IT',
             'status': 'Active'
         },
         {
-            'get_full_name': 'Jane Smith',
+            'name': 'Jane Smith',
             'email': 'jane.smith@example.com',
             'role': 'Team Lead',
             'department': 'HR',
@@ -167,7 +167,7 @@ def employee_dashboard(request):
 def employee_profile(request):
     # Sample user data
     user = {
-        'get_full_name': 'John Doe',
+        'name': 'John Doe',
         'employee_id': 'EMP001',
         'department': {'name': 'IT Department'},
         'position': 'Software Developer',
@@ -205,13 +205,6 @@ def employee_leave(request):
         ]
     }
     return render(request, 'dashboard/employee/employee_leave.html', context)
-
-def logout_view(request):
-    from django.contrib.auth import logout
-    from django.shortcuts import redirect
-    
-    logout(request)
-    return redirect('login')  # Redirect to your login page URL name
 
 @api_view(['GET'])
 def get_chart_data(request):

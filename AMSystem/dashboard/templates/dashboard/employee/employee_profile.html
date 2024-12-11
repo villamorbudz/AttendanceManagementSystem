@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Employee Profile{% endblock %}
+{% block title %}Employee | Profile{% endblock %}
 
 {% block content %}
 <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
@@ -31,59 +31,36 @@
             <!-- Profile Information -->
             <div class="border-t border-gray-200 dark:border-gray-700">
                 <dl>
-                    <!-- Profile Picture -->
-                    <div class="px-4 py-5 bg-gray-50 dark:bg-gray-700 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Profile Picture</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                            <div class="flex items-center">
-                                <img src="{% static 'images/default-avatar.png' %}" alt="Profile Picture" class="w-20 h-20 rounded-full">
-                                <button class="px-3 py-1 ml-4 text-sm text-gray-700 bg-gray-200 rounded-md dark:text-gray-300 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500">
-                                    Change Photo
-                                </button>
-                            </div>
-                        </dd>
-                    </div>
-
                     <!-- Basic Information -->
-                    <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Full name</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ user.get_full_name }}</dd>
-                    </div>
-
                     <div class="px-4 py-5 bg-gray-50 dark:bg-gray-700 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Employee ID</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ user.employee_id }}</dd>
+                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ request.user.user_id }}</dd>
+                    </div>
+
+                    <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Full name</dt>
+                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ request.user.first_name }} {{request.user.last_name}}</dd>
                     </div>
 
                     <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Department</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ user.department.name }}</dd>
+                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ request.user.department.name }}</dd>
                     </div>
 
-                    <div class="px-4 py-5 bg-gray-50 dark:bg-gray-700 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Position</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ user.position }}</dd>
+                    <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Birthdate</dt>
+                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ request.user.birthdate }}</dd>
                     </div>
 
                     <!-- Contact Information -->
                     <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Email address</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ user.email }}</dd>
+                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ request.user.email }}</dd>
                     </div>
 
                     <div class="px-4 py-5 bg-gray-50 dark:bg-gray-700 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                         <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Phone number</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ user.phone_number }}</dd>
-                    </div>
-
-                    <!-- Emergency Contact -->
-                    <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Emergency contact</dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-                            <p>{{ user.emergency_contact_name }}</p>
-                            <p class="text-gray-500 dark:text-gray-400">{{ user.emergency_contact_phone }}</p>
-                            <p class="text-gray-500 dark:text-gray-400">{{ user.emergency_contact_relationship }}</p>
-                        </dd>
+                        <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ request.user.contact_number}}</dd>
                     </div>
                 </dl>
             </div>
