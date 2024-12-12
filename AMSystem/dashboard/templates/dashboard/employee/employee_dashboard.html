@@ -18,109 +18,92 @@
 
         <!-- Main Content -->
         <div class="p-6">
-            <!-- Stats Overview -->
-            <div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2 lg:grid-cols-3">
-                <!-- Active Employees Card -->
-                <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
-                    <div class="flex justify-between items-center">
-                        <div class="space-y-2">
-                            <h3 class="text-[15px] font-bold text-[#293241] dark:text-gray-200 leading-snug">Active Employee Today</h3>
-                            <div class="flex gap-3 items-center">
-                                <span class="text-lg font-bold text-[#2d3748] dark:text-white">{{ active_employees }}</span>
-                                <span class="text-sm font-bold text-[#3d5a80] dark:text-blue-400">+12%</span>
-                            </div>
-                        </div>
-                        <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </div>
-                    </div>
+           <!-- Stats Overview -->
+<div class="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Total Present Days -->
+    <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
+        <div class="flex justify-between items-center">
+            <div class="space-y-2">
+                <h3 class="text-[15px] font-bold text-[#293241] dark:text-gray-200 leading-snug">Present Days</h3>
+                <div class="flex gap-3 items-center">
+                    <span class="text-lg font-bold text-[#2d3748] dark:text-white">{{ total_present }}</span>
+                    <span class="text-sm font-bold {% if attendance_trend >= 0 %}text-[#3d5a80] dark:text-blue-400{% else %}text-red-500 dark:text-red-400{% endif %}">
+                        {% if attendance_trend >= 0 %}+{% endif %}{{ attendance_trend|floatformat:1 }}%
+                    </span>
                 </div>
+            </div>
+            <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+        </div>
+    </div>
 
-                <!-- Employee Leave Card -->
-                <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
-                    <div class="flex justify-between items-center">
-                        <div class="space-y-2">
-                            <h3 class="text-xs font-bold text-[#293241] dark:text-gray-200 leading-[18px]">Employee Leave Today</h3>
-                            <div class="flex gap-3 items-center">
-                                <span class="text-lg font-bold text-[#2d3748] dark:text-white">25</span>
-                                <span class="text-sm font-bold text-[#3d5a80] dark:text-blue-400">+5%</span>
-                            </div>
-                        </div>
-                        <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                    </div>
+    <!-- Total Leave -->
+    <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
+        <div class="flex justify-between items-center">
+            <div class="space-y-2">
+                <h3 class="text-[15px] font-bold text-[#293241] dark:text-gray-200 leading-[18px]">Total Leave</h3>
+                <div class="flex gap-3 items-center">
+                    <span class="text-lg font-bold text-[#2d3748] dark:text-white">{{ total_leave }}</span>
+                    <span class="text-sm font-bold {% if leave_trend >= 0 %}text-[#3d5a80] dark:text-blue-400{% else %}text-red-500 dark:text-red-400{% endif %}">
+                        {% if leave_trend >= 0 %}+{% endif %}{{ leave_trend|floatformat:1 }}%
+                    </span>
                 </div>
+            </div>
+            <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+        </div>
+    </div>
 
-                <!-- New Users Card -->
-                <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
+    <!-- Time In/Out -->
+    <div class="bg-white dark:bg-gray-800 rounded-[15px] shadow p-4 transition-all duration-300">
+        <div class="flex justify-between items-center">
+            <div class="space-y-2">
+                <h3 class="text-[15px] font-bold text-[#293241] dark:text-gray-200 leading-[18px]">Today's Time Record</h3>
+                <div class="flex flex-col gap-1">
                     <div class="flex justify-between items-center">
-                        <div class="space-y-2">
-                            <h3 class="text-xs font-bold text-[#293241] dark:text-gray-200 leading-[18px]">New Users</h3>
-                            <div class="flex gap-3 items-center">
-                                <span class="text-lg font-bold text-[#2d3748] dark:text-white">+3,052</span>
-                                <span class="text-sm font-bold text-[#ee6c4d]">-14%</span>
-                            </div>
-                        </div>
-                        <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </div>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Time In:</span>
+                        <span class="text-sm font-medium text-[#2d3748] dark:text-white">{{ time_in }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Time Out:</span>
+                        <span class="text-sm font-medium text-[#2d3748] dark:text-white">{{ time_out }}</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-1">
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Total Hours:</span>
+                        <span class="text-sm font-bold text-[#3d5a80] dark:text-blue-400">{{ total_hours }} hrs</span>
                     </div>
                 </div>
             </div>
+            <div class="w-[40.59px] h-[40.59px] bg-[#ee6c4d] rounded-xl shadow flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
 
             <!-- Charts Section -->
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <!-- Active Users Chart -->
-                <div class="bg-gradient-to-br from-[#98c1d9] to-[#3d5a80] dark:from-[#3d5a80] dark:to-[#2b2d42] rounded-[15px] p-6">
-                    <div class="mb-4">
-                        <h3 class="text-lg font-medium text-white">Active Users <span class="text-sm text-green-400">(+23)</span> <span class="text-sm text-gray-300">than last week</span></h3>
-                        <div class="flex gap-6 mt-4">
-                            <div class="flex gap-2 items-center">
-                                <div class="p-2 bg-white bg-opacity-10 rounded">
-                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                </div>
-                                <div class="text-white">
-                                    <span class="block text-2xl font-bold">32,984</span>
-                                    <span class="text-sm opacity-70">Employee</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-2 items-center">
-                                <div class="p-2 bg-white bg-opacity-10 rounded">
-                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                </div>
-                                <div class="text-white">
-                                    <span class="block text-2xl font-bold">1</span>
-                                    <span class="text-sm opacity-70">Leave</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="relative h-[180px] mt-4">
-                        <canvas id="activeUsersChart"></canvas>
+                <!-- Weekly Attendance Chart -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Weekly Attendance</h3>
+                    <div class="h-80">
+                        <canvas id="weeklyAttendanceChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Attendance Report Chart -->
-                <div class="bg-white dark:bg-gray-800 rounded-[15px] p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h3 class="text-[#2b2d42] dark:text-white text-lg font-medium">Employee Attendance Report</h3>
-                            <p class="mt-1 text-sm text-red-500">1,243 more in 2023</p>
-                        </div>
-                    </div>
-                    <div class="relative h-[180px] mt-4">
-                        <canvas id="attendanceChart"></canvas>
+                <!-- Monthly Leave Chart -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Monthly Leave History</h3>
+                    <div class="h-80">
+                        <canvas id="monthlyLeaveChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -130,183 +113,72 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
-    function initializeCharts() {
-        // Active Users Chart
-        const activeUsersCtx = document.getElementById('activeUsersChart').getContext('2d');
-        const activeUsersChart = new Chart(activeUsersCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-                datasets: [{
-                    data: [300, 220, 150, 280, 450, 380, 420, 280, 180],
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    borderRadius: 0,
-                    barThickness: 8,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
-                    padding: {
-                        left: -10,
-                        right: -10,
-                        top: 0,
-                        bottom: -10
-                    }
-                },
-                scales: {
-                    y: {
-                        display: true,
-                        position: 'left',
-                        max: 500,
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: 'rgba(255, 255, 255, 0.7)',
-                            font: {
-                                size: 10,
-                                weight: '400'
-                            },
-                            padding: 0,
-                            stepSize: 100,
-                            callback: function(value) {
-                                return value === 0 ? '' : value;
-                            }
-                        },
-                        border: {
-                            display: false
-                        }
-                    },
-                    x: {
-                        display: false
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        enabled: false
+document.addEventListener('DOMContentLoaded', function() {
+    // Weekly Attendance Chart
+    const weeklyCtx = document.getElementById('weeklyAttendanceChart').getContext('2d');
+    new Chart(weeklyCtx, {
+        type: 'line',
+        data: {
+            labels: {{ weekly_labels|safe }},
+            datasets: [{
+                label: 'Present',
+                data: {{ weekly_present|safe }},
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'Absent',
+                data: {{ weekly_absent|safe }},
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
                     }
                 }
             }
-        });
+        }
+    });
 
-        // Attendance Chart
-        const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
-        const isDark = document.documentElement.classList.contains('dark');
-        
-        // Create gradients
-        const gradientBlue = attendanceCtx.createLinearGradient(0, 0, 0, 240);
-        gradientBlue.addColorStop(0, isDark ? 'rgba(152, 193, 217, 0.3)' : 'rgba(152, 193, 217, 0.4)');
-        gradientBlue.addColorStop(1, isDark ? 'rgba(152, 193, 217, 0.02)' : 'rgba(152, 193, 217, 0.0)');
-
-        const gradientPink = attendanceCtx.createLinearGradient(0, 0, 0, 240);
-        gradientPink.addColorStop(0, isDark ? 'rgba(238, 108, 77, 0.3)' : 'rgba(255, 182, 193, 0.4)');
-        gradientPink.addColorStop(1, isDark ? 'rgba(238, 108, 77, 0.02)' : 'rgba(255, 182, 193, 0.0)');
-
-        const attendanceChart = new Chart(attendanceCtx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                    label: 'Present',
-                    data: [450, 380, 320, 280, 300, 380, 400, 360, 320, 300, 340, 360],
-                    borderColor: isDark ? '#98c1d9' : '#3d5a80',
-                    backgroundColor: gradientBlue,
-                    tension: 0.4,
-                    fill: true,
-                    borderWidth: 2,
-                    pointRadius: 0
-                },
-                {
-                    label: 'Absent',
-                    data: [300, 250, 200, 180, 220, 280, 320, 280, 240, 200, 180, 160],
-                    borderColor: isDark ? '#ee6c4d' : '#e76f51',
-                    backgroundColor: gradientPink,
-                    tension: 0.4,
-                    fill: true,
-                    borderWidth: 2,
-                    pointRadius: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                layout: {
-                    padding: {
-                        top: 20,
-                        right: 20,
-                        bottom: 0,
-                        left: 0
+    // Monthly Leave Chart
+    const monthlyCtx = document.getElementById('monthlyLeaveChart').getContext('2d');
+    new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ monthly_labels|safe }},
+            datasets: [{
+                label: 'Leave Requests',
+                data: {{ monthly_leave_data|safe }},
+                backgroundColor: '#3b82f6',
+                borderColor: '#3b82f6',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
                     }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 500,
-                        position: 'right',
-                        grid: {
-                            color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                            drawBorder: false,
-                            borderDash: [5, 5]
-                        },
-                        ticks: {
-                            color: isDark ? '#98c1d9' : '#3d5a80',
-                            font: {
-                                size: 10,
-                                weight: '400'
-                            },
-                            padding: 10,
-                            stepSize: 100,
-                            callback: function(value) {
-                                return value === 0 ? '' : value;
-                            }
-                        },
-                        border: {
-                            display: false
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false,
-                            drawBorder: false
-                        },
-                        ticks: {
-                            color: isDark ? '#98c1d9' : '#3d5a80',
-                            font: {
-                                size: 10,
-                                weight: '400'
-                            },
-                            padding: 5
-                        },
-                        border: {
-                            display: false
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
                 }
             }
-        });
-    }
-
-    // Initialize charts when DOM is loaded
-    document.addEventListener('DOMContentLoaded', initializeCharts);
-
-    // Update charts when theme changes
-    document.addEventListener('themeChanged', initializeCharts);
+        }
+    });
+});
 </script>
 {% endblock %}

@@ -386,14 +386,139 @@ def process_leave_request(request, request_id, action):
         return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
 # Employee views
+@login_required
 def employee_dashboard(request):
+    today = timezone.now().date()
+    user = request.user
+
+    # Get today's attendance for the user
+    today_attendance = Attendance.objects.filter(
+        user=user,
+        date=today
+    ).first()
+
+    # Calculate total present days for the user
+    total_present = Attendance.objects.filter(
+        user=user,
+        status='Present'
+    ).count()
+
+    # Calculate attendance trend
+    yesterday = today - timedelta(days=1)
+    yesterday_present = Attendance.objects.filter(
+        user=user,
+        date=yesterday,
+        status='Present'
+    ).exists()
+    
+    attendance_trend = 0
+    if yesterday_present:
+        if today_attendance and today_attendance.status == 'Present':
+            attendance_trend = 0
+        else:
+            attendance_trend = -100
+    elif today_attendance and today_attendance.status == 'Present':
+        attendance_trend = 100
+
+    # Get total leave count for the user
+    total_leave = LeaveRequest.objects.filter(
+        user=user
+    ).count()
+
+    # Calculate leave trend
+    last_month = today - timedelta(days=30)
+    current_month_leave = LeaveRequest.objects.filter(
+        user=user,
+        created_at__gte=today - timedelta(days=30)
+    ).count()
+    previous_month_leave = LeaveRequest.objects.filter(
+        user=user,
+        created_at__lt=today - timedelta(days=30),
+        created_at__gte=today - timedelta(days=60)
+    ).count()
+
+    leave_trend = 0
+    if previous_month_leave > 0:
+        leave_trend = ((current_month_leave - previous_month_leave) / previous_month_leave) * 100
+    elif current_month_leave > 0:
+        leave_trend = 100
+
+    # Get time in/out records for today
+    time_records = Attendance.objects.filter(
+        user=user,
+        date=today
+    ).values_list('time_in', 'time_out').first()
+
+    time_in = time_records[0] if time_records and time_records[0] else None
+    time_out = time_records[1] if time_records and time_records[1] else None
+
+    total_hours = 0
+    if time_in and time_out:
+        time_diff = time_out - time_in
+        total_hours = time_diff.total_seconds() / 3600
+
+    # Get weekly attendance data for charts
+    weekly_data = []
+    weekly_labels = []
+    weekly_present = []
+    weekly_absent = []
+    
+    for i in range(7):
+        date = today - timedelta(days=i)
+        attendance = Attendance.objects.filter(
+            user=user,
+            date=date
+        ).first()
+        
+        weekly_labels.append(date.strftime('%a, %b %d'))  # Format: Mon, Jan 01
+        if attendance:
+            weekly_present.append(1 if attendance.status == 'Present' else 0)
+            weekly_absent.append(1 if attendance.status == 'Absent' else 0)
+        else:
+            weekly_present.append(0)
+            weekly_absent.append(0)
+    
+    # Reverse the lists to show oldest to newest
+    weekly_labels.reverse()
+    weekly_present.reverse()
+    weekly_absent.reverse()
+
+    # Get monthly leave data for charts
+    monthly_leave_data = []
+    monthly_labels = []
+    
+    for i in range(6):  # Last 6 months
+        month_start = today.replace(day=1) - timedelta(days=30*i)
+        month_end = (month_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        
+        leave_count = LeaveRequest.objects.filter(
+            user=user,
+            start_date__gte=month_start,
+            start_date__lte=month_end
+        ).count()
+        
+        monthly_labels.append(month_start.strftime('%b'))  # Month name
+        monthly_leave_data.append(leave_count)
+    
+    # Reverse the lists to show oldest to newest
+    monthly_labels.reverse()
+    monthly_leave_data.reverse()
+
     context = {
-        'attendance_summary': {
-            'present': 22,
-            'absent': 3,
-            'late': 5
-        }
+        'total_present': total_present,
+        'attendance_trend': attendance_trend,
+        'total_leave': total_leave,
+        'leave_trend': leave_trend,
+        'time_in': time_in.strftime('%I:%M %p') if time_in else 'Not recorded',
+        'time_out': time_out.strftime('%I:%M %p') if time_out else 'Not recorded',
+        'total_hours': round(total_hours, 2) if total_hours > 0 else 0,
+        'weekly_labels': weekly_labels,
+        'weekly_present': weekly_present,
+        'weekly_absent': weekly_absent,
+        'monthly_labels': monthly_labels,
+        'monthly_leave_data': monthly_leave_data
     }
+    
     return render(request, 'dashboard/employee/employee_dashboard.html', context)
 
 def employee_profile(request):
