@@ -74,10 +74,10 @@
 <div class="section">
     <h2>📚 Project Documentation/Resources</h2>
     <ul>
-    <li>📄 <strong>Functional Requirements Document:</strong> <a href="https://docs.google.com/document/d/1CV0SnLQ8Mk_a7esE05MgeWcsuibVhiEMZl3C8cEM4TM/edit?usp=sharing" target="_blank">Project Document</a></li>
-    <li>📊 <strong>Gantt Chart:</strong> <a href="https://cebuinstituteoftechnology-my.sharepoint.com/:x:/g/personal/clarencekirk_macapobre_cit_edu/EX0PUaIayKpGj128RzcTkwsBBmu9KCDw7roXzGJaw4Itug?e=vygDPE" target="_blank">View Timeline</a></li>
-    <li>🔄 <strong>Entity Relationship Diagram (ERD):</strong> <a href="https://online.visual-paradigm.com/share.jsp?id=323938343239332d34" target="_blank">View ERD</a></li>
-    <li>🎨 <strong>UI/UX Design:</strong> <a href="https://www.figma.com/design/6IJLOH5yoD7sXUFPLvHjBk/Attendance-Management-System?node-id=0-1&node-type=canvas" target="_blank">Figma Prototype</a></li>
+    <li>📄 <strong>Functional Requirements Document:</strong> <a href="./docs/AMS_FunctionalRequirements.pdf" target="_blank">Project Document</a></li>
+    <li>📊 <strong>Gantt Chart:</strong> <a href="./docs/AMS_GanttChart.pdf" target="_blank">View Timeline</a></li>
+    <li>🔄 <strong>Entity Relationship Diagram (ERD):</strong> <a href="./docs/AMS_ERD.pdf" target="_blank">View ERD</a></li>
+    <li>🎨 <strong>UI/UX Design:</strong> <a href="./docs/AMS_UI-UX.pdf" target="_blank">Figma Prototype</a></li>
     </ul>
 </div>
 
