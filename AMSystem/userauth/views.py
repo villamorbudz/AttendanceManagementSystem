@@ -36,8 +36,6 @@ def login_view(request):
     return render(request, 'userauth/login.html', {'form': form})
 
 def logout_view(request):
-    from django.contrib.auth import logout
-    from django.shortcuts import redirect
     
     # Clear the password from session before logout
     if 'password_text' in request.session:

@@ -16,6 +16,7 @@ from attendance.models import Attendance
 from leave.models import LeaveRequest, LeaveType
 import json
 import logging
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -169,7 +170,6 @@ def department_create(request):
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'message': 'Invalid JSON data'}, status=400)
     except Exception as e:
-        logger.error(f'Error creating department: {str(e)}')
         return JsonResponse({'success': False, 'message': 'An error occurred while creating the department'}, status=500)
 
 @login_required
@@ -304,26 +304,6 @@ def leave_request_detail(request, request_id):
         })
     except LeaveRequest.DoesNotExist:
         return JsonResponse({'error': 'Leave request not found'}, status=404)
-
-@login_required
-def leave_request_update(request, request_id):
-    if request.method == 'PUT':
-        try:
-            leave_request = LeaveRequest.objects.get(id=request_id)
-            if request.user.department.role.first().name != 'Manager':
-                return JsonResponse({'error': 'Unauthorized access'}, status=403)
-            
-            data = json.loads(request.body)
-            if 'status' in data:
-                leave_request.status = data['status']
-                leave_request.save()
-                return JsonResponse({'message': 'Leave request updated successfully'})
-            return JsonResponse({'error': 'Status field is required'}, status=400)
-        except LeaveRequest.DoesNotExist:
-            return JsonResponse({'error': 'Leave request not found'}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 # CSV Import Views
 @login_required

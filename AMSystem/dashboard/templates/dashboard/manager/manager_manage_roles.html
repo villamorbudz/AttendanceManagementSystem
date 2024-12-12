@@ -122,20 +122,22 @@
                     </thead>
                     <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         {% for role in roles %}
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ role.name }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if role.is_staff %}bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100{% else %}bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300{% endif %}">
-                                    {{ role.is_staff|yesno:"Staff,Non-Staff" }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                                {{ role.users_count }} users
-                            </td>
-
-                        </tr>
+                            {% if role.name != 'Administrator'%}
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ role.name }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if role.is_staff %}bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100{% else %}bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300{% endif %}">
+                                            {{ role.is_staff|yesno:"Staff,Non-Staff" }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                                        {{ role.user_count }} users
+                                    </td>
+        
+                                </tr>
+                            {% endif%}
                         {% endfor %}
                     </tbody>
                 </table>

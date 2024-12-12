@@ -88,7 +88,7 @@
             <!-- Actions Bar -->
             <div class="flex justify-between items-center mb-6">
                 <div class="flex space-x-4">
-                    <button id="addDepartmentBtn" class="flex items-center px-4 py-2 text-white rounded-lg transition-colors duration-200 bg-coral hover:bg-coral/90">
+                    <button id="addDepartmentBtn" class="flex items-center px-4 py-2 text-white bg-blue-500 rounded-lg transition-colors duration-200 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700">
                         <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                         </svg>
@@ -124,12 +124,19 @@
                                 <tr class="transition-colors duration-200 hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.name }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.role_name }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.employees_count }}</td>                                <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full dark:bg-green-900 dark:text-green-100">Active</span>
+                                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap dark:text-gray-100">{{ department.employees_count }}</td>                                 
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm {% if department.is_active %}text-green-500 dark:text-green-400{% else %}text-red-500 dark:text-red-400{% endif %}">
+                                            {{ department.is_active|yesno:"Active,Inactive" }}
+                                        </div>
                                     </td>
-                                    <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button onclick="editDepartment('{{ department.id }}', '{{ department.name }}', '{{ department.role_name }}')" class="mr-3 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300">Edit</button>
-                                        <button onclick="deleteDepartment('{{ department.id }}')" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Delete</button>
+                                        {% if department.is_active %}
+                                            <button onclick="openDeleteDepartmentModal('{{ department.id }}')" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300">Delete</button>
+                                        {% else %}
+                                            <button onclick="openRestoreDepartmentModal('{{ department.id }}')" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">Restore</button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endif %}
@@ -142,32 +149,65 @@
             <!-- Pagination -->
             <div class="flex justify-between items-center mt-6">
                 <div class="flex flex-1 justify-between sm:hidden">
-                    <button class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 dark:border-gray-600 dark:text-gray-200 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">Previous</button>
-                    <button class="inline-flex relative items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 dark:border-gray-600 dark:text-gray-200 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">Next</button>
+                    {% if departments.has_previous %}
+                    <a href="?page={{ departments.previous_page_number }}" class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 dark:border-gray-600 dark:text-gray-200 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">Previous</a>
+                    {% else %}
+                    <button disabled class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-md border border-gray-300 dark:border-gray-600 dark:text-gray-500 dark:bg-gray-700 cursor-not-allowed">Previous</button>
+                    {% endif %}
+                    
+                    {% if departments.has_next %}
+                    <a href="?page={{ departments.next_page_number }}" class="inline-flex relative items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 dark:border-gray-600 dark:text-gray-200 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">Next</a>
+                    {% else %}
+                    <button disabled class="inline-flex relative items-center px-4 py-2 ml-3 text-sm font-medium text-gray-400 bg-gray-100 rounded-md border border-gray-300 dark:border-gray-600 dark:text-gray-500 dark:bg-gray-700 cursor-not-allowed">Next</button>
+                    {% endif %}
                 </div>
                 <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                     <div>
                         <p class="text-sm text-gray-700 dark:text-gray-300">
-                            Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">20</span> results
+                            Showing <span class="font-medium">{{ departments.start_index }}</span> to <span class="font-medium">{{ departments.end_index }}</span> of <span class="font-medium">{{ departments.paginator.count }}</span> results
                         </p>
                     </div>
                     <div>
                         <nav class="inline-flex relative z-0 -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                            <button class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-l-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            {% if departments.has_previous %}
+                            <a href="?page={{ departments.previous_page_number }}" class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-l-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <span class="sr-only">Previous</span>
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                            {% else %}
+                            <button disabled class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-l-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-500 cursor-not-allowed">
                                 <span class="sr-only">Previous</span>
                                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                                 </svg>
                             </button>
-                            <button class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">1</button>
-                            <button class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-white border border-gray-300 dark:border-gray-600 bg-coral">2</button>
-                            <button class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">3</button>
-                            <button class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-r-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            {% endif %}
+                            
+                            {% for i in departments.paginator.page_range %}
+                                {% if departments.number == i %}
+                                <button class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-white border border-gray-300 dark:border-gray-600 bg-coral">{{ i }}</button>
+                                {% else %}
+                                <a href="?page={{ i }}" class="inline-flex relative items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700">{{ i }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if departments.has_next %}
+                            <a href="?page={{ departments.next_page_number }}" class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white rounded-r-md border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <span class="sr-only">Next</span>
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                            {% else %}
+                            <button disabled class="inline-flex relative items-center px-2 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-r-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-500 cursor-not-allowed">
                                 <span class="sr-only">Next</span>
                                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                                 </svg>
                             </button>
+                            {% endif %}
                         </nav>
                     </div>
                 </div>
@@ -177,8 +217,8 @@
 </div>
 
 <!-- Add Department Modal -->
-<div id="addDepartmentModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+<div id="addDepartmentModal" class="hidden overflow-y-auto fixed inset-0 z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex justify-center items-end px-4 pt-4 pb-20 min-h-screen text-center sm:block sm:p-0">
         <!-- Background overlay with animation -->
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-300 ease-out" aria-hidden="true"></div>
 
@@ -186,13 +226,13 @@
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
         <!-- Modal panel with animation -->
-        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800 hover-scale">
+        <div class="inline-block overflow-hidden text-left align-bottom bg-white rounded-lg shadow-xl transition-all transform sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800 hover-scale">
             <form id="addDepartmentForm" class="p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white" id="modal-title">Add New Department</h3>
                     <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
                         <span class="sr-only">Close</span>
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
@@ -202,11 +242,10 @@
                     <div>
                         <label for="departmentName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department Name</label>
                         <input type="text" id="departmentName" name="name" 
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-coral focus:ring-coral dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm transition-all duration-200"
+                               class="block mt-1 w-full rounded-md border-gray-300 shadow-sm transition-all duration-200 focus:border-coral focus:ring-coral dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
                                required
-                               minlength="2"
-                               onkeyup="validateInput(this)">
-                        <div class="feedback-message hidden"></div>
+                               minlength="2">
+                        <div class="hidden feedback-message"></div>
                     </div>
 
                     <div class="mt-4">
@@ -292,36 +331,76 @@
     </div>
 </div>
 
-<!-- Delete Department Modal -->
-<div id="deleteDepartmentModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800">
-            <form id="deleteDepartmentForm" method="POST">
-                {% csrf_token %}
-                <input type="hidden" id="delete_department_id" name="department_id">
-                <div class="p-6">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Delete Department</h3>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Are you sure you want to delete this department? This action cannot be undone.</p>
-                    <div class="mt-6 flex flex-col sm:flex-row-reverse sm:gap-2">
-                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors duration-200">
-                            Delete
-                        </button>
-                        <button type="button" onclick="closeDeleteDepartmentModal()" class="mt-3 sm:mt-0 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-coral sm:w-auto sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600 transition-colors duration-200">
-                            Cancel
-                        </button>
+<!-- Restore Department Modal -->
+<div id="restoreDepartmentModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+        <!-- Modal panel -->
+        <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
+                            Restore Department
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Are you sure you want to restore this department? This will make the department active again.
+                            </p>
+                        </div>
                     </div>
-                    <div id="deleteResponseMessage" class="mt-4 hidden"></div>
                 </div>
-            </form>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" onclick="confirmRestoreDepartment()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Restore
+                </button>
+                <button type="button" onclick="closeRestoreDepartmentModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                    Cancel
+                </button>
+            </div>
+            <div id="restoreResponseMessage" class="px-4 py-3 hidden"></div>
         </div>
     </div>
 </div>
 
-{% endblock %}
+<!-- Delete Department Modal -->
+<div id="deleteDepartmentModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
 
-{% block extra_js %}
+        <!-- Modal panel -->
+        <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
+                            Delete Department
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                Are you sure you want to delete this department? This action cannot be undone.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" onclick="confirmDeleteDepartment()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Delete
+                </button>
+                <button type="button" onclick="closeDeleteDepartmentModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700">
+                    Cancel
+                </button>
+            </div>
+            <div id="deleteResponseMessage" class="px-4 py-3 hidden"></div>
+        </div>
+    </div>
+</div>
+
 <script>
     // Modal elements
     const addDepartmentModal = document.getElementById('addDepartmentModal');
@@ -370,22 +449,6 @@
     function closeDeleteDepartmentModal() {
         deleteDepartmentModal.classList.add('hidden');
         document.getElementById('deleteResponseMessage').classList.add('hidden');
-    }
-
-    // Validation Functions
-    function validateInput(input) {
-        const feedbackMessage = input.nextElementSibling;
-        if (input.value.length < 2) {
-            feedbackMessage.textContent = 'Name must be at least 2 characters long';
-            feedbackMessage.classList.remove('hidden', 'text-green-600');
-            feedbackMessage.classList.add('text-red-600');
-            submitBtn.disabled = true;
-        } else {
-            feedbackMessage.textContent = 'Looks good!';
-            feedbackMessage.classList.remove('hidden', 'text-red-600');
-            feedbackMessage.classList.add('text-green-600');
-            submitBtn.disabled = false;
-        }
     }
 
     // Form Submission Handlers
@@ -507,5 +570,98 @@
             messageDiv.classList.add('text-red-600');
         });
     });
+
+    let selectedDepartmentId = null;
+
+    function openRestoreDepartmentModal(departmentId) {
+        selectedDepartmentId = departmentId;
+        document.getElementById('restoreDepartmentModal').classList.remove('hidden');
+    }
+
+    function closeRestoreDepartmentModal() {
+        document.getElementById('restoreDepartmentModal').classList.add('hidden');
+        document.getElementById('restoreResponseMessage').classList.add('hidden');
+        selectedDepartmentId = null;
+    }
+
+    function openDeleteDepartmentModal(departmentId) {
+        selectedDepartmentId = departmentId;
+        document.getElementById('deleteDepartmentModal').classList.remove('hidden');
+    }
+
+    function closeDeleteDepartmentModal() {
+        document.getElementById('deleteDepartmentModal').classList.add('hidden');
+        document.getElementById('deleteResponseMessage').classList.add('hidden');
+        selectedDepartmentId = null;
+    }
+
+    function confirmRestoreDepartment() {
+        if (!selectedDepartmentId) return;
+
+        fetch(`{% url 'dashboard:restore_department' department_id=0 %}`.replace('0', selectedDepartmentId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const messageDiv = document.getElementById('restoreResponseMessage');
+            messageDiv.textContent = data.message || data.error;
+            messageDiv.classList.remove('hidden');
+            messageDiv.classList.toggle('text-green-600', data.success);
+            messageDiv.classList.toggle('text-red-600', !data.success);
+
+            if (data.success) {
+                setTimeout(() => {
+                    closeRestoreDepartmentModal();
+                    window.location.reload();
+                }, 1500);
+            }
+        })
+        .catch(error => {
+            const messageDiv = document.getElementById('restoreResponseMessage');
+            messageDiv.textContent = 'An error occurred while restoring the department';
+            messageDiv.classList.remove('hidden');
+            messageDiv.classList.add('text-red-600');
+        });
+    }
+
+    function confirmDeleteDepartment() {
+        if (!selectedDepartmentId) return;
+
+        fetch(`{% url 'dashboard:delete_department' department_id=0 %}`.replace('0', selectedDepartmentId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const messageDiv = document.getElementById('deleteResponseMessage');
+            messageDiv.textContent = data.message || data.error;
+            messageDiv.classList.remove('hidden');
+            messageDiv.classList.toggle('text-green-600', data.success);
+            messageDiv.classList.toggle('text-red-600', !data.success);
+
+            if (data.success) {
+                setTimeout(() => {
+                    closeDeleteDepartmentModal();
+                    window.location.reload();
+                }, 1500);
+            }
+        })
+        .catch(error => {
+            const messageDiv = document.getElementById('deleteResponseMessage');
+            messageDiv.textContent = 'An error occurred while deleting the department';
+            messageDiv.classList.remove('hidden');
+            messageDiv.classList.add('text-red-600');
+        });
+    }
 </script>
+{% endblock %}
+
+{% block extra_js %}
 {% endblock %}

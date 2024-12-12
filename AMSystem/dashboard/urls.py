@@ -9,7 +9,7 @@ urlpatterns = [
     path('', views.dashboard_home, name='home'),
     
     # Employee views
-    path('employee/dashboard', views.employee_dashboard, name='employee_dashboard'),
+    path('employee/dashboard/', views.employee_dashboard, name='employee_dashboard'),
     path('employee/profile/', views.employee_profile, name='employee_profile'),
     path('employee/attendance/', views.employee_attendance, name='employee_attendance'),
     path('employee/leave/', views.employee_leave, name='employee_leave'),
@@ -23,6 +23,14 @@ urlpatterns = [
     path('management/departments/', views.manager_departments, name='manager_departments'),
     path('management/roles/', views.manager_roles, name='manager_roles'),
     path('management/leave-types/', views.manager_leave_types, name='manager_leave_types'),
+    path('manager/leave-requests/', views.manager_leave_requests, name='manager_leave_requests'),
+    path('manager/leave-request/<int:request_id>/<str:action>/', views.process_leave_request, name='process_leave_request'),
+    
+    # Leave Type Management
+    path('manager/leave-types/add/', views.leave_type_add, name='leave_type_add'),
+    path('manager/leave-types/<int:leave_type_id>/edit/', views.leave_type_edit, name='leave_type_edit'),
+    path('manager/leave-types/<int:leave_type_id>/delete/', views.leave_type_delete, name='leave_type_delete'),
+    path('manager/leave-types/<int:leave_type_id>/restore/', views.leave_type_restore, name='leave_type_restore'),
     
     # User management endpoints
     path('management/users/update/', views.update_user, name='update_user'),
@@ -35,7 +43,7 @@ urlpatterns = [
     path('departments/add/', views.add_department, name='add_department'),
     path('departments/<int:department_id>/update/', views.update_department, name='update_department'),
     path('departments/<int:department_id>/delete/', views.delete_department, name='delete_department'),
-    path('departments/<int:department_id>/restore/', management_views.department_restore, name='restore_department'),
+    path('departments/<int:department_id>/restore/', views.restore_department, name='restore_department'),
     
     # API endpoints
     path('api/chart-data/', views.get_chart_data, name='chart_data'),

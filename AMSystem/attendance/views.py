@@ -44,7 +44,7 @@ def record_attendance(request):
             response ='Successfully Timed In!'
         
         response_data = {
-            'user_id': user.id,
+            'user_id': user.user_id,
             'first_name': user.first_name,
             'last_name': user.last_name,
             'date': str(today),

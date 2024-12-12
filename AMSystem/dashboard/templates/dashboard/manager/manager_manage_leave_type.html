@@ -10,13 +10,13 @@
 
     <!-- Main Content -->
     <main class="overflow-y-auto flex-1">
-       <!-- Header -->
-       <div class="bg-white shadow-sm dark:bg-gray-800">
-        <div class="flex justify-between items-center px-6 py-4">
-            <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Leave Type Management</h1>
-            {% include 'dashboard/manager/includes/header_buttons.html' %}
+        <!-- Header -->
+        <div class="bg-white shadow-sm dark:bg-gray-800">
+            <div class="flex justify-between items-center px-6 py-4">
+                <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Leave Type Management</h1>
+                {% include 'dashboard/manager/includes/header_buttons.html' %}
+            </div>
         </div>
-    </div>
 
         <!-- Leave Type Management Content -->
         <div class="p-6">
@@ -30,7 +30,7 @@
                 </button>
                 <div class="flex space-x-4">
                     <div class="relative">
-                        <input type="text" placeholder="Search leave types..." class="py-2 pr-4 pl-10 w-64 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                        <input type="text" placeholder="Search leave types..." class="py-2 pr-4 pl-10 w-64 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         <svg class="absolute top-2.5 left-3 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
@@ -38,94 +38,197 @@
                 </div>
             </div>
 
-            <!-- Leave Types Grid -->
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {% for leave_type in leave_types %}
-                <div class="bg-white rounded-lg shadow dark:bg-gray-800">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ leave_type.name }}</h3>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ leave_type.description }}</p>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button onclick="openModal('editLeaveTypeModal-{{ leave_type.id }}')" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Leave Types Table -->
+            <div class="overflow-hidden bg-white dark:bg-gray-800 rounded-lg shadow">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 dark:text-gray-400 uppercase">Name</th>
+                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-right text-gray-500 dark:text-gray-400 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        {% for leave_type in leave_types %}
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ leave_type.name }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if leave_type.is_active %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100{% else %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100{% endif %}">
+                                    {{ leave_type.is_active|yesno:"Active,Inactive" }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                {% if leave_type.is_active %}
+                                <button onclick="openModal('editLeaveTypeModal', { id: {{ leave_type.id }}, name: '{{ leave_type.name }}' })" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mx-2">
+                                    <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
                                 </button>
-                                <button onclick="openModal('deleteLeaveTypeModal-{{ leave_type.id }}')" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button onclick="openModal('deleteLeaveTypeModal', { id: {{ leave_type.id }}, name: '{{ leave_type.name }}' })" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
+                                    <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                     </svg>
                                 </button>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <div class="flex justify-between items-center text-sm">
-                                <span class="text-gray-600 dark:text-gray-400">Default Days:</span>
-                                <span class="font-medium">{{ leave_type.default_days }}</span>
-                            </div>
-                            <div class="flex justify-between items-center mt-2 text-sm">
-                                <span class="text-gray-600 dark:text-gray-400">Paid Leave:</span>
-                                <span class="px-2 py-1 text-xs rounded-full {% if leave_type.is_paid %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100{% else %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100{% endif %}">
-                                    {{ leave_type.is_paid|yesno:"Yes,No" }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="pt-4 mt-4 border-t">
-                            <h4 class="mb-2 text-sm font-medium text-gray-900 dark:text-white">Applicable To</h4>
-                            <div class="flex flex-wrap gap-2">
-                                {% for role in leave_type.applicable_roles %}
-                                <span class="px-2 py-1 text-xs text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-100">
-                                    {{ role.name }}
-                                </span>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
+                                {% else %}
+                                <button onclick="openModal('restoreLeaveTypeModal', { id: {{ leave_type.id }}, name: '{{ leave_type.name }}' })" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300">
+                                    <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
 </div>
 
 <!-- Add Leave Type Modal -->
-<div class="hidden overflow-y-auto fixed inset-0 z-10" id="addLeaveTypeModal">
-    <div class="flex justify-center items-end px-4 pt-4 pb-20 min-h-screen text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-500 opacity-75 dark:bg-gray-900"></div>
-        </div>
+<div id="addLeaveTypeModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        <div class="inline-block overflow-hidden text-left align-bottom bg-white rounded-lg shadow-xl transition-all transform sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800">
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800">
             <form id="addLeaveTypeForm">
-                <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4 dark:bg-gray-800">
-                    <h3 class="mb-4 text-lg font-medium leading-6 text-gray-900 dark:text-white">Add New Leave Type</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Leave Type Name</label>
-                            <input type="text" name="name" required class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                        </div>
+                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Add New Leave Type</h3>
+                    <div>
+                        <label for="newLeaveTypeName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                        <input type="text" name="name" id="newLeaveTypeName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     </div>
                 </div>
-                <div class="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse dark:bg-gray-800">
-                    <button type="submit" class="inline-flex justify-center px-4 py-2 w-full text-base font-medium text-white bg-blue-500 rounded-md border border-transparent shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm dark:bg-blue-700 dark:hover:bg-blue-800">
-                        Add Leave Type
-                    </button>
-                    <button type="button" onclick="closeModal('addLeaveTypeModal')" class="inline-flex justify-center px-4 py-2 mt-3 w-full text-base font-medium text-gray-700 bg-white rounded-md border border-gray-300 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                        Cancel
-                    </button>
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm dark:bg-blue-700 dark:hover:bg-blue-800">Add</button>
+                    <button type="button" onclick="closeModal('addLeaveTypeModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-600 dark:text-white dark:border-gray-500 dark:hover:bg-gray-700">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Edit Leave Type Modal -->
+<div id="editLeaveTypeModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800">
+            <form id="editLeaveTypeForm">
+                <input type="hidden" id="editLeaveTypeId" name="id">
+                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">Edit Leave Type</h3>
+                    <div>
+                        <label for="editLeaveTypeName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                        <input type="text" name="name" id="editLeaveTypeName" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm dark:bg-blue-700 dark:hover:bg-blue-800">Save Changes</button>
+                    <button type="button" onclick="closeModal('editLeaveTypeModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-600 dark:text-white dark:border-gray-500 dark:hover:bg-gray-700">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Leave Type Modal -->
+<div id="deleteLeaveTypeModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800">
+            <form id="deleteLeaveTypeForm">
+                <input type="hidden" id="deleteLeaveTypeId" name="id">
+                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Deactivate Leave Type</h3>
+                            <div class="mt-2">
+                                <p id="deleteLeaveTypeMessage" class="text-sm text-gray-500 dark:text-gray-400">Are you sure you want to deactivate this leave type? This leave type will be marked as inactive but can be restored later.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm dark:bg-red-700 dark:hover:bg-red-800">Deactivate</button>
+                    <button type="button" onclick="closeModal('deleteLeaveTypeModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-600 dark:text-white dark:border-gray-500 dark:hover:bg-gray-700">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Restore Leave Type Modal -->
+<div id="restoreLeaveTypeModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full dark:bg-gray-800">
+            <form id="restoreLeaveTypeForm">
+                <input type="hidden" id="restoreLeaveTypeId" name="id">
+                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Restore Leave Type</h3>
+                            <div class="mt-2">
+                                <p id="restoreLeaveTypeMessage" class="text-sm text-gray-500 dark:text-gray-400">Are you sure you want to restore this leave type? This will make the leave type active again.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm dark:bg-green-700 dark:hover:bg-green-800">Restore</button>
+                    <button type="button" onclick="closeModal('restoreLeaveTypeModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm dark:bg-gray-600 dark:text-white dark:border-gray-500 dark:hover:bg-gray-700">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    function openModal(modalId) {
+    function openModal(modalId, leaveType = null) {
+        if (leaveType) {
+            if (modalId === 'editLeaveTypeModal') {
+                document.getElementById('editLeaveTypeId').value = leaveType.id;
+                document.getElementById('editLeaveTypeName').value = leaveType.name;
+                // Update confirmation message
+                const messageElement = document.getElementById('deleteLeaveTypeMessage');
+                if (messageElement) {
+                    messageElement.textContent = `Are you sure you want to deactivate "${leaveType.name}"? This leave type will be marked as inactive but can be restored later.`;
+                }
+            } else if (modalId === 'deleteLeaveTypeModal') {
+                document.getElementById('deleteLeaveTypeId').value = leaveType.id;
+                // Update confirmation message
+                const messageElement = document.getElementById('deleteLeaveTypeMessage');
+                if (messageElement) {
+                    messageElement.textContent = `Are you sure you want to deactivate "${leaveType.name}"? This leave type will be marked as inactive but can be restored later.`;
+                }
+            } else if (modalId === 'restoreLeaveTypeModal') {
+                document.getElementById('restoreLeaveTypeId').value = leaveType.id;
+                // Update confirmation message
+                const messageElement = document.getElementById('restoreLeaveTypeMessage');
+                if (messageElement) {
+                    messageElement.textContent = `Are you sure you want to restore "${leaveType.name}"? This will make the leave type active again.`;
+                }
+            }
+        }
         document.getElementById(modalId).classList.remove('hidden');
     }
 
@@ -133,11 +236,116 @@
         document.getElementById(modalId).classList.add('hidden');
     }
 
-    // Add event listeners for the leave type form
+    function handleResponse(response) {
+        if (!response.ok) {
+            return response.json().then(err => Promise.reject(err));
+        }
+        return response.json();
+    }
+
+    function showToast(message, type = 'success') {
+        // You can implement your own toast notification here
+        alert(message);
+    }
+
+    function refreshPage() {
+        window.location.reload();
+    }
+
+    // Add event listeners for the forms
     document.getElementById('addLeaveTypeForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        // Add your form submission logic here
-        closeModal('addLeaveTypeModal');
+        const formData = {
+            name: document.getElementById('newLeaveTypeName').value
+        };
+
+        fetch('{% url "dashboard:leave_type_add" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(handleResponse)
+        .then(data => {
+            showToast(data.message);
+            closeModal('addLeaveTypeModal');
+            refreshPage();
+        })
+        .catch(error => {
+            showToast(error.error || 'An error occurred', 'error');
+        });
+    });
+
+    document.getElementById('editLeaveTypeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const leaveTypeId = document.getElementById('editLeaveTypeId').value;
+        const formData = {
+            name: document.getElementById('editLeaveTypeName').value
+        };
+
+        fetch('{% url "dashboard:leave_type_edit" leave_type_id=0 %}'.replace('0', leaveTypeId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(handleResponse)
+        .then(data => {
+            showToast(data.message);
+            closeModal('editLeaveTypeModal');
+            refreshPage();
+        })
+        .catch(error => {
+            showToast(error.error || 'An error occurred', 'error');
+        });
+    });
+
+    document.getElementById('deleteLeaveTypeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const leaveTypeId = document.getElementById('deleteLeaveTypeId').value;
+
+        fetch('{% url "dashboard:leave_type_delete" leave_type_id=0 %}'.replace('0', leaveTypeId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(handleResponse)
+        .then(data => {
+            showToast(data.message);
+            closeModal('deleteLeaveTypeModal');
+            refreshPage();
+        })
+        .catch(error => {
+            showToast(error.error || 'An error occurred', 'error');
+        });
+    });
+
+    document.getElementById('restoreLeaveTypeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const leaveTypeId = document.getElementById('restoreLeaveTypeId').value;
+
+        fetch('{% url "dashboard:leave_type_restore" leave_type_id=0 %}'.replace('0', leaveTypeId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(handleResponse)
+        .then(data => {
+            showToast(data.message);
+            closeModal('restoreLeaveTypeModal');
+            refreshPage();
+        })
+        .catch(error => {
+            showToast(error.error || 'An error occurred', 'error');
+        });
     });
 </script>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Employee | Leave Management{% endblock %}
+{% block title %}Employee | Leave Requests {% endblock %}
 
 {% block content %}
 <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
@@ -131,10 +131,9 @@
                         <div class="relative">
                             <select name="leaveType" required class="px-3 py-2 w-full rounded-md border border-gray-300 shadow-sm transition-colors duration-200 appearance-none dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
                                 <option value="">Select a leave type</option>
-                                <option value="annual">Annual Leave</option>
-                                <option value="sick">Sick Leave</option>
-                                <option value="personal">Personal Leave</option>
-                                <option value="emergency">Emergency Leave</option>
+                                {% for leave_type in leave_types %}
+                                    <option value="{{ leave_type.id }}">{{ leave_type.name }}</option>
+                                {% endfor %}
                             </select>
                             <div class="flex absolute inset-y-0 right-0 items-center px-2 pointer-events-none">
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,4 +185,136 @@
 
 {% block extra_js %}
 {% load static %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('leaveRequestModal');
+        const modalContent = document.getElementById('modalContent');
+        const closeModalBtn = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelLeaveRequest');
+        const form = document.getElementById('leaveRequestForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const requestLeaveBtn = document.querySelector('button.bg-blue-500');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            // Give time for the display:block to take effect
+            setTimeout(() => {
+                modalContent.classList.remove('opacity-0');
+                modalContent.classList.remove('translate-y-4');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modalContent.classList.add('opacity-0');
+            modalContent.classList.add('translate-y-4');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+            if (form) form.reset();
+            if (errorMessage) errorMessage.classList.add('hidden');
+        }
+
+        function validateDates(startDate, endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (start < today) {
+                return "Start date cannot be in the past";
+            }
+            if (end < start) {
+                return "End date cannot be before start date";
+            }
+            return null;
+        }
+
+        // Event Listeners
+        if (requestLeaveBtn) {
+            requestLeaveBtn.addEventListener('click', openModal);
+        }
+
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', closeModal);
+        }
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', closeModal);
+        }
+
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const data = {
+                    leave_type: formData.get('leaveType'),
+                    start_date: formData.get('startDate'),
+                    end_date: formData.get('endDate'),
+                    reason: formData.get('reason')
+                };
+
+                // Validate dates
+                const dateError = validateDates(data.start_date, data.end_date);
+                if (dateError) {
+                    errorMessage.textContent = dateError;
+                    errorMessage.classList.remove('hidden');
+                    return;
+                }
+
+                // Submit the form
+                fetch('{% url "leave:leave_request" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        closeModal();
+                        // Show success message
+                        const successMessage = document.createElement('div');
+                        successMessage.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
+                        successMessage.textContent = data.message || 'Leave request submitted successfully';
+                        document.body.appendChild(successMessage);
+                        
+                        // Fade out and refresh after 2 seconds
+                        setTimeout(() => {
+                            successMessage.style.opacity = '0';
+                            setTimeout(() => {
+                                successMessage.remove();
+                                window.location.reload();
+                            }, 300);
+                        }, 2000);
+                    } else {
+                        errorMessage.textContent = data.error || 'An error occurred';
+                        errorMessage.classList.remove('hidden');
+                    }
+                })
+                .catch(error => {
+                    errorMessage.textContent = 'An error occurred. Please try again.';
+                    errorMessage.classList.remove('hidden');
+                });
+            });
+        }
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close modal with escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+    });
+</script>
 {% endblock %}

@@ -1,124 +1,366 @@
 {% extends 'dashboard/base.html' %}
 {% load static %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Management | Profile{% endblock %}
 
 {% block content %}
-<div class="flex overflow-hidden h-screen">
-    
+<div class="flex h-screen bg-gray-100 dark:bg-gray-900">
     {% include 'dashboard/manager/includes/sidebar.html' %}
-    
-    <main class="flex overflow-y-auto overflow-x-hidden relative flex-col flex-1 bg-gray-100 dark:bg-gray-900">
+
+    <!-- Main Content -->
+    <main class="overflow-y-auto flex-1">
         <!-- Header -->
         <div class="bg-white shadow-sm dark:bg-gray-800">
-            <div class="flex justify-between items-center px-6 py-4">
-                <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Profile</h1>
-                {% include 'dashboard/manager/includes/header_buttons.html' %}
+            <div class="flex justify-between items-center px-6 py-3">
+                <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Profile</h1>
+                <div class="flex items-center">
+                    {% include 'dashboard/employee/includes/header_buttons.html' %}
+                </div>
             </div>
         </div>
 
-        <div class="px-4 py-8 mx-auto w-full max-w-7xl sm:px-6 lg:px-8">
-            <!-- Profile Section -->
-            <div class="bg-white rounded-lg shadow dark:bg-gray-800">
-                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Profile Information</h3>
-                </div>
-                <div class="p-6">
-                    <form method="POST" enctype="multipart/form-data" class="space-y-6">
-                        {% csrf_token %}
-                        <div class="flex items-center space-x-6">
-                            <div class="shrink-0">
-                                {% if user.profile_image %}
-                                    <img class="object-cover w-16 h-16 rounded-full" src="{{ user.profile_image.url }}" alt="Profile image">
-                                {% else %}
-                                    <div class="flex justify-center items-center w-16 h-16 bg-gray-200 rounded-full dark:bg-gray-700">
-                                        <span class="text-xl text-gray-500 dark:text-gray-400">{{ user.first_name|first|upper }}</span>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <label class="block">
-                                <span class="sr-only">Choose profile photo</span>
-                                <input type="file" name="profile_image" class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-gray-300 dark:hover:file:bg-gray-600">
-                            </label>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                            <div>
-                                <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
-                                <input type="text" name="first_name" id="first_name" value="{{ user.first_name }}"
-                                    class="block mt-1 w-full rounded-md border-gray-300 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500">
-                            </div>
-
-                            <div>
-                                <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
-                                <input type="text" name="last_name" id="last_name" value="{{ user.last_name }}"
-                                    class="block mt-1 w-full rounded-md border-gray-300 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500">
-                            </div>
-
-                            <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                                <input type="email" name="email" id="email" value="{{ user.email }}"
-                                    class="block mt-1 w-full rounded-md border-gray-300 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500">
-                            </div>
-
-                            <div>
-                                <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
-                                <input type="tel" name="phone" id="phone" value="{{ user.phone }}"
-                                    class="block mt-1 w-full rounded-md border-gray-300 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label for="address" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
-                            <textarea name="address" id="address" rows="3"
-                                class="block mt-1 w-full rounded-md border-gray-300 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500">{{ user.address }}</textarea>
-                        </div>
-
-                        <div class="flex justify-end">
-                            <button type="submit"
-                                class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md border border-transparent shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                Save Changes
+        <!-- Profile Content -->
+        <div class="container px-4 py-8 mx-auto">
+            <div class="mx-auto space-y-6 max-w-4xl">
+                <!-- Profile Card -->
+                <div class="overflow-hidden bg-white rounded-lg shadow dark:bg-gray-800">
+                    <div class="p-6 sm:p-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Personal Information</h3>
+                            <button id="editProfileButton" class="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <svg class="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                                Edit Profile
                             </button>
                         </div>
-                    </form>
+
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <!-- Employee ID -->
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Employee ID</label>
+                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ request.user.user_id }}</p>
+                            </div>
+
+                            <!-- Department -->
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Department</label>
+                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ request.user.department.name }}</p>
+                            </div>
+
+                            <!-- Full Name -->
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Full Name</label>
+                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Email</label>
+                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ request.user.email }}</p>
+                            </div>
+
+                            <!-- Birthdate -->
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Birthdate</label>
+                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ request.user.birthdate }}</p>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Phone Number</label>
+                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ request.user.contact_number }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Change Card -->
+                <div class="overflow-hidden bg-white rounded-lg shadow dark:bg-gray-800">
+                    <div class="p-6 sm:p-8">
+                        <h3 class="mb-6 text-xl font-semibold text-gray-900 dark:text-white">Change Password</h3>
+                        <form method="POST" action="{% url 'dashboard:change_password' %}" class="space-y-4">
+                            {% csrf_token %}
+                                                        <div>
+                                <label for="current_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Password</label>
+                                <div class="relative">
+                                    <input type="password" name="current_password" id="current_password" required readonly
+                                           value="{{ password_text }}"
+                                           class="block pr-10 mt-1 w-full rounded-md border-gray-300 bg-gray-100 cursor-not-allowed shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-600 dark:border-gray-600 dark:text-gray-300 sm:text-sm">
+                                    <button type="button" onclick="togglePasswordVisibility('current_password')"
+                                            class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="new_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">New Password</label>
+                                <div class="relative">
+                                    <input type="password" name="new_password" id="new_password" required
+                                           class="block pr-10 mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm">
+                                    <button type="button" class="flex absolute inset-y-0 right-0 items-center px-3 password-toggle" data-target="new_password">
+                                        <svg class="w-5 h-5 text-gray-400 show-password" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        <svg class="hidden w-5 h-5 text-gray-400 hide-password" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="confirm_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm New Password</label>
+                                <div class="relative">
+                                    <input type="password" name="confirm_password" id="confirm_password" required
+                                           class="block pr-10 mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm">
+                                    <button type="button" class="flex absolute inset-y-0 right-0 items-center px-3 password-toggle" data-target="confirm_password">
+                                        <svg class="w-5 h-5 text-gray-400 show-password" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        <svg class="hidden w-5 h-5 text-gray-400 hide-password" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    Change Password
+                                </button>
+                            </div>
+                            {% if messages %}
+                            <div class="mt-4">
+                                {% for message in messages %}
+                                    <div class="p-4 mb-4 rounded-md {% if message.tags == 'success' %}bg-green-50 text-green-700 border border-green-200{% else %}bg-red-50 text-red-700 border border-red-200{% endif %}">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 </div>
+
+<!-- Edit Profile Modal -->
+<div id="editProfileModal" class="hidden overflow-y-auto fixed inset-0 z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex justify-center items-end px-4 pt-4 pb-20 min-h-screen text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+        <!-- Modal panel -->
+        <div class="inline-block overflow-hidden text-left align-bottom bg-white rounded-lg shadow-xl transition-all transform dark:bg-gray-800 sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <form id="editProfileForm" method="POST" action="{% url 'dashboard:update_profile' %}" class="p-6">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Edit Profile</h3>
+                        <button type="button" onclick="closeEditModal()" class="text-gray-400 hover:text-gray-500">
+                            <span class="sr-only">Close</span>
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- First Name -->
+                    <div>
+                        <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
+                        <input type="text" name="first_name" id="first_name" value="{{ request.user.first_name }}"
+                               class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm">
+                    </div>
+
+                    <!-- Last Name -->
+                    <div>
+                        <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
+                        <input type="text" name="last_name" id="last_name" value="{{ request.user.last_name }}"
+                               class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm">
+                    </div>
+
+                    <!-- Birthdate -->
+                    <div>
+                        <label for="birthdate" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Birthdate</label>
+                        <input type="date" name="birthdate" id="birthdate" value="{{ request.user.birthdate|date:'Y-m-d' }}"
+                               class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm">
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div>
+                        <label for="contact_number" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
+                        <input type="tel" name="contact_number" id="contact_number" value="{{ request.user.contact_number }}"
+                               class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm">
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-6 space-x-3">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md border border-transparent hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Modal Interaction -->
+<script>
+    // Get DOM elements
+    const modal = document.getElementById('editProfileModal');
+    const editButton = document.getElementById('editProfileButton');
+    const closeButton = document.querySelector('[onclick="closeEditModal()"]');
+    const form = document.getElementById('editProfileForm');
+
+    // Current user data
+    const userData = {
+        firstName: "{{ request.user.first_name }}",
+        lastName: "{{ request.user.last_name }}",
+        birthdate: "{{ request.user.birthdate|date:'Y-m-d' }}",
+        contactNumber: "{{ request.user.contact_number }}"
+    };
+
+    // Function to open modal
+    function openEditModal() {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        
+        // Populate form fields with current data
+        document.getElementById('first_name').value = userData.firstName;
+        document.getElementById('last_name').value = userData.lastName;
+        document.getElementById('birthdate').value = userData.birthdate;
+        document.getElementById('contact_number').value = userData.contactNumber;
+    }
+
+    // Function to close modal
+    function closeEditModal() {
+        modal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Event listeners
+    editButton.addEventListener('click', openEditModal);
+
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeEditModal();
+        }
+    });
+
+    // Prevent form submission if required fields are empty
+    form.addEventListener('submit', function(event) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('border-red-500');
+            } else {
+                field.classList.remove('border-red-500');
+            }
+        });
+
+        if (!isValid) {
+            event.preventDefault();
+            alert('Please fill in all required fields.');
+        }
+    });
+
+    // Add input validation for specific fields
+    const contactInput = document.getElementById('contact_number');
+    if (contactInput) {
+        contactInput.addEventListener('input', function(e) {
+            // Remove any non-numeric characters
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // Limit to reasonable phone number length
+            if (this.value.length > 15) {
+                this.value = this.value.slice(0, 15);
+            }
+        });
+    }
+
+    // Prevent future dates in birthdate
+    const birthdateInput = document.getElementById('birthdate');
+    if (birthdateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        birthdateInput.setAttribute('max', today);
+    }
+
+    // Password toggle functionality
+    const passwordToggleButtons = document.querySelectorAll('.password-toggle');
+    passwordToggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const inputId = this.getAttribute('data-target');
+            const input = document.getElementById(inputId);
+            const showPasswordIcon = this.querySelector('.show-password');
+            const hidePasswordIcon = this.querySelector('.hide-password');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                showPasswordIcon.classList.add('hidden');
+                hidePasswordIcon.classList.remove('hidden');
+            } else {
+                input.type = 'password';
+                showPasswordIcon.classList.remove('hidden');
+                hidePasswordIcon.classList.add('hidden');
+            }
+        });
+    });
+
+    function togglePasswordVisibility(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(inputId + '_icon');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+            `;
+        } else {
+            input.type = 'password';
+            icon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            `;
+        }
+    }
+</script>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Preview profile image before upload
-    document.querySelector('input[type="file"]').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.querySelector('.h-16.w-16');
-                if (img.tagName === 'IMG') {
-                    img.src = e.target.result;
-                } else {
-                    const newImg = document.createElement('img');
-                    newImg.src = e.target.result;
-                    newImg.classList = img.classList;
-                    newImg.classList.add('object-cover');
-                    img.parentNode.replaceChild(newImg, img);
-                }
-            }
-            reader.readAsDataURL(file);
+    function openEditModal() {
+        document.getElementById('editProfileModal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+        document.getElementById('editProfileModal').classList.add('hidden');
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('editProfileModal');
+        if (event.target === modal) {
+            closeEditModal();
         }
     });
 
-    // Form validation for password change
-    document.querySelector('form[action*="change_password"]').addEventListener('submit', function(e) {
-        const newPassword = document.getElementById('new_password').value;
-        const confirmPassword = document.getElementById('confirm_password').value;
-
-        if (newPassword !== confirmPassword) {
-            e.preventDefault();
-            alert('New passwords do not match!');
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeEditModal();
         }
     });
 </script>
